@@ -63,6 +63,16 @@ when a window has data.
 
 - [ ] `verify_citations.py`: checks quoted card text against the card database
 
+## Feedback follow-ups
+
+- [ ] **README**: explain how to generate local card data (`data/`) and add a
+      short example of a report output
+- [ ] **Stale data rule**: define when a meta window is considered stale (e.g.
+      warn if the latest window is older than X days) in `docs/data-sources.md`
+      or `docs/metrics.md`
+- [ ] **Skill skeleton**: create a minimal `skills/swu-review/SKEKYL.md` with
+      the review flow, even if partial
+
 ## Recurring
 
 - [ ] Re-verify `docs/rules.md` at every set release, suspension or new

@@ -1,9 +1,13 @@
 # Local data cache: card database, meta usage, prices, card text dumps.
 # Not redistributed because card texts/images are © FFG / Asmodee / Lucasfilm.
 /data/
+skills/data
 
-# Local reports: they embed card images, so they are not published.
+# Local reports and cases: generated outputs and personal workspace.
 /.local/
+/cases/
+/reports/
+*.pdf
 
 # Python
 __pycache__/

@@ -1,0 +1,400 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ediar.dev/swu-review/analysis.schema.json",
+  "title": "SWU Review card analysis",
+  "description": "Machine-readable card/deck-composition analysis for a Star Wars: Unlimited Premier deck. Legality, composition, card sheets, draw odds, findings and limitations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "tool_version",
+    "rules_version",
+    "db",
+    "input",
+    "deck",
+    "legality",
+    "composition",
+    "cards",
+    "draw_odds",
+    "findings",
+    "limitations",
+    "out_of_scope"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "minLength": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "tool_version": { "type": "string", "minLength": 1 },
+    "rules_version": { "type": "string", "minLength": 1 },
+    "db": { "$ref": "#/$defs/db" },
+    "input": { "$ref": "#/$defs/input" },
+    "deck": { "$ref": "#/$defs/deck" },
+    "legality": { "$ref": "#/$defs/legality" },
+    "composition": { "$ref": "#/$defs/composition" },
+    "cards": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/card" }
+    },
+    "draw_odds": { "$ref": "#/$defs/draw_odds" },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/limitation" }
+    },
+    "out_of_scope": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/out_of_scope" }
+    }
+  },
+  "$defs": {
+    "db": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "data_as_of", "sets", "schema_hash", "cards"],
+      "properties": {
+        "source": { "type": "string" },
+        "data_as_of": { "type": "string" },
+        "sets": { "type": "array", "items": { "type": "string" } },
+        "schema_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "cards": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "format", "n"],
+      "properties": {
+        "path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "format": { "type": "string", "enum": ["case", "swudb_json", "flat", "text", "json"] },
+        "n": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "card_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "name", "subtitle", "set", "number", "code", "count", "resolved_by"],
+      "properties": {
+        "identity": { "type": "string" },
+        "name": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "set": { "type": "string" },
+        "number": { "type": "string" },
+        "code": { "type": "string" },
+        "count": { "type": "integer", "minimum": 1 },
+        "resolved_by": { "type": "string", "enum": ["key", "set_number", "id", "identity", "name"] }
+      }
+    },
+    "deck_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "name", "subtitle", "copies"],
+      "properties": {
+        "identity": { "type": "string" },
+        "name": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "copies": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "unresolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zone", "ref", "reason"],
+      "properties": {
+        "zone": { "type": "string", "enum": ["leader", "base", "main", "sideboard"] },
+        "ref": { "type": "object" },
+        "reason": { "type": "string" }
+      }
+    },
+    "deck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["leader", "base", "main_deck", "sideboard", "unresolved"],
+      "properties": {
+        "leader": { "anyOf": [{ "$ref": "#/$defs/card_ref" }, { "type": "null" }] },
+        "base": { "anyOf": [{ "$ref": "#/$defs/card_ref" }, { "type": "null" }] },
+        "main_deck": { "type": "array", "items": { "$ref": "#/$defs/deck_entry" } },
+        "sideboard": { "type": "array", "items": { "$ref": "#/$defs/deck_entry" } },
+        "unresolved": { "type": "array", "items": { "$ref": "#/$defs/unresolved" } }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "ok", "detail"],
+      "properties": {
+        "id": { "type": "string" },
+        "ok": { "type": "boolean" },
+        "detail": { "type": "string" }
+      }
+    },
+    "aspect_penalty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "max", "per_card"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "max": { "type": "integer", "minimum": 0 },
+        "per_card": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["identity", "copies", "penalty", "missing_aspects"],
+            "properties": {
+              "identity": { "type": "string" },
+              "copies": { "type": "integer", "minimum": 1 },
+              "penalty": { "type": "integer", "minimum": 0 },
+              "missing_aspects": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "legality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "errors", "warnings", "checks", "aspect_penalty"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "checks": { "type": "array", "items": { "$ref": "#/$defs/check" } },
+        "aspect_penalty": { "$ref": "#/$defs/aspect_penalty" }
+      }
+    },
+    "composition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["n", "curve", "curve_pct", "mean_cost", "types", "type_pct", "arenas", "distinct", "unique_slots", "price", "no_cost_slots"],
+      "properties": {
+        "n": { "type": "integer", "minimum": 0 },
+        "curve": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[0-9]+$" },
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "curve_pct": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[0-9]+$" },
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 100 }
+        },
+        "mean_cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "denominator"],
+          "properties": {
+            "value": { "type": "number" },
+            "denominator": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "types": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "type_pct": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 100 }
+        },
+        "arenas": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ground", "space", "both", "unit_slots", "ground_pct", "space_pct"],
+          "properties": {
+            "ground": { "type": "integer", "minimum": 0 },
+            "space": { "type": "integer", "minimum": 0 },
+            "both": { "type": "integer", "minimum": 0 },
+            "unit_slots": { "type": "integer", "minimum": 0 },
+            "ground_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+            "space_pct": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "distinct": { "type": "integer", "minimum": 0 },
+        "unique_slots": { "type": "integer", "minimum": 0 },
+        "no_cost_slots": { "type": "integer", "minimum": 0 },
+        "price": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["currency", "total", "priced_slots", "coverage_pct", "source", "snapshot"],
+          "properties": {
+            "currency": { "type": "string" },
+            "total": { "type": "number", "minimum": 0 },
+            "priced_slots": { "type": "integer", "minimum": 0 },
+            "coverage_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+            "source": { "type": "string" },
+            "snapshot": { "type": "string" }
+          }
+        },
+        "price_eur": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["currency", "total", "priced_slots", "coverage_pct", "source", "snapshot", "basis"],
+          "properties": {
+            "currency": { "type": "string", "const": "EUR" },
+            "total": { "type": "number", "minimum": 0 },
+            "priced_slots": { "type": "integer", "minimum": 0 },
+            "coverage_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+            "source": { "type": "string" },
+            "snapshot": { "type": "string" },
+            "basis": { "type": "string" }
+          }
+        }
+      }
+    },
+    "card": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity", "name", "subtitle", "set", "number", "code", "copies", "zone",
+        "type", "cost", "power", "hp", "arenas", "aspects", "traits", "keywords",
+        "unique", "rarity", "text", "text_status", "derived_tags", "flags"
+      ],
+      "properties": {
+        "identity": { "type": "string" },
+        "name": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "set": { "type": "string" },
+        "number": { "type": "string" },
+        "code": { "type": "string" },
+        "copies": { "type": "integer", "minimum": 1 },
+        "zone": { "type": "string", "enum": ["leader", "base", "main"] },
+        "type": { "type": "string" },
+        "cost": { "type": ["integer", "null"] },
+        "power": { "type": ["integer", "null"] },
+        "hp": { "type": ["integer", "null"] },
+        "upgrade_power": { "type": ["integer", "null"] },
+        "upgrade_hp": { "type": ["integer", "null"] },
+        "arenas": { "type": "array", "items": { "type": "string" } },
+        "aspects": { "type": "array", "items": { "type": "string" } },
+        "traits": { "type": "array", "items": { "type": "string" } },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "unique": { "type": "boolean" },
+        "rarity": { "type": "string" },
+        "text": { "type": ["string", "null"] },
+        "text_status": { "type": "string", "enum": ["present", "missing"] },
+        "derived_tags": { "type": "array", "items": { "type": "string" } },
+        "epic_action": { "type": ["string", "null"] },
+        "double_sided": { "type": "boolean" },
+        "flags": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["off_aspect", "no_price", "unresolved_text"],
+          "properties": {
+            "off_aspect": { "type": "boolean" },
+            "no_price": { "type": "boolean" },
+            "unresolved_text": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "draw_odds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "assumptions", "n", "hand", "draw_per_regroup", "mulligan", "rounds", "per_card"],
+      "properties": {
+        "model": { "type": "string" },
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "n": { "type": "integer", "minimum": 0 },
+        "hand": { "type": "integer", "minimum": 0 },
+        "draw_per_regroup": { "type": "integer", "minimum": 0 },
+        "mulligan": { "type": "boolean" },
+        "rounds": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+        "per_card": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["identity", "name", "copies", "p", "expected_copies"],
+            "properties": {
+              "identity": { "type": "string" },
+              "name": { "type": "string" },
+              "copies": { "type": "integer", "minimum": 1 },
+              "p": { "type": "array", "items": { "type": "number", "minimum": 0, "maximum": 100 } },
+              "expected_copies": { "type": "array", "items": { "type": "number", "minimum": 0 } }
+            }
+          }
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "category", "statement", "evidence", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "severity": { "type": "string", "enum": ["info", "warning"] },
+        "category": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["metric_path", "value", "denominator", "pct", "threshold", "cards"],
+          "properties": {
+            "metric_path": { "type": "string", "minLength": 1 },
+            "value": { "type": "number" },
+            "denominator": { "type": ["integer", "null"], "minimum": 0 },
+            "pct": { "type": ["number", "null"] },
+            "threshold": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["op", "value", "unit"],
+              "properties": {
+                "op": { "type": "string", "enum": ["<", "<=", ">", ">=", "=="] },
+                "value": { "type": "number" },
+                "unit": { "type": "string" }
+              }
+            },
+            "cards": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["identity", "copies"],
+                "properties": {
+                  "identity": { "type": "string" },
+                  "copies": { "type": "integer", "minimum": 1 }
+                }
+              }
+            }
+          }
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "registry", "version"],
+          "properties": {
+            "kind": { "type": "string", "enum": ["threshold"] },
+            "registry": { "type": "string" },
+            "version": { "type": "string" }
+          }
+        }
+      }
+    },
+    "limitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "impact", "statement", "affects", "detail", "mitigation"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": { "type": "string", "enum": ["data", "model", "rules", "scope", "heuristic"] },
+        "impact": { "type": "string", "enum": ["info", "degraded", "blocking"] },
+        "statement": { "type": "string", "minLength": 1 },
+        "affects": { "type": "array", "items": { "type": "string" } },
+        "detail": { "type": "string" },
+        "mitigation": { "type": "string" }
+      }
+    },
+    "out_of_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

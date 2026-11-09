@@ -1,0 +1,1814 @@
+{
+  "cards": [
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Aggression",
+        "Villainy"
+      ],
+      "code": "HMW012",
+      "copies": 1,
+      "cost": 5,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "aspect:Villainy",
+        "trait:OFFICIAL",
+        "trait:SEPARATIST",
+        "type:Leader",
+        "unique"
+      ],
+      "double_sided": true,
+      "epic_action": "Epic Action: If you control 5 or more resources, deploy this leader.",
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 6,
+      "identity": "Poggle the Lesser|Let the Executions Begin",
+      "keywords": [],
+      "name": "Poggle the Lesser",
+      "number": "012",
+      "power": 1,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "Let the Executions Begin",
+      "text": "Action [C=1, Exhaust]: Ready a friendly Creature unit and deal 1 damage to it.",
+      "text_status": "present",
+      "traits": [
+        "SEPARATIST",
+        "OFFICIAL"
+      ],
+      "type": "Leader",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "leader"
+    },
+    {
+      "arenas": [],
+      "aspects": [
+        "Vigilance"
+      ],
+      "code": "HMW022",
+      "copies": 1,
+      "cost": null,
+      "derived_tags": [
+        "aspect:Vigilance",
+        "trait:ENDOR",
+        "type:Base"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": true,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 30,
+      "identity": "Shield Generator Complex|Endor",
+      "keywords": [],
+      "name": "Shield Generator Complex",
+      "number": "022",
+      "power": null,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "Endor",
+      "text": "",
+      "text_status": "present",
+      "traits": [
+        "ENDOR"
+      ],
+      "type": "Base",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "base"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Aggression"
+      ],
+      "code": "HMW177",
+      "copies": 3,
+      "cost": 2,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "trait:EWOK",
+        "type:Unit"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 2,
+      "identity": "Adamant Ewoks",
+      "keywords": [],
+      "name": "Adamant Ewoks",
+      "number": "177",
+      "power": 3,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "When Played: If you control another Ewok unit or an Endor base, you may deal 1 damage to a base and 1 damage to an enemy unit.",
+      "text_status": "present",
+      "traits": [
+        "EWOK"
+      ],
+      "type": "Unit",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Vigilance"
+      ],
+      "code": "HMW083",
+      "copies": 3,
+      "cost": 2,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Vigilance",
+        "keyword:Restore",
+        "trait:CREATURE",
+        "type:Unit",
+        "unique"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 3,
+      "identity": "Batcher|Loyal Hound",
+      "keywords": [
+        "Restore"
+      ],
+      "name": "Batcher",
+      "number": "083",
+      "power": 2,
+      "rarity": "Uncommon",
+      "set": "HMW",
+      "subtitle": "Loyal Hound",
+      "text": "Restore 1 (When this unit attacks, heal 1 damage from your base.) \nThis unit gets +1/+0 while defending.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Aggression"
+      ],
+      "code": "HMW179",
+      "copies": 3,
+      "cost": 2,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "keyword:Grit",
+        "trait:CREATURE",
+        "type:Unit"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 4,
+      "identity": "Feisty Blurrg",
+      "keywords": [
+        "Grit"
+      ],
+      "name": "Feisty Blurrg",
+      "number": "179",
+      "power": 1,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "Grit (This unit gets +1/+0 for each damage on it.)",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Vigilance",
+        "Aggression"
+      ],
+      "code": "ASH032",
+      "copies": 3,
+      "cost": 2,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "aspect:Vigilance",
+        "trait:UNDERWORLD",
+        "type:Unit"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 4,
+      "identity": "Rancor Keeper",
+      "keywords": [],
+      "name": "Rancor Keeper",
+      "number": "032",
+      "power": 2,
+      "rarity": "Uncommon",
+      "set": "ASH",
+      "subtitle": "",
+      "text": "When a friendly unit is dealt damage and survives: Deal 1 damage to any number of bases. Use this ability only once each round.",
+      "text_status": "present",
+      "traits": [
+        "UNDERWORLD"
+      ],
+      "type": "Unit",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Vigilance"
+      ],
+      "code": "LOF063",
+      "copies": 3,
+      "cost": 3,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Vigilance",
+        "trait:CREATURE",
+        "type:Unit",
+        "unique"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 5,
+      "identity": "Oggdo Bogdo|Bogano Brute",
+      "keywords": [],
+      "name": "Oggdo Bogdo",
+      "number": "063",
+      "power": 5,
+      "rarity": "Rare",
+      "set": "LOF",
+      "subtitle": "Bogano Brute",
+      "text": "This unit can't attack unless it's damaged. \nWhen this unit attacks and defeats a unit: Heal 2 damage from this unit.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Vigilance",
+        "Villainy"
+      ],
+      "code": "HMW064",
+      "copies": 3,
+      "cost": 3,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Vigilance",
+        "aspect:Villainy",
+        "trait:CLONE",
+        "trait:IMPERIAL",
+        "trait:TROOPER",
+        "type:Unit",
+        "unique"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 5,
+      "identity": "Scorch|Imperial Commando",
+      "keywords": [],
+      "name": "Scorch",
+      "number": "064",
+      "power": 3,
+      "rarity": "Uncommon",
+      "set": "HMW",
+      "subtitle": "Imperial Commando",
+      "text": "On Attack: You may deal 1 damage to an upgraded unit.",
+      "text_status": "present",
+      "traits": [
+        "IMPERIAL",
+        "CLONE",
+        "TROOPER"
+      ],
+      "type": "Unit",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Vigilance"
+      ],
+      "code": "HMW087",
+      "copies": 3,
+      "cost": 3,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Vigilance",
+        "trait:CREATURE",
+        "type:Unit"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 4,
+      "identity": "Venomous Wyyyshokk",
+      "keywords": [],
+      "name": "Venomous Wyyyshokk",
+      "number": "087",
+      "power": 3,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "When Defeated: You may give a Weakness token to a damaged unit.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Aggression"
+      ],
+      "code": "HMW182",
+      "copies": 3,
+      "cost": 4,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "keyword:Grit",
+        "trait:CREATURE",
+        "type:Unit",
+        "unique"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 6,
+      "identity": "Arena Nexu|Starved for Prey",
+      "keywords": [
+        "Grit"
+      ],
+      "name": "Arena Nexu",
+      "number": "182",
+      "power": 2,
+      "rarity": "Rare",
+      "set": "HMW",
+      "subtitle": "Starved for Prey",
+      "text": "Grit \nOn Attack: You may deal 3 damage to a friendly Creature unit (including this one) and ready this unit. Use this ability only once each round.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Vigilance",
+        "Villainy"
+      ],
+      "code": "HMW065",
+      "copies": 2,
+      "cost": 4,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Vigilance",
+        "aspect:Villainy",
+        "trait:CLONE",
+        "trait:CREATURE",
+        "type:Unit",
+        "unique"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 6,
+      "identity": "Clone of the Zillo Beast|Emperor's Experiment",
+      "keywords": [],
+      "name": "Clone of the Zillo Beast",
+      "number": "065",
+      "power": 6,
+      "rarity": "Rare",
+      "set": "HMW",
+      "subtitle": "Emperor's Experiment",
+      "text": "Other friendly units get -2/-2. \nOn Attack: You may give a Weakness token to a unit.",
+      "text_status": "present",
+      "traits": [
+        "CLONE",
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Aggression",
+        "Villainy"
+      ],
+      "code": "HMW155",
+      "copies": 3,
+      "cost": 4,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "aspect:Villainy",
+        "trait:CREATURE",
+        "type:Unit"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 5,
+      "identity": "Filthy Dianoga",
+      "keywords": [],
+      "name": "Filthy Dianoga",
+      "number": "155",
+      "power": 5,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Aggression",
+        "Villainy"
+      ],
+      "code": "HMW156",
+      "copies": 3,
+      "cost": 5,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "aspect:Villainy",
+        "trait:CREATURE",
+        "type:Unit",
+        "unique"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 6,
+      "identity": "Arena Acklay|Screaming Predator",
+      "keywords": [],
+      "name": "Arena Acklay",
+      "number": "156",
+      "power": 5,
+      "rarity": "Uncommon",
+      "set": "HMW",
+      "subtitle": "Screaming Predator",
+      "text": "When this unit is dealt damage and survives: Deal 2 damage to each enemy base.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Vigilance",
+        "Villainy"
+      ],
+      "code": "HMW067",
+      "copies": 3,
+      "cost": 5,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Vigilance",
+        "aspect:Villainy",
+        "trait:CREATURE",
+        "type:Unit",
+        "unique"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 7,
+      "identity": "The Great Progenitor|First of the Drengir",
+      "keywords": [],
+      "name": "The Great Progenitor",
+      "number": "067",
+      "power": 4,
+      "rarity": "Legendary",
+      "set": "HMW",
+      "subtitle": "First of the Drengir",
+      "text": "When Attack Ends: You may give a Weakness token to this unit. If you do, create a Beast token for each Weakness token on this unit.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": true,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Space"
+      ],
+      "aspects": [
+        "Vigilance"
+      ],
+      "code": "HMW092",
+      "copies": 2,
+      "cost": 6,
+      "derived_tags": [
+        "arena:Space",
+        "aspect:Vigilance",
+        "keyword:Restore",
+        "trait:CREATURE",
+        "type:Unit"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 5,
+      "identity": "Starlit Purrgil",
+      "keywords": [
+        "Restore"
+      ],
+      "name": "Starlit Purrgil",
+      "number": "092",
+      "power": 4,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "Restore 2 (When this unit attacks, heal 2 damage from your base.)\nWhen Played: You may exhaust a unit.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [
+        "Ground"
+      ],
+      "aspects": [
+        "Aggression"
+      ],
+      "code": "HMW188",
+      "copies": 2,
+      "cost": 7,
+      "derived_tags": [
+        "arena:Ground",
+        "aspect:Aggression",
+        "keyword:Overwhelm",
+        "trait:CREATURE",
+        "type:Unit"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 7,
+      "identity": "Giant Gorax",
+      "keywords": [
+        "Overwhelm"
+      ],
+      "name": "Giant Gorax",
+      "number": "188",
+      "power": 7,
+      "rarity": "Legendary",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "Overwhelm\nOn Attack/When Defeated: If you control an Endor base, each opponent chooses one:\nYou deal 3 damage to a unit or base they control.\nThey discard a card from their hand and defeat a resource they control.",
+      "text_status": "present",
+      "traits": [
+        "CREATURE"
+      ],
+      "type": "Unit",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [],
+      "aspects": [
+        "Vigilance"
+      ],
+      "code": "HMW099",
+      "copies": 3,
+      "cost": 2,
+      "derived_tags": [
+        "aspect:Vigilance",
+        "trait:INNATE",
+        "type:Event"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": null,
+      "identity": "Always a Bigger Fish",
+      "keywords": [],
+      "name": "Always a Bigger Fish",
+      "number": "099",
+      "power": null,
+      "rarity": "Rare",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "Defeat a friendly Creature unit. If you do, play a Creature unit that costs up to 3 more than the defeated unit from your hand for free.",
+      "text_status": "present",
+      "traits": [
+        "INNATE"
+      ],
+      "type": "Event",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [],
+      "aspects": [
+        "Aggression"
+      ],
+      "code": "HMW193",
+      "copies": 3,
+      "cost": 2,
+      "derived_tags": [
+        "aspect:Aggression",
+        "trait:DISASTER",
+        "type:Event"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": null,
+      "identity": "Nightfall",
+      "keywords": [],
+      "name": "Nightfall",
+      "number": "193",
+      "power": null,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "Deal 1 damage to an enemy unit. \nIf you control an Endor base, you may attack with a unit. It gets +2/+0 for this attack.",
+      "text_status": "present",
+      "traits": [
+        "DISASTER"
+      ],
+      "type": "Event",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [],
+      "aspects": [
+        "Aggression"
+      ],
+      "code": "HMW194",
+      "copies": 3,
+      "cost": 3,
+      "derived_tags": [
+        "aspect:Aggression",
+        "trait:DISASTER",
+        "type:Event"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": null,
+      "identity": "Run Amok",
+      "keywords": [],
+      "name": "Run Amok",
+      "number": "194",
+      "power": null,
+      "rarity": "Common",
+      "set": "HMW",
+      "subtitle": "",
+      "text": "Create a Beast token.\nDeal 1 damage to a friendly ground unit and 1 damage to an enemy ground unit.",
+      "text_status": "present",
+      "traits": [
+        "DISASTER"
+      ],
+      "type": "Event",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    },
+    {
+      "arenas": [],
+      "aspects": [
+        "Vigilance"
+      ],
+      "code": "SEC069",
+      "copies": 2,
+      "cost": 1,
+      "derived_tags": [
+        "aspect:Vigilance",
+        "trait:INNATE",
+        "type:Upgrade"
+      ],
+      "double_sided": false,
+      "epic_action": null,
+      "flags": {
+        "no_price": false,
+        "off_aspect": false,
+        "unresolved_text": false
+      },
+      "hp": 1,
+      "identity": "Nimble Prowess",
+      "keywords": [],
+      "name": "Nimble Prowess",
+      "number": "069",
+      "power": 1,
+      "rarity": "Common",
+      "set": "SEC",
+      "subtitle": "",
+      "text": "Attach to a friendly unit.\nWhen Played: You may exhaust a unit in attached unit's arena.",
+      "text_status": "present",
+      "traits": [
+        "INNATE"
+      ],
+      "type": "Upgrade",
+      "unique": false,
+      "upgrade_hp": null,
+      "upgrade_power": null,
+      "zone": "main"
+    }
+  ],
+  "composition": {
+    "arenas": {
+      "both": 0,
+      "ground": 37,
+      "ground_pct": 94.9,
+      "space": 2,
+      "space_pct": 5.1,
+      "unit_slots": 39
+    },
+    "curve": {
+      "1": 2,
+      "2": 18,
+      "3": 12,
+      "4": 8,
+      "5": 6,
+      "6": 2,
+      "7": 2
+    },
+    "curve_pct": {
+      "1": 4.0,
+      "2": 36.0,
+      "3": 24.0,
+      "4": 16.0,
+      "5": 12.0,
+      "6": 4.0,
+      "7": 4.0
+    },
+    "distinct": 18,
+    "mean_cost": {
+      "denominator": 50,
+      "value": 3.24
+    },
+    "n": 50,
+    "no_cost_slots": 0,
+    "price": {
+      "coverage_pct": 100.0,
+      "currency": "USD",
+      "priced_slots": 50,
+      "snapshot": "2026-10-27",
+      "source": "swu-db",
+      "total": 28.19
+    },
+    "type_pct": {
+      "Event": 18.0,
+      "Unit": 78.0,
+      "Upgrade": 4.0
+    },
+    "types": {
+      "Event": 9,
+      "Unit": 39,
+      "Upgrade": 2
+    },
+    "unique_slots": 20
+  },
+  "db": {
+    "cards": 1634,
+    "data_as_of": "2026-10-27",
+    "schema_hash": "66aa15bcd22bff0933eb4d38b45435cde0f747a217f96dd4f19af38f826095c0",
+    "sets": [
+      "JTL",
+      "LOF",
+      "IBH",
+      "SEC",
+      "LAW",
+      "ASH",
+      "HMW"
+    ],
+    "source": "api.swu-db.com"
+  },
+  "deck": {
+    "base": {
+      "code": "HMW022",
+      "count": 1,
+      "identity": "Shield Generator Complex|Endor",
+      "name": "Shield Generator Complex",
+      "number": "022",
+      "resolved_by": "set_number",
+      "set": "HMW",
+      "subtitle": "Endor"
+    },
+    "leader": {
+      "code": "HMW012",
+      "count": 1,
+      "identity": "Poggle the Lesser|Let the Executions Begin",
+      "name": "Poggle the Lesser",
+      "number": "012",
+      "resolved_by": "set_number",
+      "set": "HMW",
+      "subtitle": "Let the Executions Begin"
+    },
+    "main_deck": [
+      {
+        "copies": 3,
+        "identity": "Adamant Ewoks",
+        "name": "Adamant Ewoks",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "Always a Bigger Fish",
+        "name": "Always a Bigger Fish",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "Arena Acklay|Screaming Predator",
+        "name": "Arena Acklay",
+        "subtitle": "Screaming Predator"
+      },
+      {
+        "copies": 3,
+        "identity": "Arena Nexu|Starved for Prey",
+        "name": "Arena Nexu",
+        "subtitle": "Starved for Prey"
+      },
+      {
+        "copies": 3,
+        "identity": "Batcher|Loyal Hound",
+        "name": "Batcher",
+        "subtitle": "Loyal Hound"
+      },
+      {
+        "copies": 2,
+        "identity": "Clone of the Zillo Beast|Emperor's Experiment",
+        "name": "Clone of the Zillo Beast",
+        "subtitle": "Emperor's Experiment"
+      },
+      {
+        "copies": 3,
+        "identity": "Feisty Blurrg",
+        "name": "Feisty Blurrg",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "Filthy Dianoga",
+        "name": "Filthy Dianoga",
+        "subtitle": ""
+      },
+      {
+        "copies": 2,
+        "identity": "Giant Gorax",
+        "name": "Giant Gorax",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "Nightfall",
+        "name": "Nightfall",
+        "subtitle": ""
+      },
+      {
+        "copies": 2,
+        "identity": "Nimble Prowess",
+        "name": "Nimble Prowess",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "Oggdo Bogdo|Bogano Brute",
+        "name": "Oggdo Bogdo",
+        "subtitle": "Bogano Brute"
+      },
+      {
+        "copies": 3,
+        "identity": "Rancor Keeper",
+        "name": "Rancor Keeper",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "Run Amok",
+        "name": "Run Amok",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "Scorch|Imperial Commando",
+        "name": "Scorch",
+        "subtitle": "Imperial Commando"
+      },
+      {
+        "copies": 2,
+        "identity": "Starlit Purrgil",
+        "name": "Starlit Purrgil",
+        "subtitle": ""
+      },
+      {
+        "copies": 3,
+        "identity": "The Great Progenitor|First of the Drengir",
+        "name": "The Great Progenitor",
+        "subtitle": "First of the Drengir"
+      },
+      {
+        "copies": 3,
+        "identity": "Venomous Wyyyshokk",
+        "name": "Venomous Wyyyshokk",
+        "subtitle": ""
+      }
+    ],
+    "sideboard": [
+      {
+        "copies": 3,
+        "identity": "Arvel Skeen|Win and Walk Away",
+        "name": "Arvel Skeen",
+        "subtitle": "Win and Walk Away"
+      },
+      {
+        "copies": 3,
+        "identity": "Collateral Damage",
+        "name": "Collateral Damage",
+        "subtitle": ""
+      },
+      {
+        "copies": 2,
+        "identity": "Commence the Festivities",
+        "name": "Commence the Festivities",
+        "subtitle": ""
+      },
+      {
+        "copies": 2,
+        "identity": "Territorial Mudhorn",
+        "name": "Territorial Mudhorn",
+        "subtitle": ""
+      }
+    ],
+    "unresolved": []
+  },
+  "draw_odds": {
+    "assumptions": [
+      "Population: 50 main-deck cards; leader and base are not drawn.",
+      "Opening hand: 6 cards.",
+      "After each round, during the regroup phase, the player draws 2 cards.",
+      "No mulligan, no other card draw, no thinning, no recursion, no opponent interaction.",
+      "P(at least one by n draws) = 1 - C(N-K, n) / C(N, n).",
+      "Expected copies by n draws = n * K / N.",
+      "P(see) is not P(play): resources and playability are not modelled."
+    ],
+    "draw_per_regroup": 2,
+    "hand": 6,
+    "model": "hypergeometric_goldfish",
+    "mulligan": false,
+    "n": 50,
+    "per_card": [
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Adamant Ewoks",
+        "name": "Adamant Ewoks",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Always a Bigger Fish",
+        "name": "Always a Bigger Fish",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Arena Acklay|Screaming Predator",
+        "name": "Arena Acklay - Screaming Predator",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Arena Nexu|Starved for Prey",
+        "name": "Arena Nexu - Starved for Prey",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Batcher|Loyal Hound",
+        "name": "Batcher - Loyal Hound",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 2,
+        "expected_copies": [
+          0.24,
+          0.32,
+          0.4,
+          0.48,
+          0.56,
+          0.64,
+          0.72
+        ],
+        "identity": "Clone of the Zillo Beast|Emperor's Experiment",
+        "name": "Clone of the Zillo Beast - Emperor's Experiment",
+        "p": [
+          22.8,
+          29.7,
+          36.3,
+          42.6,
+          48.6,
+          54.2,
+          59.5
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Feisty Blurrg",
+        "name": "Feisty Blurrg",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Filthy Dianoga",
+        "name": "Filthy Dianoga",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 2,
+        "expected_copies": [
+          0.24,
+          0.32,
+          0.4,
+          0.48,
+          0.56,
+          0.64,
+          0.72
+        ],
+        "identity": "Giant Gorax",
+        "name": "Giant Gorax",
+        "p": [
+          22.8,
+          29.7,
+          36.3,
+          42.6,
+          48.6,
+          54.2,
+          59.5
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Nightfall",
+        "name": "Nightfall",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 2,
+        "expected_copies": [
+          0.24,
+          0.32,
+          0.4,
+          0.48,
+          0.56,
+          0.64,
+          0.72
+        ],
+        "identity": "Nimble Prowess",
+        "name": "Nimble Prowess",
+        "p": [
+          22.8,
+          29.7,
+          36.3,
+          42.6,
+          48.6,
+          54.2,
+          59.5
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Oggdo Bogdo|Bogano Brute",
+        "name": "Oggdo Bogdo - Bogano Brute",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Rancor Keeper",
+        "name": "Rancor Keeper",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Run Amok",
+        "name": "Run Amok",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Scorch|Imperial Commando",
+        "name": "Scorch - Imperial Commando",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 2,
+        "expected_copies": [
+          0.24,
+          0.32,
+          0.4,
+          0.48,
+          0.56,
+          0.64,
+          0.72
+        ],
+        "identity": "Starlit Purrgil",
+        "name": "Starlit Purrgil",
+        "p": [
+          22.8,
+          29.7,
+          36.3,
+          42.6,
+          48.6,
+          54.2,
+          59.5
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "The Great Progenitor|First of the Drengir",
+        "name": "The Great Progenitor - First of the Drengir",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      },
+      {
+        "copies": 3,
+        "expected_copies": [
+          0.36,
+          0.48,
+          0.6,
+          0.72,
+          0.84,
+          0.96,
+          1.08
+        ],
+        "identity": "Venomous Wyyyshokk",
+        "name": "Venomous Wyyyshokk",
+        "p": [
+          32.4,
+          41.4,
+          49.6,
+          57.0,
+          63.6,
+          69.5,
+          74.7
+        ]
+      }
+    ],
+    "rounds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "findings": [
+    {
+      "category": "composition",
+      "evidence": {
+        "cards": [
+          {
+            "copies": 2,
+            "identity": "Starlit Purrgil"
+          }
+        ],
+        "denominator": 39,
+        "metric_path": "composition.arenas.space",
+        "pct": 5.1,
+        "threshold": {
+          "op": "<",
+          "unit": "pct_of_unit_slots",
+          "value": 15
+        },
+        "value": 2
+      },
+      "id": "arena-imbalance",
+      "severity": "warning",
+      "source": {
+        "kind": "threshold",
+        "registry": "reference/findings.md#arena-imbalance",
+        "version": "1"
+      },
+      "statement": "Only 2 of 39 unit slots are Space (5.1%)."
+    }
+  ],
+  "generated_at": "2026-11-03T09:36:34Z",
+  "input": {
+    "format": "case",
+    "n": 50,
+    "path": "cases/poggle-blue-endor/deck.json",
+    "sha256": "9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a"
+  },
+  "legality": {
+    "aspect_penalty": {
+      "max": 0,
+      "per_card": [],
+      "total": 0
+    },
+    "checks": [
+      {
+        "detail": "All card references resolved",
+        "id": "unresolved",
+        "ok": true
+      },
+      {
+        "detail": "Exactly one leader",
+        "id": "leader",
+        "ok": true
+      },
+      {
+        "detail": "Exactly one base",
+        "id": "base",
+        "ok": true
+      },
+      {
+        "detail": "Leader slot contains a Leader",
+        "id": "leader_type",
+        "ok": true
+      },
+      {
+        "detail": "Base slot contains a Base",
+        "id": "base_type",
+        "ok": true
+      },
+      {
+        "detail": "Draw deck contains no leader or base",
+        "id": "main_zone",
+        "ok": true
+      },
+      {
+        "detail": "Sideboard contains no leader or base",
+        "id": "sideboard_zone",
+        "ok": true
+      },
+      {
+        "detail": "Draw deck must be at least 50 cards (found: 50)",
+        "id": "deck_size",
+        "ok": true
+      },
+      {
+        "detail": "Sideboard must be at most 10 cards (found: 10)",
+        "id": "sideboard_size",
+        "ok": true
+      },
+      {
+        "detail": "All identities within 3 copies",
+        "id": "copy_limit",
+        "ok": true
+      },
+      {
+        "detail": "All cards from Premier sets",
+        "id": "premier_sets",
+        "ok": true
+      },
+      {
+        "detail": "No suspended cards",
+        "id": "suspended",
+        "ok": true
+      }
+    ],
+    "errors": [],
+    "ok": true,
+    "warnings": []
+  },
+  "limitations": [
+    {
+      "affects": [
+        "legality",
+        "composition",
+        "cards",
+        "draw_odds"
+      ],
+      "category": "data",
+      "detail": "Any set released after the snapshot is invisible to this analysis.",
+      "id": "data-snapshot",
+      "impact": "info",
+      "mitigation": "Re-run fetch_cards.py and check db.data_as_of.",
+      "statement": "Card data snapshot: 2026-10-27 from api.swu-db.com (7 sets, 1634 cards)."
+    },
+    {
+      "affects": [
+        "legality",
+        "cards"
+      ],
+      "category": "data",
+      "detail": "Reprint legality by card version cannot be verified. An old printing may be reported as unresolved even when a Premier reprint exists.",
+      "id": "premier-only-db",
+      "impact": "degraded",
+      "mitigation": "Resolve by name+subtitle or add non-Premier printings to the DB.",
+      "statement": "Only Premier sets are fetched; older printings are not in the local DB."
+    },
+    {
+      "affects": [
+        "composition.price"
+      ],
+      "category": "data",
+      "detail": "No foil, EUR, shipping or seller variation. Not an appraisal.",
+      "id": "price-snapshot",
+      "impact": "info",
+      "mitigation": "Read the total as an estimate with the stated coverage.",
+      "statement": "Prices are market USD from swu-db, snapshot 2026-10-27, coverage 100.0%."
+    },
+    {
+      "affects": [
+        "draw_odds"
+      ],
+      "category": "model",
+      "detail": "Opening hand 6, +2 per regroup, no mulligan, no other draw, no thinning, no recursion, no opponent interaction.",
+      "id": "draw-goldfish",
+      "impact": "degraded",
+      "mitigation": "Read as an upper bound on seeing a card, not on playing it.",
+      "statement": "Draw odds use a goldfish model."
+    },
+    {
+      "affects": [
+        "cards",
+        "findings"
+      ],
+      "category": "model",
+      "detail": "Keywords are listed, not simulated. Draw, removal and ramp are not classified.",
+      "id": "no-rules-engine",
+      "impact": "info",
+      "mitigation": "Use the card sheets for manual reading.",
+      "statement": "Card text is reproduced from the DB, not interpreted."
+    },
+    {
+      "affects": [
+        "legality"
+      ],
+      "category": "rules",
+      "detail": "Errata, suspensions or event-specific rules after that date are not included.",
+      "id": "rules-version",
+      "impact": "info",
+      "mitigation": "Check the official Comprehensive Event Guide.",
+      "statement": "Legality follows the local rules verified on 2026-10-26."
+    },
+    {
+      "affects": [
+        "composition",
+        "cards",
+        "draw_odds"
+      ],
+      "category": "scope",
+      "detail": "Sideboard cards get no composition slots, no card sheets and no draw odds.",
+      "id": "sideboard-legal-only",
+      "impact": "info",
+      "mitigation": "Analyse the sideboard separately if needed.",
+      "statement": "The sideboard is used for legality only."
+    },
+    {
+      "affects": [
+        "findings"
+      ],
+      "category": "heuristic",
+      "detail": "A threshold crossing is an observation, not a verdict.",
+      "id": "heuristic-thresholds",
+      "impact": "degraded",
+      "mitigation": "Read reference/findings.md for the rationale.",
+      "statement": "Findings use versioned heuristic thresholds, not rules of the game."
+    },
+    {
+      "affects": [
+        "findings",
+        "cards"
+      ],
+      "category": "scope",
+      "detail": "The absence of a finding is not a claim that the deck lacks an effect. A curated taxonomy is planned for v0.2.",
+      "id": "text-semantics-not-analyzed",
+      "impact": "degraded",
+      "mitigation": "Read card text manually.",
+      "statement": "Draw, removal and ramp are not classified in this version."
+    }
+  ],
+  "out_of_scope": [
+    {
+      "id": "meta",
+      "statement": "Meta share, staple density and archetype data."
+    },
+    {
+      "id": "matchups",
+      "statement": "Matchup win rates and sideboard plans."
+    },
+    {
+      "id": "strategy",
+      "statement": "Play lines, target lines and scenarios."
+    },
+    {
+      "id": "cuts_adds",
+      "statement": "Recommended cuts or additions."
+    },
+    {
+      "id": "council",
+      "statement": "Multi-perspective council review."
+    },
+    {
+      "id": "subjective_grades",
+      "statement": "Card or deck quality scores without a rubric."
+    },
+    {
+      "id": "price_speculation",
+      "statement": "Price forecasts or investment advice."
+    }
+  ],
+  "rules_version": "2026-10-26",
+  "schema_version": "0.1.0",
+  "tool_version": "0.1.0-dev"
+}

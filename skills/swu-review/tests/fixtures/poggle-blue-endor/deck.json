@@ -1,0 +1,2028 @@
+{
+ "id": "cmv78geaa14sr01piznlcvhew",
+ "name": "poggle blue endor",
+ "format": "premier",
+ "linkEnabled": true,
+ "inTeamFolder": false,
+ "homeTeam": null,
+ "listed": false,
+ "notes": "",
+ "ownerName": "Edgar Sanchez",
+ "ownerImage": "https://lh3.googleusercontent.com/a/ACg8ocLoKQyd5Z4NCqAf3NmHYlVnr11KqMqiNCMByqm8tCQqR2Rc4r1O=s96-c",
+ "mainDeck": [
+  {
+   "card": {
+    "cardNumber": 32,
+    "title": "Rancor Keeper",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 2,
+    "hp": 4,
+    "power": 2,
+    "text": "When a friendly unit is dealt damage and survives: Deal 1 damage to any number of bases. Use this ability only once each round.",
+    "textStyled": "<p><strong>When a friendly unit is dealt damage and survives:</strong> Deal 1 damage to any number of bases. Use this ability only once each round.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     },
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Underworld",
+      "id": 22
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 7,
+     "name": "Uncommon",
+     "character": "U",
+     "color": "#d1d1d1"
+    },
+    "expansion": {
+     "id": 108,
+     "name": "Ashes of the Empire",
+     "code": "ASH"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 296,
+    "hyperspaceFoilAvailable": 534,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 12,
+    "title": "Poggle the Lesser",
+    "subtitle": "Let the Executions Begin",
+    "artFrontHorizontal": true,
+    "artBackHorizontal": null,
+    "cost": 5,
+    "hp": 6,
+    "power": 1,
+    "text": "Action [1 resource, Exhaust]: Ready a friendly Creature unit and deal 1 damage to it.",
+    "textStyled": "<p><strong>Action [</strong><img src=\"https://ffg-prod-uploads.s3.amazonaws.com/icon_cost_1_6878a6fe98.png\" alt=\"icon_cost_1.png\"><strong>, </strong><img src=\"https://ffg-prod-uploads.s3.amazonaws.com/icon_exhaust_0c450d09d4.png\" alt=\"icon_exhaust.png\"><strong>]: </strong>Ready a friendly <strong><i>Creature</i></strong> unit and deal 1 damage to it.</p>",
+    "deployBox": "When Deployed: Create a Beast token.\nOn Attack: You may ready a friendly Creature unit and deal 1 damage to it.",
+    "deployBoxStyled": "<p><strong>When Deployed: </strong>Create a Beast token.</p><p><strong>On Attack: </strong>You may ready a friendly <strong><i>Creature</i></strong> unit and deal 1 damage to it.</p>",
+    "epicAction": "Epic Action: If you control 5 or more resources, deploy this leader.",
+    "epicActionStyled": "<p><strong>Epic Action:</strong> If you control 5 or more resources, deploy this leader.</p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     },
+     {
+      "name": "Villainy",
+      "id": 27,
+      "color": "#000000"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 4,
+     "name": "Leader"
+    },
+    "type2": {
+     "id": 6,
+     "name": "Leader Unit"
+    },
+    "traits": [
+     {
+      "name": "Separatist",
+      "id": 172
+     },
+     {
+      "name": "Official",
+      "id": 12
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 794,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 284,
+    "hyperspaceFoilAvailable": 0,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 1
+  },
+  {
+   "card": {
+    "cardNumber": 155,
+    "title": "Filthy Dianoga",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 4,
+    "hp": 5,
+    "power": 5,
+    "text": "",
+    "textStyled": "<p></p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     },
+     {
+      "name": "Villainy",
+      "id": 27,
+      "color": "#000000"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 427,
+    "hyperspaceFoilAvailable": 665,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 156,
+    "title": "Arena Acklay",
+    "subtitle": "Screaming Predator",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 5,
+    "hp": 6,
+    "power": 5,
+    "text": "When this unit is dealt damage and survives: Deal 2 damage to each enemy base.",
+    "textStyled": "<p><strong>When this unit is dealt damage and survives: </strong>Deal 2 damage to each enemy base.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     },
+     {
+      "name": "Villainy",
+      "id": 27,
+      "color": "#000000"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 7,
+     "name": "Uncommon",
+     "character": "U",
+     "color": "#d1d1d1"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 815,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 428,
+    "hyperspaceFoilAvailable": 666,
+    "foilPrestigeAvailable": 863,
+    "serializedPrestigeAvailable": 911,
+    "additionalVariants": [
+     {
+      "variantType": "Weekly Play 2026",
+      "event": "Weekly Play",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/156_front_HMWP_010.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 10
+      }
+     },
+     {
+      "variantType": "Weekly Play Foil 2026",
+      "event": "Weekly Play Foil",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/156_front_HMWP_030.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 30,
+       "isFoil": true
+      }
+     }
+    ],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 177,
+    "title": "Adamant Ewoks",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 2,
+    "hp": 2,
+    "power": 3,
+    "text": "When Played: If you control another Ewok unit or an Endor base, you may deal 1 damage to a base and 1 damage to an enemy unit.",
+    "textStyled": "<p><strong>When Played: </strong>If you control another <strong><i>Ewok</i></strong> unit or an <strong><i>Endor</i></strong> base, you may deal 1 damage to a base and 1 damage to an enemy unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Ewok",
+      "id": 293
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 449,
+    "hyperspaceFoilAvailable": 687,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [
+     {
+      "variantType": "Weekly Play 2026",
+      "event": "Weekly Play",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/177_front_HMWP_014.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 14
+      }
+     },
+     {
+      "variantType": "Weekly Play Foil 2026",
+      "event": "Weekly Play Foil",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/177_front_HMWP_034.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 34,
+       "isFoil": true
+      }
+     },
+     {
+      "variantType": "SQ Prize Wall 2026",
+      "event": "SQ Prize Wall",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/177_front_P26_249.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "P26",
+       "cardNumber": 249
+      }
+     }
+    ],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 179,
+    "title": "Feisty Blurrg",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 2,
+    "hp": 4,
+    "power": 1,
+    "text": "Grit (This unit gets +1/+0 for each damage on it.)",
+    "textStyled": "<p><strong>Grit</strong> <i>(This unit gets <strong>+1</strong>/<strong>+0</strong> for each damage on it.)</i></p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [
+     {
+      "name": "Grit",
+      "id": 17
+     }
+    ],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 451,
+    "hyperspaceFoilAvailable": 689,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 182,
+    "title": "Arena Nexu",
+    "subtitle": "Starved for Prey",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 4,
+    "hp": 6,
+    "power": 2,
+    "text": "Grit\nOn Attack: You may deal 3 damage to a friendly Creature unit (including this one) and ready this unit. Use this ability only once each round.",
+    "textStyled": "<p><strong>Grit</strong></p><p><strong>On Attack: </strong>You may deal 3 damage to a friendly <strong><i>Creature</i></strong> unit <i>(including this one)</i> and ready this unit. Use this ability only once each round.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [
+     {
+      "name": "Grit",
+      "id": 17
+     }
+    ],
+    "rarity": {
+     "id": 12,
+     "name": "Rare",
+     "character": "R",
+     "color": "#f1c000"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 454,
+    "hyperspaceFoilAvailable": 692,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 188,
+    "title": "Giant Gorax",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 7,
+    "hp": 7,
+    "power": 7,
+    "text": "Overwhelm\nOn Attack/When Defeated: If you control an Endor base, each opponent chooses one:\nYou deal 3 damage to a unit or base they control.\nThey discard a card from their hand and defeat a resource they control.\n",
+    "textStyled": "<p><strong>Overwhelm</strong></p><p><strong>On Attack/When Defeated: </strong>If you control an <strong><i>Endor</i></strong> base, each opponent chooses one:</p><ul><li>You deal 3 damage to a unit or base they control.</li><li>They discard a card from their hand and defeat a resource they control.</li></ul>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [
+     {
+      "name": "Overwhelm",
+      "id": 27
+     }
+    ],
+    "rarity": {
+     "id": 17,
+     "name": "Legendary",
+     "character": "L",
+     "color": "#00c8f3"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 831,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 460,
+    "hyperspaceFoilAvailable": 698,
+    "foilPrestigeAvailable": 879,
+    "serializedPrestigeAvailable": 927,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 2
+  },
+  {
+   "card": {
+    "cardNumber": 193,
+    "title": "Nightfall",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 2,
+    "hp": null,
+    "power": null,
+    "text": "Deal 1 damage to an enemy unit.\nIf you control an Endor base, you may attack with a unit. It gets +2/+0 for this attack.",
+    "textStyled": "<p>Deal 1 damage to an enemy unit.</p><p>If you control an <strong><i>Endor</i></strong> base, you may attack with a unit. It gets <strong>+2</strong>/<strong>+0</strong> for this attack.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 8,
+     "name": "Event"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Disaster",
+      "id": 243
+     }
+    ],
+    "arenas": [],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 465,
+    "hyperspaceFoilAvailable": 703,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 194,
+    "title": "Run Amok",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 3,
+    "hp": null,
+    "power": null,
+    "text": "Create a Beast token.\nDeal 1 damage to a friendly ground unit and 1 damage to an enemy ground unit.",
+    "textStyled": "<p>Create a Beast token.</p><p>Deal 1 damage to a friendly ground unit and 1 damage to an enemy ground unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 8,
+     "name": "Event"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Disaster",
+      "id": 243
+     }
+    ],
+    "arenas": [],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 466,
+    "hyperspaceFoilAvailable": 704,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 22,
+    "title": "Shield Generator Complex",
+    "subtitle": "",
+    "artFrontHorizontal": true,
+    "artBackHorizontal": null,
+    "cost": null,
+    "hp": 30,
+    "power": null,
+    "text": "",
+    "textStyled": "<p></p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 7,
+     "name": "Base"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Endor",
+      "id": null
+     }
+    ],
+    "arenas": [],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 294,
+    "hyperspaceFoilAvailable": 0,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 1
+  },
+  {
+   "card": {
+    "cardNumber": 64,
+    "title": "Scorch",
+    "subtitle": "Imperial Commando",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 3,
+    "hp": 5,
+    "power": 3,
+    "text": "On Attack: You may deal 1 damage to an upgraded unit.",
+    "textStyled": "<p><strong>On Attack: </strong>You may deal 1 damage to an upgraded unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     },
+     {
+      "name": "Villainy",
+      "id": 27,
+      "color": "#000000"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Imperial",
+      "id": 7
+     },
+     {
+      "name": "Clone",
+      "id": 219
+     },
+     {
+      "name": "Trooper",
+      "id": 17
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 7,
+     "name": "Uncommon",
+     "character": "U",
+     "color": "#d1d1d1"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 804,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 336,
+    "hyperspaceFoilAvailable": 574,
+    "foilPrestigeAvailable": 852,
+    "serializedPrestigeAvailable": 900,
+    "additionalVariants": [
+     {
+      "variantType": "Weekly Play 2026",
+      "event": "Weekly Play",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/064_front_HMWP_002.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 2
+      }
+     },
+     {
+      "variantType": "Weekly Play Foil 2026",
+      "event": "Weekly Play Foil",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/064_front_HMWP_022.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 22,
+       "isFoil": true
+      }
+     }
+    ],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 65,
+    "title": "Clone of the Zillo Beast",
+    "subtitle": "Emperor's Experiment",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 4,
+    "hp": 6,
+    "power": 6,
+    "text": "Other friendly units get –2/–2.\nOn Attack: You may give a Weakness token to a unit.",
+    "textStyled": "<p>Other friendly units get <strong>–2</strong>/<strong>–2</strong>.</p><p><strong>On Attack: </strong>You may give a Weakness token to a unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     },
+     {
+      "name": "Villainy",
+      "id": 27,
+      "color": "#000000"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Clone",
+      "id": 219
+     },
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 12,
+     "name": "Rare",
+     "character": "R",
+     "color": "#f1c000"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 824,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 337,
+    "hyperspaceFoilAvailable": 575,
+    "foilPrestigeAvailable": 872,
+    "serializedPrestigeAvailable": 920,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 2
+  },
+  {
+   "card": {
+    "cardNumber": 67,
+    "title": "The Great Progenitor",
+    "subtitle": "First of the Drengir",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 5,
+    "hp": 7,
+    "power": 4,
+    "text": "When Attack Ends: You may give a Weakness token to this unit. If you do, create a Beast token for each Weakness token on this unit.",
+    "textStyled": "<p><strong>When Attack Ends: </strong>You may give a Weakness token to this unit. If you do, create a Beast token for each Weakness token on this unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     },
+     {
+      "name": "Villainy",
+      "id": 27,
+      "color": "#000000"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 17,
+     "name": "Legendary",
+     "character": "L",
+     "color": "#00c8f3"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 825,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 339,
+    "hyperspaceFoilAvailable": 577,
+    "foilPrestigeAvailable": 873,
+    "serializedPrestigeAvailable": 921,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 83,
+    "title": "Batcher",
+    "subtitle": "Loyal Hound",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 2,
+    "hp": 3,
+    "power": 2,
+    "text": "Restore 1 (When this unit attacks, heal 1 damage from your base.)\nThis unit gets +1/+0 while defending.",
+    "textStyled": "<p><strong>Restore 1</strong> <i>(When this unit attacks, heal 1 damage from your base.)</i></p><p>This unit gets <strong>+1</strong>/<strong>+0</strong> while defending.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [
+     {
+      "name": "Restore",
+      "id": 32
+     }
+    ],
+    "rarity": {
+     "id": 7,
+     "name": "Uncommon",
+     "character": "U",
+     "color": "#d1d1d1"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 355,
+    "hyperspaceFoilAvailable": 593,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [
+     {
+      "variantType": "Weekly Play 2026",
+      "event": "Weekly Play",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/083_front_HMWP_004.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 4
+      }
+     },
+     {
+      "variantType": "Weekly Play Foil 2026",
+      "event": "Weekly Play Foil",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/units/083_front_HMWP_024.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 24,
+       "isFoil": true
+      }
+     }
+    ],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 87,
+    "title": "Venomous Wyyyshokk",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 3,
+    "hp": 4,
+    "power": 3,
+    "text": "When Defeated: You may give a Weakness token to a damaged unit.",
+    "textStyled": "<p><strong>When Defeated: </strong>You may give a Weakness token to a damaged unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 359,
+    "hyperspaceFoilAvailable": 597,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 92,
+    "title": "Starlit Purrgil",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 6,
+    "hp": 5,
+    "power": 4,
+    "text": "Restore 2 (When this unit attacks, heal 2 damage from your base.)\nWhen Played: You may exhaust a unit.",
+    "textStyled": "<p><strong>Restore 2</strong> <i>(When this unit attacks, heal 2 damage from your base.)</i></p><p><strong>When Played: </strong>You may exhaust a unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 7,
+      "name": "Space"
+     }
+    ],
+    "keywords": [
+     {
+      "name": "Restore",
+      "id": 32
+     }
+    ],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 364,
+    "hyperspaceFoilAvailable": 602,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 2
+  },
+  {
+   "card": {
+    "cardNumber": 99,
+    "title": "Always a Bigger Fish",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 2,
+    "hp": null,
+    "power": null,
+    "text": "Defeat a friendly Creature unit. If you do, play a Creature unit that costs up to 3 more than the defeated unit from your hand for free.",
+    "textStyled": "<p>Defeat a friendly <strong><i>Creature</i></strong> unit. If you do, play a Creature unit that costs up to 3 more than the defeated unit from your hand for free.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 8,
+     "name": "Event"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Innate",
+      "id": 82
+     }
+    ],
+    "arenas": [],
+    "keywords": [],
+    "rarity": {
+     "id": 12,
+     "name": "Rare",
+     "character": "R",
+     "color": "#f1c000"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 371,
+    "hyperspaceFoilAvailable": 609,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [
+     {
+      "variantType": "Weekly Play 2026",
+      "event": "Weekly Play",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/events/099_front_HMWP_006.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 6
+      }
+     },
+     {
+      "variantType": "Weekly Play Foil 2026",
+      "event": "Weekly Play Foil",
+      "years": [
+       2026
+      ],
+      "frontUrl": "images/HMW/events/099_front_HMWP_026.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "HMWP",
+       "cardNumber": 26,
+       "isFoil": true
+      }
+     }
+    ],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 63,
+    "title": "Oggdo Bogdo",
+    "subtitle": "Bogano Brute",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 3,
+    "hp": 5,
+    "power": 5,
+    "text": "This unit can't attack unless it's damaged.\nWhen this unit attacks and defeats a unit: Heal 2 damage from this unit.",
+    "textStyled": "<p>This unit can't attack unless it's damaged.</p><p><strong>When this unit attacks and defeats a unit:</strong> Heal 2 damage from this unit.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 12,
+     "name": "Rare",
+     "character": "R",
+     "color": "#f1c000"
+    },
+    "expansion": {
+     "id": 53,
+     "name": "Legends of the Force",
+     "code": "LOF"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 565,
+    "hyperspaceAvailable": 327,
+    "hyperspaceFoilAvailable": 803,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [
+     {
+      "variantType": "Judge Program 2025",
+      "event": "Judge Program",
+      "years": [
+       2025
+      ],
+      "frontUrl": "images/LOF/units/063_front_J25_010.png",
+      "backUrl": null,
+      "collectionDetail": {
+       "setCode": "J25",
+       "cardNumber": 10,
+       "stamp": "judge"
+      }
+     }
+    ],
+    "rotation": "A",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 69,
+    "title": "Nimble Prowess",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 1,
+    "hp": null,
+    "power": null,
+    "text": "Attach to a friendly unit.\nWhen Played: You may exhaust a unit in attached unit's arena.",
+    "textStyled": "<p>Attach to a friendly unit.</p><p><strong>When Played:</strong> You may exhaust a unit in attached unit's arena.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": 1,
+    "upgradePower": 1,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 10,
+     "name": "Upgrade"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Innate",
+      "id": 82
+     }
+    ],
+    "arenas": [],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 73,
+     "name": "Secrets of Power",
+     "code": "SEC"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 579,
+    "hyperspaceAvailable": 333,
+    "hyperspaceFoilAvailable": 825,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "A",
+    "preview": false
+   },
+   "count": 2
+  }
+ ],
+ "sideboard": [
+  {
+   "card": {
+    "cardNumber": 89,
+    "title": "Territorial Mudhorn",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 4,
+    "hp": 5,
+    "power": 3,
+    "text": "Sentinel (Enemy units in this arena must attack a Sentinel when they attack you.)",
+    "textStyled": "<p><strong>Sentinel</strong> <i>(Enemy units in this arena must attack a Sentinel when they attack you.)</i></p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Vigilance",
+      "id": 2,
+      "color": "#4073d4"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [
+     {
+      "name": "Sentinel",
+      "id": 7
+     }
+    ],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 361,
+    "hyperspaceFoilAvailable": 599,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 2
+  },
+  {
+   "card": {
+    "cardNumber": 191,
+    "title": "Arvel Skeen",
+    "subtitle": "Win and Walk Away",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 3,
+    "hp": 3,
+    "power": 4,
+    "text": "When Played/On Attack: You may defeat a Credit token (belonging to any player). If you do, deal 1 damage to a unit or base.",
+    "textStyled": "<p><strong>When Played/On Attack:</strong> You may defeat a Credit token <i>(belonging to any player)</i>. If you do, deal 1 damage to a unit or base.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": true,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 9,
+     "name": "Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Rebel",
+      "id": 37
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 7,
+     "name": "Uncommon",
+     "character": "U",
+     "color": "#d1d1d1"
+    },
+    "expansion": {
+     "id": 93,
+     "name": "A Lawless Time",
+     "code": "LAW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 455,
+    "hyperspaceFoilAvailable": 693,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  },
+  {
+   "card": {
+    "cardNumber": 202,
+    "title": "Commence the Festivities",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 1,
+    "hp": null,
+    "power": null,
+    "text": "Attack with a unit. It gains Saboteur for this attack. If you control fewer resources than an opponent, it gets +2/+0 for this attack.",
+    "textStyled": "<p>Attack with a unit. It gains <strong>Saboteur</strong> for this attack. If you control fewer resources than an opponent, it gets <strong>+2</strong>/<strong>+0</strong> for this attack.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 8,
+     "name": "Event"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Plan",
+      "id": 142
+     }
+    ],
+    "arenas": [],
+    "keywords": [
+     {
+      "name": "Saboteur",
+      "id": 3
+     }
+    ],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 93,
+     "name": "A Lawless Time",
+     "code": "LAW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 466,
+    "hyperspaceFoilAvailable": 704,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 2
+  },
+  {
+   "card": {
+    "cardNumber": 208,
+    "title": "Collateral Damage",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 3,
+    "hp": null,
+    "power": null,
+    "text": "Deal 2 damage to a unit. Then, deal 2 damage to a base or another unit in the same arena.",
+    "textStyled": "<p>Deal 2 damage to a unit. Then, deal 2 damage to a base or another unit in the same arena.</p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [
+     {
+      "name": "Aggression",
+      "id": 12,
+      "color": "#d30808"
+     }
+    ],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 8,
+     "name": "Event"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Disaster",
+      "id": 243
+     }
+    ],
+    "arenas": [],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 93,
+     "name": "A Lawless Time",
+     "code": "LAW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 472,
+    "hyperspaceFoilAvailable": 710,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "count": 3
+  }
+ ],
+ "maybeboard": [],
+ "tokens": [
+  {
+   "name": "Beast",
+   "card": {
+    "cardNumber": 3,
+    "title": "Beast",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 0,
+    "hp": 3,
+    "power": 3,
+    "text": "",
+    "textStyled": "<p></p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": null,
+    "upgradePower": null,
+    "aspects": [],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 40,
+     "name": "Token Unit"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Creature",
+      "id": 162
+     }
+    ],
+    "arenas": [
+     {
+      "id": 2,
+      "name": "Ground"
+     }
+    ],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 8,
+    "hyperspaceFoilAvailable": 0,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "sources": [
+    "Poggle the Lesser",
+    "Run Amok",
+    "The Great Progenitor"
+   ]
+  },
+  {
+   "name": "Weakness",
+   "card": {
+    "cardNumber": 2,
+    "title": "Weakness",
+    "subtitle": "",
+    "artFrontHorizontal": false,
+    "artBackHorizontal": null,
+    "cost": 0,
+    "hp": null,
+    "power": null,
+    "text": "",
+    "textStyled": "<p></p>",
+    "deployBox": null,
+    "deployBoxStyled": null,
+    "epicAction": "",
+    "epicActionStyled": "<p></p>",
+    "unique": false,
+    "upgradeHp": -1,
+    "upgradePower": -1,
+    "aspects": [],
+    "aspectDuplicates": [],
+    "type": {
+     "id": 11,
+     "name": "Token Upgrade"
+    },
+    "type2": null,
+    "traits": [
+     {
+      "name": "Condition",
+      "id": 173
+     }
+    ],
+    "arenas": [],
+    "keywords": [],
+    "rarity": {
+     "id": 2,
+     "name": "Common",
+     "character": "C",
+     "color": "#964d02"
+    },
+    "expansion": {
+     "id": 128,
+     "name": "Homeworlds",
+     "code": "HMW"
+    },
+    "prestigeAvailable": 0,
+    "showcaseAvailable": 0,
+    "standardFoilAvailable": 0,
+    "hyperspaceAvailable": 7,
+    "hyperspaceFoilAvailable": 0,
+    "foilPrestigeAvailable": 0,
+    "serializedPrestigeAvailable": 0,
+    "additionalVariants": [],
+    "rotation": "B",
+    "preview": false
+   },
+   "sources": [
+    "Clone of the Zillo Beast",
+    "The Great Progenitor",
+    "Venomous Wyyyshokk"
+   ]
+  }
+ ]
+}

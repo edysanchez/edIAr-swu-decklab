@@ -434,7 +434,7 @@ def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_
             pool.add(resolved.key)
     bad_sets = [
         key for key in sorted(pool)
-        if not legal.is_legal(card_db[key].get("set") or "")
+        if not legal.is_legal_any(sc.card_printings(card_db[key]))
     ]
     check(
         "premier_sets",

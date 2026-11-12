@@ -47,6 +47,14 @@ class LegalSets:
     warnings: List[str] = field(default_factory=list)
     policy: Optional[LegalSetPolicy] = None
 
+    def is_legal_any(self, set_codes, on=None) -> bool:
+        """Return whether any printing of a card is legal as of this snapshot.
+
+        `rules.md`: a card reprinted in a Premier-legal product is legal even if
+        the player uses an older printing.
+        """
+        return any(self.is_legal(code, on) for code in set_codes or ())
+
     def is_legal(self, set_code: str, on=None) -> bool:
         """Return whether ``set_code`` is Premier-legal as of this snapshot."""
         if self.policy is not None:

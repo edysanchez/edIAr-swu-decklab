@@ -135,6 +135,36 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
             any("non-Premier set JTL" in error for error in errors), errors
         )
 
+    def test_accepts_a_card_reprinted_in_a_legal_set(self):
+        # The deck entry points at JTL, which the snapshot drops, but the card
+        # also exists in HMW: `docs/rules.md` makes it legal.
+        self.use_snapshot(legal=WITHOUT_JTL)
+        card_db = dict(vd.sc.load_swu_cards())
+        key = ("Adept ARC-170", "")
+        card_db[key] = dict(card_db[key], printings=["JTL", "HMW"])
+
+        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db):
+            _ok, errors, _warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertFalse(any("non-Premier" in error for error in errors), errors)
+
+    def test_rejects_a_card_without_a_legal_printing(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+        card_db = dict(vd.sc.load_swu_cards())
+        key = ("Adept ARC-170", "")
+        card_db[key] = dict(card_db[key], printings=["JTL"])
+
+        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db):
+            _ok, errors, _warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertTrue(
+            any("non-Premier set JTL" in error for error in errors), errors
+        )
+
     def test_without_a_snapshot_the_registry_applies(self):
         with mock.patch.object(C, "LEGAL_SETS_SNAPSHOT_PATH", "/nonexistent/legal.json"):
             _ok, errors, _warnings = vd.validate_deck(self.write_deck(), verbose=False)

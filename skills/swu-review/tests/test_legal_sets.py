@@ -126,6 +126,14 @@ class LegalSetsTest(unittest.TestCase):
             result.warnings,
         )
 
+    def test_any_legal_printing_makes_the_card_legal(self):
+        # `docs/rules.md`: a reprint in a Premier-legal product legalises the card.
+        result = self.load(legal=["HMW"])
+
+        self.assertTrue(result.is_legal_any(["SOR", "HMW"]))
+        self.assertFalse(result.is_legal_any(["SOR", "SHD"]))
+        self.assertFalse(result.is_legal_any([]))
+
     def test_legal_from_is_used_for_upcoming_products(self):
         # Unreleased sets carry "legal_from" instead of "release".
         result = self.load(

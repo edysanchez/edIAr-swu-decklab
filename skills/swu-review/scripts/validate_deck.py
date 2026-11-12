@@ -273,17 +273,17 @@ def validate_deck(deck_path, verbose=True):
     
     for key in deck_cards:
         card = card_db.get(key)
-        if card and not legal.is_legal(card.get('set') or ''):
+        if card and not legal.is_legal_any(sc.card_printings(card)):
             errors.append(f"Card {card['name']} is from non-Premier set {card['set']}")
     
     for key in sideboard_cards:
         card = card_db.get(key)
-        if card and not legal.is_legal(card.get('set') or ''):
+        if card and not legal.is_legal_any(sc.card_printings(card)):
             errors.append(f"Sideboard card {card['name']} is from non-Premier set {card['set']}")
     
     for label, key in (("Leader", leader_key), ("Base", base_key)):
         card = card_db.get(key)
-        if card and not legal.is_legal(card.get('set') or ''):
+        if card and not legal.is_legal_any(sc.card_printings(card)):
             errors.append(f"{label} {card['name']} is from non-Premier set {card['set']}")
     
     for key in all_identities:

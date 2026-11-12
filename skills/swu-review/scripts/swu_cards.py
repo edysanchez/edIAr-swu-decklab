@@ -56,6 +56,20 @@ def load_swu_cards(card_db_path: Optional[Path] = None) -> Dict[Tuple[str, str],
     return cards
 
 
+def card_printings(card: Dict[str, Any]) -> List[str]:
+    """Return every set code a card is known to be printed in.
+
+    `rules.md`: legality follows the card version, so a reprint in a Premier
+    legal product legalises the card. The card database keeps one entry per
+    identity, with ``printings`` when more than one set is known and ``set``
+    otherwise.
+    """
+    printings = [str(code) for code in (card.get("printings") or []) if code]
+    if printings:
+        return printings
+    return [card["set"]] if card.get("set") else []
+
+
 def card_identity_key(name: str, subtitle: str = "") -> Tuple[str, str]:
     """Get canonical card identity key (name, subtitle)."""
     return (name.strip(), (subtitle or "").strip())

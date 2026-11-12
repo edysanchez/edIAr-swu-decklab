@@ -67,8 +67,18 @@ def normalize_cards(all_cards_data):
             name = row.get('Name', '')
             subtitle = row.get('Subtitle', '') or ''
             key = f"{name}|{subtitle}" if subtitle else name
-            
-            cards[key] = {
+
+            # Keep every printing: `docs/rules.md` makes a card legal if any of
+            # its printings comes from a Premier-legal product. The surviving
+            # `set` stays the last one fetched, for display.
+            card_set = row.get('Set', set_code)
+            printings = []
+            if key in cards:
+                printings = list(cards[key].get('printings') or [cards[key]['set']])
+            if card_set and card_set not in printings:
+                printings.append(card_set)
+
+            record = {
                 "name": name,
                 "subtitle": subtitle,
                 "set": row.get('Set', set_code),
@@ -94,6 +104,9 @@ def normalize_cards(all_cards_data):
                 "frontArt": row.get('FrontArt'),
                 "artist": row.get('Artist')
             }
+            if len(printings) > 1:
+                record["printings"] = printings
+            cards[key] = record
     
     return cards
 

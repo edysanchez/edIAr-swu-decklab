@@ -11,9 +11,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import swu_cards as sc
+import constants as C
+import suspended_list
 
-PREMIER_SETS = {"JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"}
-SUSPENDED = set()  # None as of 2026-10-26
+PREMIER_SETS = set(C.PREMIER_SETS)
 
 
 def load_deck(deck_path):
@@ -192,6 +193,9 @@ def validate_deck(deck_path, verbose=True):
     except FileNotFoundError as e:
         print(f"ERROR: {e}", file=sys.stderr)
         sys.exit(1)
+
+    suspended = suspended_list.load(card_db)
+    warnings.extend(suspended.warnings)
     
     try:
         deck = load_deck(deck_path)
@@ -277,10 +281,15 @@ def validate_deck(deck_path, verbose=True):
             errors.append(f"Sideboard card {card['name']} is from non-Premier set {card['set']}")
     
     for key in all_identities:
-        if key in SUSPENDED:
+        if key in suspended.identities:
             card = card_db.get(key)
-            name = card['name'] if card else str(key)
-            errors.append(f"Card {name} is suspended")
+            if card:
+                label = f"{card['name']} - {card['subtitle']}" if card.get('subtitle') else card['name']
+                errors.append(
+                    f"Card {label} ({card['set']} {card['number']}) is suspended in Premier"
+                )
+            else:
+                errors.append(f"Card {key} is suspended in Premier")
     
     total_penalty, max_penalty = calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db)
     
@@ -309,6 +318,10 @@ def validate_deck(deck_path, verbose=True):
                 print(f"     - {err}")
         else:
             print(f"  ✅ LEGAL")
+        if warnings:
+            print(f"\n  ⚠️  WARNINGS ({len(warnings)}):")
+            for warning in warnings:
+                print(f"     - {warning}")
         print("=" * 60)
     
     return len(errors) == 0, errors, warnings

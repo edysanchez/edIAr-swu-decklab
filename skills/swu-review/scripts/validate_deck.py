@@ -11,10 +11,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import swu_cards as sc
-import constants as C
+import legal_sets
 import suspended_list
-
-PREMIER_SETS = set(C.PREMIER_SETS)
 
 
 def load_deck(deck_path):
@@ -196,6 +194,9 @@ def validate_deck(deck_path, verbose=True):
 
     suspended = suspended_list.load(card_db)
     warnings.extend(suspended.warnings)
+
+    legal = legal_sets.load()
+    warnings.extend(legal.warnings)
     
     try:
         deck = load_deck(deck_path)
@@ -272,12 +273,12 @@ def validate_deck(deck_path, verbose=True):
     
     for key in deck_cards:
         card = card_db.get(key)
-        if card and card['set'] not in PREMIER_SETS:
+        if card and not legal.is_legal(card.get('set') or ''):
             errors.append(f"Card {card['name']} is from non-Premier set {card['set']}")
     
     for key in sideboard_cards:
         card = card_db.get(key)
-        if card and card['set'] not in PREMIER_SETS:
+        if card and not legal.is_legal(card.get('set') or ''):
             errors.append(f"Sideboard card {card['name']} is from non-Premier set {card['set']}")
     
     for key in all_identities:

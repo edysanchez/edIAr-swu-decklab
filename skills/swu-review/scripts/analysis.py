@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import constants as C
+import legal_sets
 import suspended_list
 import swu_cards as sc
 from card_resolver import CardIndex, UnresolvedCard
@@ -347,7 +348,7 @@ def _zone_check(zone, resolved, counts):
     return True, f"Exactly one {zone}"
 
 
-def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts, suspended=None):
+def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts, suspended=None, legal=None):
     errors = []
     warnings = []
     checks = []
@@ -355,6 +356,9 @@ def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_
     suspended_keys = suspended.identities if suspended is not None else frozenset(C.SUSPENDED)
     if suspended is not None:
         warnings.extend(suspended.warnings)
+
+    legal = legal or legal_sets.load()
+    warnings.extend(legal.warnings)
 
     def check(check_id, ok, detail):
         checks.append({"id": check_id, "ok": ok, "detail": detail})
@@ -424,13 +428,16 @@ def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_
 
     bad_sets = [
         key for key in combined
-        if card_db[key].get("set") not in C.PREMIER_SETS
+        if not legal.is_legal(card_db[key].get("set") or "")
     ]
     check(
         "premier_sets",
         not bad_sets,
         "All cards from Premier sets" if not bad_sets
-        else f"Non-Premier cards: {', '.join(_identity(k) for k in bad_sets)}",
+        else "Non-Premier cards: " + ", ".join(
+            f"{_identity(k)} ({card_db[k].get('set') or 'no set'})"
+            for k in bad_sets
+        ),
     )
 
     suspended_cards = []
@@ -904,6 +911,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     legality = _legality(
         leader, base, main_counts, side_counts, unresolved, card_db, zone_counts,
         suspended=suspended_list.load(card_db),
+        legal=legal_sets.load(),
     )
     legality["aspect_penalty"] = _aspect_penalty(leader, base, main_counts, card_repository)
     composition = _composition(main_counts, card_db, db["data_as_of"], cm_index)

@@ -6,6 +6,10 @@
 - Prompt for confirmation only when critical information is missing, an action is irreversible, or system security requires explicit user approval.
 - Never attempt to bypass access controls or permission checks; if the harness requests approval, explain briefly what action needs permission.
 
+## Language
+- Everything committed to the repository is written in English: documentation (`.md`), code, comments and commit messages. Chat replies follow the user's language.
+- Catalan sources that already exist (`data/cardsets/`, `.local/`) are local working files and are gitignored, not project documentation.
+
 ## Project
 `edIAr-swu-decklab` - Star Wars: Unlimited Premier deck review tools.
 
@@ -17,6 +21,7 @@ For strategic deck reviews, always read `skills/swu-review/SKILL.md` first. It c
 - Full analysis & report (recommended): `python3 skills/swu-review/scripts/swu_analyze.py <deck> --json out.json --report out.md`
 - Fetch card DB: `python3 skills/swu-review/scripts/fetch_cards.py`
 - Fetch suspended list (SWU Competitive Hub): `python3 skills/swu-review/scripts/fetch_suspended.py`
+- Fetch Premier legal sets (SWU Competitive Hub): `python3 skills/swu-review/scripts/fetch_legal_sets.py`
 - Validate deck (standalone): `python3 skills/swu-review/scripts/validate_deck.py <deck.json|deck.txt>`
 - Analyze composition (standalone): `python3 skills/swu-review/scripts/analyze_deck.py <deck.json|deck.txt>`
 - Draw odds (standalone): `python3 skills/swu-review/scripts/draw_odds.py <deck.json|deck.txt>`
@@ -26,7 +31,7 @@ For strategic deck reviews, always read `skills/swu-review/SKILL.md` first. It c
 
 ### Notes
 - Card DB is cached in `data/swudb/` (gitignored). If missing, run `fetch_cards.py` first.
-- Suspended list is cached in `data/swu/suspended.json` (gitignored) from SWU Competitive Hub. If missing, the built-in registry in `scripts/constants.py` is used and a warning is emitted. Refresh with `fetch_suspended.py`; disagreements between the snapshot and the registry are surfaced as warnings.
+- Suspended list and Premier legal sets are cached in `data/swu/` (gitignored) from SWU Competitive Hub. Both fall back to the registry in `scripts/constants.py`; precedence, freshness and warning rules are in `skills/swu-review/SKILL.md`.
 - Rules are in `docs/rules.md` (source of truth).
 - Metrics in `docs/metrics.md` (draw model: +2 per regroup, leader/base not drawn).
 - Resource model: a game starts with 2 prepared resources (+1 per regroup). First action phase is 2 resources, not 1.

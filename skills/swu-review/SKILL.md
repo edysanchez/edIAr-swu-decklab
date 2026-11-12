@@ -12,6 +12,7 @@ A minimal skill for reviewing Star Wars: Unlimited Premier decks. It uses only l
 - Python 3
 - Card database cached via `fetch_cards.py` (stored in `data/swudb/cards_normalized.json`, gitignored)
 - Suspended list cached via `fetch_suspended.py` (stored in `data/swu/suspended.json`, gitignored). Without it, the built-in registry in `scripts/constants.py` is used.
+- Premier legal sets cached via `fetch_legal_sets.py` (stored in `data/swu/legal-sets.json`, gitignored). Without it, `constants.PREMIER_SETS` is used.
 
 ## Setup
 
@@ -31,7 +32,21 @@ The hub page is the operational source: it is one server-rendered page that is
 updated the same day FFG announces a suspension, and it also records when a card
 leaves the list. The snapshot wins over the built-in registry when present;
 every disagreement is reported as a warning so the registry can be updated with
-the official announcement link.
+the official announcement link. A snapshot older than 45 days is reported as
+stale.
+
+Fetch the Premier legal-set list from the same hub:
+
+```bash
+python3 skills/swu-review/scripts/fetch_legal_sets.py
+```
+
+The snapshot records the page's own date, the legal set codes, the announced
+next change and every product's release date. A product released after the
+snapshot was written is legal from its release date (`docs/rules.md`), so the
+resolver applies that override only inside the gap between the snapshot date and
+today. The snapshot is stale after 14 days, or as soon as its announced next
+change date has passed; both cases are reported as warnings.
 
 Optionally fetch Cardmarket EUR prices (public bulk files, cached in
 `data/cm/`):

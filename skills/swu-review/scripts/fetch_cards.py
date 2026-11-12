@@ -15,7 +15,11 @@ from datetime import datetime
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
-from .constants import CARD_DB_PATH
+sys.path.insert(0, str(Path(__file__).parent))
+
+import constants as C
+
+CARD_DB_PATH = C.CARD_DB_PATH
 
 PREMIER_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
 API_BASE = "https://api.swu-db.com"

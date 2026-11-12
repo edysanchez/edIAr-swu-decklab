@@ -281,6 +281,11 @@ def validate_deck(deck_path, verbose=True):
         if card and not legal.is_legal(card.get('set') or ''):
             errors.append(f"Sideboard card {card['name']} is from non-Premier set {card['set']}")
     
+    for label, key in (("Leader", leader_key), ("Base", base_key)):
+        card = card_db.get(key)
+        if card and not legal.is_legal(card.get('set') or ''):
+            errors.append(f"{label} {card['name']} is from non-Premier set {card['set']}")
+    
     for key in all_identities:
         if key in suspended.identities:
             card = card_db.get(key)

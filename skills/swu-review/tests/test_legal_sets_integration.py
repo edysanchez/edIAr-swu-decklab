@@ -42,6 +42,22 @@ DECK = {
     "sideboard": [],
 }
 
+# A JTL leader and a JTL base with an otherwise HMW deck: the set pool applies
+# to the leader and base slots too (`docs/rules.md`).
+JTL_LEADER_DECK = {
+    "leader": {"id": "JTL_016", "count": 1},  # Admiral Ackbar
+    "base": {"id": "HMW_022", "count": 1},
+    "deck": [{"id": "HMW_177", "count": 50}],
+    "sideboard": [],
+}
+
+JTL_BASE_DECK = {
+    "leader": {"id": "HMW_012", "count": 1},
+    "base": {"id": "JTL_024", "count": 1},  # Data Vault, Scarif
+    "deck": [{"id": "HMW_177", "count": 50}],
+    "sideboard": [],
+}
+
 
 def snapshot(legal, fetched_at="2026-11-12T00:00:00Z", as_of="2026-11-12"):
     return {
@@ -55,11 +71,11 @@ def snapshot(legal, fetched_at="2026-11-12T00:00:00Z", as_of="2026-11-12"):
 
 
 class RunMixin:
-    def write_deck(self):
+    def write_deck(self, deck=None):
         handle = tempfile.TemporaryDirectory()
         self.addCleanup(handle.cleanup)
         path = Path(handle.name) / "deck.json"
-        path.write_text(json.dumps(DECK), encoding="utf-8")
+        path.write_text(json.dumps(deck or DECK), encoding="utf-8")
         return path
 
     def use_snapshot(self, **overrides):
@@ -72,9 +88,9 @@ class RunMixin:
         self.addCleanup(patcher.stop)
         return path
 
-    def analyse(self):
+    def analyse(self, deck=None):
         return analysis.build_analysis(
-            self.write_deck(),
+            self.write_deck(deck),
             card_db_path=CARD_DB,
             generated_at=FIXED_TIME,
         )
@@ -96,6 +112,28 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
         _ok, errors, _warnings = vd.validate_deck(self.write_deck(), verbose=False)
 
         self.assertFalse(any("non-Premier" in error for error in errors), errors)
+
+    def test_rejects_a_leader_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        _ok, errors, _warnings = vd.validate_deck(
+            self.write_deck(JTL_LEADER_DECK), verbose=False
+        )
+
+        self.assertTrue(
+            any("non-Premier set JTL" in error for error in errors), errors
+        )
+
+    def test_rejects_a_base_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        _ok, errors, _warnings = vd.validate_deck(
+            self.write_deck(JTL_BASE_DECK), verbose=False
+        )
+
+        self.assertTrue(
+            any("non-Premier set JTL" in error for error in errors), errors
+        )
 
     def test_without_a_snapshot_the_registry_applies(self):
         with mock.patch.object(C, "LEGAL_SETS_SNAPSHOT_PATH", "/nonexistent/legal.json"):
@@ -122,6 +160,22 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
         check = self.premier_sets_check(self.analyse())
 
         self.assertTrue(check["ok"], check)
+
+    def test_analysis_flags_a_leader_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        check = self.premier_sets_check(self.analyse(JTL_LEADER_DECK))
+
+        self.assertFalse(check["ok"], check)
+        self.assertIn("Admiral Ackbar", check["detail"])
+
+    def test_analysis_flags_a_base_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        check = self.premier_sets_check(self.analyse(JTL_BASE_DECK))
+
+        self.assertFalse(check["ok"], check)
+        self.assertIn("JTL", check["detail"])
 
     def test_stale_snapshot_warning_reaches_the_analysis(self):
         self.use_snapshot(legal=ALL_SETS, fetched_at="2020-01-01T00:00:00Z", as_of="2020-01-01")

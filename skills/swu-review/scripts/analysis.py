@@ -426,8 +426,14 @@ def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_
         else "; ".join(f"{_identity(k)} has {c} copies (max 3)" for k, c in sorted(over)),
     )
 
+    # The set pool covers leader and base too: a rotated leader makes the deck
+    # illegal even when every card in the draw deck is from a legal product.
+    pool = set(combined)
+    for resolved in (leader, base):
+        if resolved is not None:
+            pool.add(resolved.key)
     bad_sets = [
-        key for key in combined
+        key for key in sorted(pool)
         if not legal.is_legal(card_db[key].get("set") or "")
     ]
     check(

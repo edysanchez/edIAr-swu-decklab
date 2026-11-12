@@ -11,6 +11,7 @@ A minimal skill for reviewing Star Wars: Unlimited Premier decks. It uses only l
 
 - Python 3
 - Card database cached via `fetch_cards.py` (stored in `data/swudb/cards_normalized.json`, gitignored)
+- Suspended list cached via `fetch_suspended.py` (stored in `data/swu/suspended.json`, gitignored). Without it, the built-in registry in `scripts/constants.py` is used.
 
 ## Setup
 
@@ -19,6 +20,18 @@ Fetch Premier cards:
 ```bash
 python3 skills/swu-review/scripts/fetch_cards.py
 ```
+
+Fetch the Premier suspended list from SWU Competitive Hub:
+
+```bash
+python3 skills/swu-review/scripts/fetch_suspended.py
+```
+
+The hub page is the operational source: it is one server-rendered page that is
+updated the same day FFG announces a suspension, and it also records when a card
+leaves the list. The snapshot wins over the built-in registry when present;
+every disagreement is reported as a warning so the registry can be updated with
+the official announcement link.
 
 Optionally fetch Cardmarket EUR prices (public bulk files, cached in
 `data/cm/`):

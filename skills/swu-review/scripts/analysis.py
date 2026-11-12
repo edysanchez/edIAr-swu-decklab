@@ -23,8 +23,11 @@ from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+# Add parent directory to path so infrastructure subpackage is findable
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import constants as C
+import suspended_list
 import swu_cards as sc
 from card_resolver import CardIndex, UnresolvedCard
 from draw_odds import p_at_least_one
@@ -343,10 +346,14 @@ def _zone_check(zone, resolved, counts):
     return True, f"Exactly one {zone}"
 
 
-def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts):
+def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts, suspended=None):
     errors = []
     warnings = []
     checks = []
+
+    suspended_keys = suspended.identities if suspended is not None else frozenset(C.SUSPENDED)
+    if suspended is not None:
+        warnings.extend(suspended.warnings)
 
     def check(check_id, ok, detail):
         checks.append({"id": check_id, "ok": ok, "detail": detail})
@@ -425,12 +432,15 @@ def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_
         else f"Non-Premier cards: {', '.join(_identity(k) for k in bad_sets)}",
     )
 
-    suspended = [key for key in combined if key in C.SUSPENDED]
+    suspended_cards = []
+    for key in (leader_key, base_key, *combined):
+        if key and key in suspended_keys and key not in suspended_cards:
+            suspended_cards.append(key)
     check(
         "suspended",
-        not suspended,
-        "No suspended cards" if not suspended
-        else f"Suspended cards: {', '.join(_identity(k) for k in suspended)}",
+        not suspended_cards,
+        "No suspended cards" if not suspended_cards
+        else f"Suspended cards: {', '.join(_identity(k) for k in suspended_cards)}",
     )
 
     return {
@@ -464,11 +474,13 @@ def _aspect_penalty(
 
     if leader is not None:
         # Get the key from the leader card entity
-        leader_key = leader.get("identity", "") if leader else None
+        # leader is a Resolved object; card is a dict
+        leader_key = leader.card.get("identity", "") if leader.card else None
 
     if base is not None:
         # Get the key from the base card entity
-        base_key = base.get("identity", "") if base else None
+        # base is a Resolved object; card is a dict
+        base_key = base.card.get("identity", "") if base.card else None
 
     # Calculate penalty using the domain service
     return penalty_service.calculate_penalty(
@@ -841,12 +853,21 @@ def _draw_odds(main_counts, card_db, n, max_round):
     }
 
 
-def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=None, cm_index=None):
+def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=None, cm_index=None, card_repository=None):
     """Build the full analysis dict for a deck file.
 
     ``cm_index`` is an optional :class:`cardmarket.CardmarketIndex`. When given,
     ``composition.price_eur`` is added next to the USD block; when omitted, the
     output is unchanged.
+
+    Args:
+        deck_path: Path to the deck file.
+        card_db_path: Path to the card database JSON file.
+        generated_at: ISO format timestamp when the analysis was generated.
+        max_round: Maximum number of draws for draw odds calculation.
+        cm_index: Optional Cardmarket index for price data.
+        card_repository: CardRepository implementation for card data access.
+            If not provided, an InMemoryCardRepository is used.
     """
     deck_path = Path(deck_path)
     content = deck_path.read_text(encoding="utf-8")
@@ -882,8 +903,15 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     n = sum(main_counts.values())
     db = _db_meta(card_db_path, card_db)
     zone_counts = _zone_counts(content, deck_format)
+
+    # Use provided card_repository or default to InMemoryCardRepository
+    if card_repository is None:
+        from infrastructure.in_memory_card_repository import InMemoryCardRepository
+        card_repository = InMemoryCardRepository()
+
     legality = _legality(
-        leader, base, main_counts, side_counts, unresolved, card_db, zone_counts
+        leader, base, main_counts, side_counts, unresolved, card_db, zone_counts,
+        suspended=suspended_list.load(card_db),
     )
     legality["aspect_penalty"] = _aspect_penalty(leader, base, main_counts, card_repository)
     composition = _composition(main_counts, card_db, db["data_as_of"], cm_index)

@@ -35,6 +35,16 @@ SUSPENDED_SOURCES = (
 SUSPENDED_HUB_URL = "https://www.swu-competitivehub.com/suspended-list/"
 SUSPENDED_SNAPSHOT_PATH = "data/swu/suspended.json"
 SUSPENDED_SNAPSHOT_MAX_AGE_DAYS = 45
+
+# Premier legal sets follow the same pattern with a different question.
+# ``fetch_legal_sets.py`` writes the snapshot and ``legal_sets.py`` resolves it.
+# Rotations are announced weeks ahead, so two weeks is a generous window.
+LEGAL_SETS_HUB_URL = (
+    "https://www.swu-competitivehub.com/premier-format-and-rotation/"
+)
+LEGAL_SETS_SNAPSHOT_PATH = "data/swu/legal-sets.json"
+LEGAL_SETS_SNAPSHOT_MAX_AGE_DAYS = 14
+
 SUSPENDED_CARDS = (
     {
         "identity": ("Cad Bane", "Still Faster Than You"),

@@ -2,11 +2,24 @@
 
 This service depends on the CardRepository protocol, not on a specific
 implementation. This allows for easy testing with InMemoryCardRepository
-and easy substitution of the data source in production.
+and easy substitution of the data source in production (CardDBRepository
+wraps the normalised card database loaded from JSON).
 """
 
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 from infrastructure.card_repository import CardRepository
+
+Identity = Tuple[str, str]
+
+
+def _identity_label(key: Identity) -> str:
+    """Render a ``(name, subtitle)`` key as ``Name|Subtitle``.
+
+    The analysis contract (``analysis.schema.json``) requires ``per_card[].identity``
+    to be a string, so the raw tuple must never leak into the output.
+    """
+    name, subtitle = key
+    return f"{name}|{subtitle}" if subtitle else name
 
 
 class AspectPenaltyService:
@@ -35,17 +48,18 @@ class AspectPenaltyService:
     
     def calculate_penalty(
         self,
-        leader_key: Optional[str],
-        base_key: Optional[str],
-        main_counts: Dict[str, int]
+        leader_key: Optional[Identity],
+        base_key: Optional[Identity],
+        main_counts: Dict[Identity, int]
     ) -> dict:
         """Calculate the aspect penalty for all main-deck cards.
-        
+
         Args:
-            leader_key: Identity key of the leader card (e.g., "HMW_012")
-                       or None if no leader
-            base_key: Identity key of the base card or None
-            main_counts: Dictionary mapping card keys to copy counts
+            leader_key: ``(name, subtitle)`` identity of the leader card,
+                or None if no leader.
+            base_key: ``(name, subtitle)`` identity of the base card, or None.
+            main_counts: Dictionary mapping card identity keys to copy counts.
+                Keys use the same ``(name, subtitle)`` tuples as the card database.
             
         Returns:
             Dictionary with keys: total, max, per_card
@@ -88,11 +102,8 @@ class AspectPenaltyService:
             
             # Add to per_card if there are missing aspects
             if penalty:
-                # Format identity key display
-                identity = key  # In a full implementation, would format name|subtitle
-                
                 per_card.append({
-                    "identity": identity,
+                    "identity": _identity_label(key),
                     "copies": copies,
                     "penalty": penalty,
                     "missing_aspects": missing,

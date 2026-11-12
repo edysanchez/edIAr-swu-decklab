@@ -33,6 +33,7 @@ from card_resolver import CardIndex, UnresolvedCard
 from draw_odds import p_at_least_one
 from validate_deck import load_deck
 from domain.services.aspect_penalty_service import AspectPenaltyService
+from infrastructure.card_db_repository import CardDBRepository
 from infrastructure.card_repository import CardRepository
 
 
@@ -468,19 +469,9 @@ def _aspect_penalty(
     # Create the domain service with injected repository
     penalty_service = AspectPenaltyService(card_repository)
 
-    # Extract keys from leader and base entities
-    leader_key = None
-    base_key = None
-
-    if leader is not None:
-        # Get the key from the leader card entity
-        # leader is a Resolved object; card is a dict
-        leader_key = leader.card.get("identity", "") if leader.card else None
-
-    if base is not None:
-        # Get the key from the base card entity
-        # base is a Resolved object; card is a dict
-        base_key = base.card.get("identity", "") if base.card else None
+    # Keys are the same (name, subtitle) tuples used by the card database
+    leader_key = leader.key if leader is not None else None
+    base_key = base.key if base is not None else None
 
     # Calculate penalty using the domain service
     return penalty_service.calculate_penalty(
@@ -867,7 +858,8 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
         max_round: Maximum number of draws for draw odds calculation.
         cm_index: Optional Cardmarket index for price data.
         card_repository: CardRepository implementation for card data access.
-            If not provided, an InMemoryCardRepository is used.
+            If not provided, the loaded card database is wrapped in a
+            CardDBRepository.
     """
     deck_path = Path(deck_path)
     content = deck_path.read_text(encoding="utf-8")
@@ -904,10 +896,10 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     db = _db_meta(card_db_path, card_db)
     zone_counts = _zone_counts(content, deck_format)
 
-    # Use provided card_repository or default to InMemoryCardRepository
+    # Use provided card_repository or wrap the card database we already loaded.
+    # The repository must expose the same keys as main_counts: (name, subtitle).
     if card_repository is None:
-        from infrastructure.in_memory_card_repository import InMemoryCardRepository
-        card_repository = InMemoryCardRepository()
+        card_repository = CardDBRepository(card_db)
 
     legality = _legality(
         leader, base, main_counts, side_counts, unresolved, card_db, zone_counts,

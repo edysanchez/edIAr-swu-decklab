@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Aspect penalty must reflect off-aspect cards.
+"""Integration test: an off-aspect card must raise the reported penalty.
+
+This goes through `build_analysis` with the real card database, so it fails if
+the wiring breaks (empty repository, wrong keys, adapter not used). The unit
+counterpart for the calculation itself is `test_aspect_penalty_service.py`.
 
 Leader Poggle provides Aggression + Villainy, base Shield Generator provides
 Vigilance. Adept ARC-170 is Command, so each copy costs 2 extra resources.

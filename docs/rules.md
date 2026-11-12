@@ -4,7 +4,7 @@ Single source of truth for **Star Wars: Unlimited Premier** deck legality in thi
 repository. Validators, the `swu-review` skill and all documentation must follow
 this file. Do not restate these rules elsewhere.
 
-_Last verified: 2026-10-26._
+_Last verified: 2026-11-09._
 
 ## Sources
 
@@ -82,10 +82,42 @@ is officially released.
 
 ## Suspended cards
 
-No cards are suspended in Premier as of 2026-10-26.
+A suspended card is **not legal in any event of that format**, competitive or
+casual, while it remains on the list. Suspension is by printed name and
+subtitle: other printings of the same name are unaffected.
 
-The suspension list is part of the Comprehensive Event Guide and can change
-between set releases. Check it before relying on this file.
+As of 2026-11-09 the Premier suspended list is:
+
+| Card | Set | No. | Type | Announced |
+|---|---|---|---|---|
+| Cad Bane, *Still Faster Than You* | ASH | 011 | Leader | 2026-08-24 |
+| Chimaera, *A Frightening Reality* | ASH | 052 | Unit | 2026-11-09 |
+| Koska Reeves, *Warrior of Mandalore* | ASH | 079 | Unit | 2026-11-09 |
+| Neel, *The Cutest Boy* | ASH | 248 | Unit | 2026-11-09 |
+| Aggressive Negotiations | SEC | 179 | Event | 2026-11-09 |
+
+Official sources (one announcement per entry, no community lists):
+
+- [Cad Bane Leader Card Suspended](https://starwarsunlimited.com/articles/cad-banned)
+  (2026-08-24).
+- [Premier Format Update: November 2026](https://starwarsunlimited.com/articles/premier-format-update-november-2026)
+  (2026-11-09, effective immediately).
+
+The machine-readable copy lives in `skills/swu-review/scripts/constants.py`
+(`SUSPENDED_CARDS`, with a per-card `source`); keep both in sync.
+
+**Caveat:** FFG publishes suspensions as individual articles, not as a
+standing list, and the Comprehensive Event Guide can lag behind them. v1.5
+(updated 2026-10-09) still states that no Premier cards are suspended, even
+though Cad Bane had been announced on 2026-08-24. When the guide and a dated
+announcement disagree, the newest announcement wins.
+
+For automation, `fetch_suspended.py` parses the
+[SWU Competitive Hub suspended list](https://www.swu-competitivehub.com/suspended-list/)
+into `data/swu/suspended.json`. That snapshot is the operational source when
+present; `constants.SUSPENDED_CARDS` is the offline fallback and the place where
+each card cites its official announcement. Differences between the two are
+reported as warnings, never applied silently.
 
 ## Errata
 

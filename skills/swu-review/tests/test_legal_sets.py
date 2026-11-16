@@ -51,12 +51,15 @@ def snapshot(**overrides):
 
 
 class LegalSetsTest(unittest.TestCase):
-    def load(self, **overrides):
+    def write(self, **overrides):
         handle = tempfile.TemporaryDirectory()
         self.addCleanup(handle.cleanup)
         path = Path(handle.name) / "legal-sets.json"
         path.write_text(json.dumps(snapshot(**overrides)), encoding="utf-8")
-        return legal_sets.load(snapshot_path=path)
+        return path
+
+    def load(self, **overrides):
+        return legal_sets.load(snapshot_path=self.write(**overrides))
 
     def test_snapshot_wins_over_the_builtin_registry(self):
         result = self.load()
@@ -123,6 +126,29 @@ class LegalSetsTest(unittest.TestCase):
         self.assertFalse(result.is_legal("IC27"))
         self.assertTrue(
             any("date" in warning.lower() for warning in result.warnings),
+            result.warnings,
+        )
+
+    def test_a_legal_set_without_cards_is_reported(self):
+        result = legal_sets.load(
+            snapshot_path=self.write(
+                legal=["JTL", "HMW"], products=[]
+            ),
+            known_sets={"JTL"},
+        )
+
+        warnings = " ".join(result.warnings)
+        self.assertIn("HMW", warnings)
+        self.assertIn("fetch_cards", warnings)
+
+    def test_no_coverage_warning_when_every_legal_set_has_cards(self):
+        result = legal_sets.load(
+            snapshot_path=self.write(legal=["JTL"], products=[]),
+            known_sets={"JTL", "HMW"},
+        )
+
+        self.assertFalse(
+            any("fetch_cards" in warning for warning in result.warnings),
             result.warnings,
         )
 

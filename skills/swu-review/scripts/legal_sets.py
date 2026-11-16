@@ -88,8 +88,38 @@ def _registry_fallback(warnings, reason=None):
     )
 
 
-def load(snapshot_path=None):
-    """Return the effective :class:`LegalSets` for the Premier format."""
+def _coverage_warnings(codes, known_sets):
+    """Report legal sets the card database has no cards from.
+
+    A legal answer needs data. Without this check a deck from a newly legal set
+    reports every card as unresolved, which reads like a deck problem instead of
+    a stale cache.
+    """
+    if known_sets is None:
+        return []
+    missing = sorted(set(codes) - set(known_sets))
+    if not missing:
+        return []
+    return [
+        "The legal-set list includes sets with no cards in the card database: "
+        f"{', '.join(missing)}. Decks using them will report unresolved cards. "
+        "Run fetch_cards.py."
+    ]
+
+
+def load(snapshot_path=None, known_sets=None):
+    """Return the effective :class:`LegalSets` for the Premier format.
+
+    ``known_sets`` is the set of set codes present in the loaded card database;
+    when given, legal sets with no cards are reported as warnings.
+    """
+    result = _load(snapshot_path)
+    result.warnings.extend(_coverage_warnings(result.codes, known_sets))
+    return result
+
+
+def _load(snapshot_path=None):
+    """Resolve the snapshot (or the registry) without the coverage check."""
     path = (
         Path(snapshot_path)
         if snapshot_path is not None

@@ -70,6 +70,14 @@ def card_printings(card: Dict[str, Any]) -> List[str]:
     return [card["set"]] if card.get("set") else []
 
 
+def card_db_sets(card_db: Dict[Tuple[str, str], Dict[str, Any]]) -> set:
+    """Return every set code the loaded card database has cards from."""
+    known = set()
+    for card in card_db.values():
+        known.update(card_printings(card))
+    return known
+
+
 def card_identity_key(name: str, subtitle: str = "") -> Tuple[str, str]:
     """Get canonical card identity key (name, subtitle)."""
     return (name.strip(), (subtitle or "").strip())

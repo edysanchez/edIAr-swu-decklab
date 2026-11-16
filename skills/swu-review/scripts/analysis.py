@@ -917,7 +917,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     legality = _legality(
         leader, base, main_counts, side_counts, unresolved, card_db, zone_counts,
         suspended=suspended_list.load(card_db),
-        legal=legal_sets.load(),
+        legal=legal_sets.load(known_sets=sc.card_db_sets(card_db)),
     )
     legality["aspect_penalty"] = _aspect_penalty(leader, base, main_counts, card_repository)
     composition = _composition(main_counts, card_db, db["data_as_of"], cm_index)

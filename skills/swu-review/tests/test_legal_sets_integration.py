@@ -135,6 +135,25 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
             any("non-Premier set JTL" in error for error in errors), errors
         )
 
+    def test_warns_about_a_legal_set_without_cards(self):
+        # LOF is legal in the snapshot but the database has no LOF cards.
+        self.use_snapshot(legal=ALL_SETS)
+        card_db = {
+            key: card
+            for key, card in vd.sc.load_swu_cards().items()
+            if card.get("set") != "LOF"
+        }
+
+        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db):
+            _ok, _errors, warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertTrue(
+            any("LOF" in warning and "fetch_cards" in warning for warning in warnings),
+            warnings,
+        )
+
     def test_accepts_a_card_reprinted_in_a_legal_set(self):
         # The deck entry points at JTL, which the snapshot drops, but the card
         # also exists in HMW: `docs/rules.md` makes it legal.
@@ -206,6 +225,25 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
 
         self.assertFalse(check["ok"], check)
         self.assertIn("JTL", check["detail"])
+
+    def test_analysis_warns_about_a_legal_set_without_cards(self):
+        self.use_snapshot(legal=ALL_SETS)
+        card_db = {
+            key: card
+            for key, card in analysis.sc.load_swu_cards().items()
+            if card.get("set") != "LOF"
+        }
+
+        with mock.patch.object(analysis.sc, "load_swu_cards", return_value=card_db):
+            out = self.analyse()
+
+        self.assertTrue(
+            any(
+                "LOF" in warning and "fetch_cards" in warning
+                for warning in out["legality"]["warnings"]
+            ),
+            out["legality"]["warnings"],
+        )
 
     def test_stale_snapshot_warning_reaches_the_analysis(self):
         self.use_snapshot(legal=ALL_SETS, fetched_at="2020-01-01T00:00:00Z", as_of="2020-01-01")

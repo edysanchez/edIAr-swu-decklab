@@ -195,7 +195,7 @@ def validate_deck(deck_path, verbose=True):
     suspended = suspended_list.load(card_db)
     warnings.extend(suspended.warnings)
 
-    legal = legal_sets.load()
+    legal = legal_sets.load(known_sets=sc.card_db_sets(card_db))
     warnings.extend(legal.warnings)
     
     try:

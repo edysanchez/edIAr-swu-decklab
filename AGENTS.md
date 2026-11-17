@@ -13,27 +13,25 @@
 ## Project
 `edIAr-swu-decklab` - Star Wars: Unlimited Premier deck review tools.
 
+## Where to look
+- `skills/swu-review/SKILL.md` - the skill: review protocol, commands, flags, snapshots
+- `docs/rules.md` - legality rules (source of truth)
+- `docs/metrics.md` - metric definitions
+- `docs/data-sources.md` - sources, freshness and licensing
+- `docs/code-health.md` - known debt and follow-ups
+
 ## Skill: swu-review
 Location: `skills/swu-review/`
-For strategic deck reviews, always read `skills/swu-review/SKILL.md` first. It contains the full review protocol, resource model, play lines guidance, substitution analysis, and council rules.
 
-### Commands
-- Full analysis & report (recommended): `python3 skills/swu-review/scripts/swu_analyze.py <deck> --json out.json --report out.md`
-- Fetch card DB: `python3 skills/swu-review/scripts/fetch_cards.py`
-- Fetch suspended list (SWU Competitive Hub): `python3 skills/swu-review/scripts/fetch_suspended.py`
-- Fetch Premier legal sets (SWU Competitive Hub): `python3 skills/swu-review/scripts/fetch_legal_sets.py`
-- Validate deck (standalone): `python3 skills/swu-review/scripts/validate_deck.py <deck.json|deck.txt>`
-- Analyze composition (standalone): `python3 skills/swu-review/scripts/analyze_deck.py <deck.json|deck.txt>`
-- Draw odds (standalone): `python3 skills/swu-review/scripts/draw_odds.py <deck.json|deck.txt>`
+For strategic deck reviews, read `skills/swu-review/SKILL.md` first. It holds the
+review protocol, the resource model, the accepted deck formats, and every command,
+flag and snapshot rule. Do not restate them here: add them there.
 
 ### Tests
 - Run test suite: `python3 -m unittest discover -s skills/swu-review/tests`
 
 ### Notes
-- Card DB is cached in `data/swudb/` (gitignored). If missing, run `fetch_cards.py` first.
-- Suspended list and Premier legal sets are cached in `data/swu/` (gitignored) from SWU Competitive Hub. Both fall back to the registry in `scripts/constants.py`; precedence, freshness and warning rules are in `skills/swu-review/SKILL.md`.
-- Rules are in `docs/rules.md` (source of truth).
-- Metrics in `docs/metrics.md` (draw model: +2 per regroup, leader/base not drawn).
-- Resource model: a game starts with 2 prepared resources (+1 per regroup). First action phase is 2 resources, not 1.
-- Supports SWUDB JSON, SWUDB text, case format (`mainDeck`/`sideboard`), and ID-based exports.
-- Card identity is `name + subtitle`. Aspect penalty is reported but never blocks legality.
+- Everything under `data/` is a local cache (gitignored): the card catalogue, the
+  suspended list, the legal-set snapshot and prices. The skill works without it,
+  falling back to the registries in `scripts/constants.py`; what each snapshot
+  means and when it goes stale is documented in `SKILL.md`.

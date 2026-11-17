@@ -16,11 +16,36 @@ A minimal skill for reviewing Star Wars: Unlimited Premier decks. It uses only l
 
 ## Setup
 
-Fetch Premier cards:
+Fetch the card catalogue:
 
 ```bash
 python3 skills/swu-review/scripts/fetch_cards.py
 ```
+
+The set list comes from `GET https://api.swu-db.com/sets`, so it follows the game
+instead of a hardcoded list: every base set is fetched, promos only with `--all`.
+Each payload is checked against the published `numberCards` before it is stored,
+and a set that comes back short (a prerelease set, for example) is refused rather
+than half-written.
+
+| Flag | Effect |
+|---|---|
+| *(none)* | every base set |
+| `--all` | every set, promos included |
+| `--base` | base sets only (the default) |
+| `--sets JTL,IC27` | explicit list |
+| `--refresh` | re-download even when cached |
+| `--dry-run` | report the plan, write nothing |
+
+The raw per-set files are the cache of record; `cards_normalized.json` is derived
+from them in a fixed order, so it can always be rebuilt with
+`rebuild_normalized()`.
+
+Both analysis CLIs repair local gaps before reading the deck: with a
+`catalogue.json` from the last `fetch_cards.py` run they download missing or
+incomplete base sets, and say so on stderr. They never invent sets, never block a
+review on a failed download, and accept `--no-fetch`. The library functions
+(`build_analysis`, `validate_deck`) never touch the network.
 
 Fetch the Premier suspended list from SWU Competitive Hub:
 
@@ -132,6 +157,7 @@ python3 skills/swu-review/scripts/swu_analyze.py path/to/deck.json --json
 #   --max-round N     last round in draw odds (default 6)
 #   --cm-cache PATH   Cardmarket cache directory (defaults to data/cm/)
 #   --no-eur          omit the optional Cardmarket EUR price block
+#   --no-fetch        do not download missing sets before analysing
 ```
 
 The contract is [`analysis.schema.json`](analysis.schema.json). It covers:
@@ -182,6 +208,9 @@ Checks against [`docs/rules.md`](../../docs/rules.md) (exactly 1 leader/base, >=
 ```bash
 python3 skills/swu-review/scripts/validate_deck.py path/to/deck.json
 python3 skills/swu-review/scripts/validate_deck.py path/to/deck.json --json
+
+# --no-fetch: do not repair the catalogue first
+python3 skills/swu-review/scripts/validate_deck.py path/to/deck.json --no-fetch
 ```
 
 ### Analyze deck
@@ -200,6 +229,32 @@ python3 skills/swu-review/scripts/draw_odds.py path/to/deck.json --max-turn 6
 python3 skills/swu-review/scripts/draw_odds.py path/to/deck.json --group cost:2
 python3 skills/swu-review/scripts/draw_odds.py path/to/deck.json --mulligan --json
 ```
+
+### Search the catalogue
+
+`search_cards.py` answers "which cards match these constraints?" and prints only
+the matches. It does not rank or recommend: choosing a card is the reviewer's
+job.
+
+```bash
+# Cheapest Space units legal in Premier
+python3 skills/swu-review/scripts/search_cards.py \
+  --legal --type Unit --arena Space --cost-max 3
+
+# JSON for further processing
+python3 skills/swu-review/scripts/search_cards.py --legal --aspect Villainy --json
+```
+
+| Filter | Values |
+|---|---|
+| `--name`, `--text` | substring, case-insensitive |
+| `--aspect`, `--type`, `--trait`, `--keyword` | comma separated |
+| `--cost-min`, `--cost-max` | integers; cards without a cost are excluded |
+| `--arena` | `Ground` or `Space` |
+| `--rarity`, `--unique` | |
+| `--set` | comma separated set codes |
+| `--legal` | checks every printing against the dated legal-set snapshot |
+| `--limit`, `--json`, `--card-db` | output control |
 
 ## Notes
 

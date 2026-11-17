@@ -254,7 +254,7 @@ def recently_checked(meta, hours=INCOMPLETE_RETRY_HOURS):
         return False
     try:
         checked = datetime.fromisoformat(str(stamp))
-    except ValueError:
+    except (TypeError, ValueError):
         return False
     return (datetime.now() - checked).total_seconds() < hours * 3600
 
@@ -343,7 +343,12 @@ def ensure_sets(
                 # A cache written before the index existed: measure it instead of
                 # trusting it, and repair it here if it turns out short. Its fetch
                 # date is the file's own mtime, not now.
-                meta = completeness(json.loads(path.read_text(encoding="utf-8")), expected)
+                try:
+                    payload = json.loads(path.read_text(encoding="utf-8"))
+                except (OSError, ValueError) as exc:
+                    status[code] = {"status": "failed", "error": f"unreadable cache: {exc}"}
+                    continue
+                meta = completeness(payload, expected)
                 meta["checked_at"] = datetime.now().isoformat()
                 meta.setdefault("fetched_at", _file_timestamp(path))
                 index[code] = meta
@@ -450,7 +455,9 @@ def write_catalogue(base_sets, all_sets, sets_dir=None):
 
 
 def refresh_catalogue(sets_dir=None, timeout=60, fetcher=None):
-    """Repair local gaps in the catalogue. Never raises, never invents sets.
+    """Repair local gaps in the catalogue. Never invents sets, never raises for a
+    network problem (a corrupt cache file can still surface, and the CLIs catch
+    it).
 
     The set list comes from the last `main` run, so this does not discover new
     products on its own: it only downloads base sets that are missing or
@@ -508,6 +515,26 @@ def refresh_catalogue(sets_dir=None, timeout=60, fetcher=None):
         "incomplete": incomplete,
         "missing": failed,
     }
+
+
+def refresh_catalogue_reporting(sets_dir=None, timeout=60):
+    """Repair the catalogue and print what happened; one implementation for both CLIs."""
+    result = refresh_catalogue(sets_dir=sets_dir, timeout=timeout)
+    if result["fetched"]:
+        print(f"Catalogue: downloaded {', '.join(result['fetched'])}", file=sys.stderr)
+    if result.get("incomplete"):
+        print(
+            f"Catalogue: {', '.join(result['incomplete'])} not complete yet; "
+            "will retry later",
+            file=sys.stderr,
+        )
+    if result["missing"]:
+        print(
+            f"WARNING: still missing {', '.join(result['missing'])}; "
+            "run fetch_cards.py",
+            file=sys.stderr,
+        )
+    return result
 
 
 def plan_lines(codes, index, directory, refresh=False):

@@ -115,25 +115,9 @@ def main(argv=None):
 
     if not args.no_fetch and args.card_db is None:
         try:
-            result = fetch_cards.refresh_catalogue()
+            fetch_cards.refresh_catalogue_reporting()
         except Exception as exc:  # never block a review
             print(f"WARNING: could not refresh the card catalogue: {exc}", file=sys.stderr)
-        else:
-            if result["fetched"]:
-                print(f"Catalogue: downloaded {', '.join(result['fetched'])}", file=sys.stderr)
-            incomplete = result.get("incomplete") or []
-            if incomplete:
-                print(
-                    f"Catalogue: {', '.join(incomplete)} not complete yet; "
-                    "will retry later",
-                    file=sys.stderr,
-                )
-            if result["missing"]:
-                print(
-                    f"WARNING: still missing {', '.join(result['missing'])}; "
-                    "run fetch_cards.py",
-                    file=sys.stderr,
-                )
 
     try:
         cm_index = None

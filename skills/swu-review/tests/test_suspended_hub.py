@@ -17,6 +17,8 @@ from pathlib import Path
 from unittest import mock
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
@@ -101,6 +103,7 @@ class ParserTest(unittest.TestCase):
             fetch_suspended.check_page(parsed)
 
 
+@requires_catalogue
 class ResolveTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -130,6 +133,7 @@ class ResolveTest(unittest.TestCase):
         self.assertEqual(len(unresolved), 1)
 
 
+@requires_catalogue
 class PrecedenceTest(unittest.TestCase):
     def setUp(self):
         self.db = sc.load_swu_cards(CARD_DB)
@@ -195,6 +199,7 @@ class PrecedenceTest(unittest.TestCase):
         self.assertTrue(any("could not be resolved" in w for w in suspended.warnings))
 
 
+@requires_catalogue
 class EntryPointsUseTheSnapshotTest(unittest.TestCase):
     """A card added to the snapshot must be enforced by both tools."""
 
@@ -246,6 +251,7 @@ class EntryPointsUseTheSnapshotTest(unittest.TestCase):
         self.assertTrue(any("Cad Bane" in e for e in errors), errors)
 
 
+@requires_catalogue
 class ValidateDeckWarningOutputTest(unittest.TestCase):
     """Snapshot warnings must be visible in the default text output."""
 

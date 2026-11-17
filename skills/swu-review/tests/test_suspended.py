@@ -16,6 +16,8 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
@@ -120,6 +122,7 @@ class SuspendedRegistryTest(unittest.TestCase):
                 )
                 self.assertIn(record["source"], C.SUSPENDED_SOURCES)
 
+    @requires_catalogue
     def test_every_suspended_card_is_in_the_card_database(self):
         db = sc.load_swu_cards(CARD_DB)
         for record in C.SUSPENDED_CARDS:
@@ -131,6 +134,7 @@ class SuspendedRegistryTest(unittest.TestCase):
                 self.assertEqual(card["type"], record["type"])
 
 
+@requires_catalogue
 class AnalysisSuspendedTest(RunMixin, unittest.TestCase):
     def suspended_check(self, out):
         return next(c for c in out["legality"]["checks"] if c["id"] == "suspended")
@@ -164,6 +168,7 @@ class AnalysisSuspendedTest(RunMixin, unittest.TestCase):
         self.assertFalse(out["legality"]["ok"])
 
 
+@requires_catalogue
 class ValidateDeckSuspendedTest(RunMixin, unittest.TestCase):
     def test_control_deck_is_valid(self):
         ok, errors, _warnings = self.validate(build_swudb_deck())

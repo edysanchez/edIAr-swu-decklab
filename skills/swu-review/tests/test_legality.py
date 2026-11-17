@@ -13,6 +13,8 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
@@ -49,6 +51,7 @@ def entry_of_type(deck, type_name):
     )
 
 
+@requires_catalogue
 class LegalityTest(unittest.TestCase):
     def assert_illegal(self, out, needle):
         self.assertFalse(out["legality"]["ok"])

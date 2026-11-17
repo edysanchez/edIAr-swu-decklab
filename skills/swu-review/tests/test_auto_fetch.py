@@ -16,6 +16,8 @@ from pathlib import Path
 from unittest import mock
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 SCRIPTS_DIR = SKILL_DIR / "scripts"
 
@@ -137,6 +139,7 @@ class RefreshCatalogueTest(unittest.TestCase):
         self.assertEqual(result["missing"], ["IC27"])
 
 
+@requires_catalogue
 class EntryPointTest(unittest.TestCase):
     def test_validate_deck_does_not_fetch_by_default(self):
         with mock.patch.object(fetch_cards, "refresh_catalogue") as refresh:

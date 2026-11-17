@@ -9,6 +9,8 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPT = SKILL_DIR / "scripts" / "swu_analyze.py"
@@ -26,6 +28,7 @@ def run(*args):
     )
 
 
+@requires_catalogue
 class CliTest(unittest.TestCase):
     def test_json_to_stdout_is_pure_json(self):
         result = run(CASE, "--card-db", CARD_DB, "--json")

@@ -18,6 +18,8 @@ from pathlib import Path
 from unittest import mock
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
@@ -105,6 +107,7 @@ class RunMixin:
         )
 
 
+@requires_catalogue
 class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
     def test_rejects_a_set_the_snapshot_drops(self):
         self.use_snapshot(legal=WITHOUT_JTL)
@@ -233,6 +236,7 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
         self.assertFalse(any("non-Premier" in error for error in errors), errors)
 
 
+@requires_catalogue
 class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
     def premier_sets_check(self, out):
         return next(c for c in out["legality"]["checks"] if c["id"] == "premier_sets")

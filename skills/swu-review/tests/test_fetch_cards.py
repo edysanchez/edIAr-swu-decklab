@@ -119,6 +119,8 @@ class RebuildTest(unittest.TestCase):
         ]
         if missing:
             self.skipTest(f"raw set files not cached: {missing}")
+        if not (SWUDB_DIR / "cards_normalized.json").exists():
+            self.skipTest("catalogue missing: run fetch_cards.py")
 
     def test_rebuild_reproduces_the_cached_normalized_file(self):
         rebuilt = fetch_cards.rebuild_normalized()

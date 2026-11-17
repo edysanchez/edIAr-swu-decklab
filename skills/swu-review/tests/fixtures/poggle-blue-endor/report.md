@@ -10,7 +10,7 @@
 
 | Field | Value |
 |---|---|
-| Generated at | 2026-11-17T10:56:25Z |
+| Generated at | 2026-11-17T11:18:23Z |
 | Tool version | 0.1.0-dev |
 | Rules version | 2026-11-09 |
 | Schema version | 0.1.0 |
@@ -18,7 +18,7 @@
 | Input SHA-256 | 9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a |
 | Input format | case |
 | Card DB source | api.swu-db.com |
-| Card DB snapshot | 2026-11-17 |
+| Card DB snapshot | 2026-10-27 (checked 2026-11-17) |
 | Card DB sets | JTL, LOF, IBH, SEC, LAW, ASH, HMW, SHD, SOR, TS26, TWI |
 | Card DB cards | 2445 |
 | Card DB schema hash | bac8c35284e8f2640cadb562bd8bfde30b7ac803d14d4145cd1cfa38aa18d79e |
@@ -607,9 +607,9 @@ Only 2 of 39 unit slots are Space (5.1%).
 
 | ID | Impact | Category | Statement |
 |---|---|---|---|
-| `data-snapshot` | info | data | Card data snapshot: 2026-11-17 from api.swu-db.com (11 sets, 2445 cards). |
+| `data-snapshot` | info | data | Card data snapshot: 2026-10-27 from api.swu-db.com (11 sets, 2445 cards). |
 | `incomplete-catalogue` | degraded | data | Sets that are missing or incomplete in the local catalogue are invisible to this analysis. |
-| `price-snapshot` | info | data | Prices are market USD from swu-db, snapshot 2026-11-17, coverage 100.0%. |
+| `price-snapshot` | info | data | Prices are market USD from swu-db, snapshot 2026-10-27, coverage 100.0%. |
 | `draw-goldfish` | degraded | model | Draw odds use a goldfish model. |
 | `no-rules-engine` | info | model | Card text is reproduced from the DB, not interpreted. |
 | `rules-version` | info | rules | Legality follows the local rules verified on 2026-11-09. |

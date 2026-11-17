@@ -98,17 +98,34 @@ def _known_sets(card_db):
     return sc.complete_sets() or sc.card_db_sets(card_db)
 
 
-def _db_meta(card_db_path, card_db):
+def _db_meta(card_db_path, card_db, deck_sets=None):
     meta_path = card_db_path.parent / "meta.json"
+    index = sc.read_sets_index(card_db_path.parent)
     if meta_path.exists():
         with open(meta_path, "r", encoding="utf-8") as f:
             meta = json.load(f)
         data_as_of = str(meta.get("fetched_at", ""))[:10] or "unknown"
+        checked_at = str(meta.get("checked_at", ""))[:10] or "unknown"
         source = meta.get("source", "unknown")
         sets = meta.get("sets") or sorted({c.get("set", "") for c in card_db.values()})
     else:
         data_as_of = "unknown"
+        checked_at = "unknown"
         source = "unknown"
+
+    # Provenance describes the data this report uses, not the whole cache: the
+    # oldest fetch among the sets in the deck, and when they were last checked.
+    scope = {str(code) for code in (deck_sets or ()) if code}
+    if not scope:
+        scope = set(index)
+    fetched = [(index.get(code) or {}).get("fetched_at") for code in scope]
+    checked = [(index.get(code) or {}).get("checked_at") for code in scope]
+    fetched = [value for value in fetched if value]
+    checked = [value for value in checked if value]
+    if fetched:
+        data_as_of = min(fetched)[:10]
+    if checked:
+        checked_at = max(checked)[:10]
         sets = sorted({c.get("set", "") for c in card_db.values() if c.get("set")})
 
     canonical = json.dumps(
@@ -120,6 +137,7 @@ def _db_meta(card_db_path, card_db):
     return {
         "source": source,
         "data_as_of": data_as_of,
+        "checked_at": checked_at,
         "sets": list(sets),
         "schema_hash": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
         "cards": len(card_db),
@@ -976,7 +994,13 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
             side_counts[resolved.key] += count
 
     n = sum(main_counts.values())
-    db = _db_meta(card_db_path, card_db)
+    deck_sets = {str(card_db[key].get("set") or "") for key in main_counts if key in card_db}
+    deck_sets |= {str(card_db[key].get("set") or "") for key in side_counts if key in card_db}
+    for resolved in (leader, base):
+        if resolved is not None and resolved.card.get("set"):
+            deck_sets.add(str(resolved.card["set"]))
+    deck_sets.discard("")
+    db = _db_meta(card_db_path, card_db, deck_sets)
     zone_counts = _zone_counts(content, deck_format)
 
     # Use provided card_repository or wrap the card database we already loaded.

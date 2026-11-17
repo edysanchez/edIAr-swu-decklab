@@ -234,6 +234,14 @@ def write_sets_index(index, sets_dir=None):
     return path
 
 
+def _file_timestamp(path):
+    """ISO timestamp of when a cached payload landed on disk."""
+    try:
+        return datetime.fromtimestamp(Path(path).stat().st_mtime).isoformat()
+    except OSError:
+        return None
+
+
 def is_incomplete(meta):
     """A set is unusable only when it was checked and found short."""
     return bool(meta) and meta.get("complete") is False
@@ -333,9 +341,11 @@ def ensure_sets(
             meta = index.get(code)
             if meta is None:
                 # A cache written before the index existed: measure it instead of
-                # trusting it, and repair it here if it turns out short.
+                # trusting it, and repair it here if it turns out short. Its fetch
+                # date is the file's own mtime, not now.
                 meta = completeness(json.loads(path.read_text(encoding="utf-8")), expected)
                 meta["checked_at"] = datetime.now().isoformat()
+                meta.setdefault("fetched_at", _file_timestamp(path))
                 index[code] = meta
             if not is_incomplete(meta):
                 status[code] = {"status": "cached", **meta}
@@ -355,7 +365,8 @@ def ensure_sets(
             continue
 
         result = completeness(data, expected)
-        index[code] = {**result, "checked_at": datetime.now().isoformat()}
+        stamp = datetime.now().isoformat()
+        index[code] = {**result, "checked_at": stamp, "fetched_at": stamp}
         if result["complete"] is False:
             status[code] = {"status": "incomplete", **result}
             continue
@@ -514,8 +525,33 @@ def write_meta(directory=None):
     cards = json.loads(normalized.read_text(encoding="utf-8")) if normalized.exists() else {}
     local = read_sets_index(directory)
     sets = [code for code in cached_set_codes(directory) if not is_incomplete(local.get(code))]
+    # Backfill the fetch date from the file itself for caches written before the
+    # field existed, so the catalogue's dates are never invented.
+    backfilled = False
+    for code in sets:
+        entry = local.setdefault(code, {})
+        if not entry.get("fetched_at"):
+            stamp = _file_timestamp(directory / f"{code}.json")
+            if stamp:
+                entry["fetched_at"] = stamp
+                backfilled = True
+    if backfilled:
+        write_sets_index(local, directory)
+
+    fetched = [
+        (local.get(code) or {}).get("fetched_at") for code in sets
+    ]
+    checked = [
+        (local.get(code) or {}).get("checked_at") for code in sets
+    ]
+    fetched = [value for value in fetched if value]
+    checked = [value for value in checked if value]
+    now = datetime.now().isoformat()
     meta = {
-        "fetched_at": datetime.now().isoformat(),
+        # Oldest data in the catalogue: a report cannot claim to be newer.
+        "fetched_at": min(fetched) if fetched else now,
+        # Last time the catalogue was verified.
+        "checked_at": max(checked) if checked else now,
         "source": "api.swu-db.com",
         "sets": sets,
         "total_unique_cards": len(cards),

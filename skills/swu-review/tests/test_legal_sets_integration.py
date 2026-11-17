@@ -350,3 +350,49 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DbProvenanceTest(unittest.TestCase):
+    """`data_as_of` describes the sets the deck uses."""
+
+    def setUp(self):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        self.dir = Path(handle.name)
+
+    def test_dates_follow_the_deck_sets(self):
+        (self.dir / "sets_index.json").write_text(
+            json.dumps(
+                {
+                    "JTL": {"complete": True, "fetched_at": "2026-10-27T10:00:00", "checked_at": "2026-11-17T09:00:00"},
+                    "HMW": {"complete": True, "fetched_at": "2026-11-17T09:00:00", "checked_at": "2026-11-17T09:00:00"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        card_db = {
+            ("Filler", ""): {"set": "HMW", "number": "001"},
+        }
+
+        db = analysis._db_meta(self.dir / "cards_normalized.json", card_db, {"HMW"})
+
+        self.assertEqual(db["data_as_of"], "2026-11-17")
+        self.assertEqual(db["checked_at"], "2026-11-17")
+
+    def test_an_old_set_in_the_deck_keeps_the_old_date(self):
+        (self.dir / "sets_index.json").write_text(
+            json.dumps(
+                {
+                    "JTL": {"complete": True, "fetched_at": "2026-10-27T10:00:00", "checked_at": "2026-11-17T09:00:00"},
+                    "HMW": {"complete": True, "fetched_at": "2026-11-17T09:00:00", "checked_at": "2026-11-17T09:00:00"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        card_db = {
+            ("Filler", ""): {"set": "HMW", "number": "001"},
+        }
+
+        db = analysis._db_meta(self.dir / "cards_normalized.json", card_db, {"HMW", "JTL"})
+
+        self.assertEqual(db["data_as_of"], "2026-10-27")

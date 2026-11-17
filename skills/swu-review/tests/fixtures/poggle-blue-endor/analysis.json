@@ -929,7 +929,7 @@
       "coverage_pct": 100.0,
       "currency": "USD",
       "priced_slots": 50,
-      "snapshot": "2026-11-17",
+      "snapshot": "2026-10-27",
       "source": "swu-db",
       "total": 28.19
     },
@@ -947,7 +947,8 @@
   },
   "db": {
     "cards": 2445,
-    "data_as_of": "2026-11-17",
+    "checked_at": "2026-11-17",
+    "data_as_of": "2026-10-27",
     "schema_hash": "bac8c35284e8f2640cadb562bd8bfde30b7ac803d14d4145cd1cfa38aa18d79e",
     "sets": [
       "JTL",
@@ -1594,7 +1595,7 @@
       "statement": "Only 2 of 39 unit slots are Space (5.1%)."
     }
   ],
-  "generated_at": "2026-11-17T10:56:25Z",
+  "generated_at": "2026-11-17T11:18:23Z",
   "input": {
     "format": "case",
     "n": 50,
@@ -1686,7 +1687,7 @@
       "id": "data-snapshot",
       "impact": "info",
       "mitigation": "Re-run fetch_cards.py and check db.data_as_of.",
-      "statement": "Card data snapshot: 2026-11-17 from api.swu-db.com (11 sets, 2445 cards)."
+      "statement": "Card data snapshot: 2026-10-27 from api.swu-db.com (11 sets, 2445 cards)."
     },
     {
       "affects": [
@@ -1709,7 +1710,7 @@
       "id": "price-snapshot",
       "impact": "info",
       "mitigation": "Read the total as an estimate with the stated coverage.",
-      "statement": "Prices are market USD from swu-db, snapshot 2026-11-17, coverage 100.0%."
+      "statement": "Prices are market USD from swu-db, snapshot 2026-10-27, coverage 100.0%."
     },
     {
       "affects": [

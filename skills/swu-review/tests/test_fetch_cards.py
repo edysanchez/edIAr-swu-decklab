@@ -9,8 +9,10 @@ them makes that rule impossible to apply.
 These tests feed synthetic API rows, so they never touch the network.
 """
 
+import datetime
 import io
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -452,3 +454,64 @@ class IsolationTest(unittest.TestCase):
 
         self.assertTrue((tmp / "cards_normalized.json").exists())
         self.assertEqual((tmp / "cards_normalized.json").parent, tmp)
+
+
+class MetaDatesTest(unittest.TestCase):
+    """`meta.json` describes the data, not the last time we looked."""
+
+    def setUp(self):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        self.dir = Path(handle.name)
+
+    def write_set(self, code, numbers=("001",)):
+        (self.dir / f"{code}.json").write_text(
+            json.dumps(payload(numbers, code)), encoding="utf-8"
+        )
+
+    def write_index(self, data):
+        (self.dir / "sets_index.json").write_text(json.dumps(data), encoding="utf-8")
+
+    def test_fetched_at_is_the_oldest_data(self):
+        self.write_set("JTL")
+        self.write_set("SOR")
+        self.write_index(
+            {
+                "JTL": {"complete": True, "fetched_at": "2026-10-27T15:23:41", "checked_at": "2026-11-17T09:00:00"},
+                "SOR": {"complete": True, "fetched_at": "2026-11-17T09:16:21", "checked_at": "2026-11-17T09:16:21"},
+            }
+        )
+
+        fetch_cards.write_meta(self.dir)
+
+        meta = json.loads((self.dir / "meta.json").read_text(encoding="utf-8"))
+        self.assertEqual(meta["fetched_at"], "2026-10-27T15:23:41")
+        self.assertEqual(meta["checked_at"], "2026-11-17T09:16:21")
+
+    def test_missing_fetch_date_is_backfilled_from_the_file(self):
+        self.write_set("JTL")
+        self.write_index({"JTL": {"complete": True, "checked_at": "2026-11-17T09:00:00"}})
+        old = datetime.datetime(2026, 10, 27, 15, 0, 0).timestamp()
+        os.utime(self.dir / "JTL.json", (old, old))
+
+        fetch_cards.write_meta(self.dir)
+
+        index = json.loads((self.dir / "sets_index.json").read_text(encoding="utf-8"))
+        self.assertIn("fetched_at", index["JTL"])
+        meta = json.loads((self.dir / "meta.json").read_text(encoding="utf-8"))
+        self.assertTrue(meta["fetched_at"].startswith("2026-10-27"), meta["fetched_at"])
+
+    def test_incomplete_sets_do_not_count(self):
+        self.write_set("JTL")
+        self.write_index(
+            {
+                "JTL": {"complete": True, "fetched_at": "2026-10-27T00:00:00", "checked_at": "2026-10-27T00:00:00"},
+                "IC27": {"complete": False, "fetched_at": "2026-11-17T00:00:00", "checked_at": "2026-11-17T00:00:00"},
+            }
+        )
+
+        fetch_cards.write_meta(self.dir)
+
+        meta = json.loads((self.dir / "meta.json").read_text(encoding="utf-8"))
+        self.assertEqual(meta["sets"], ["JTL"])
+        self.assertEqual(meta["fetched_at"], "2026-10-27T00:00:00")

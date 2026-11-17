@@ -57,6 +57,7 @@
       "properties": {
         "source": { "type": "string" },
         "data_as_of": { "type": "string" },
+      "checked_at": { "type": "string" },
         "sets": { "type": "array", "items": { "type": "string" } },
         "schema_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
         "cards": { "type": "integer", "minimum": 0 }

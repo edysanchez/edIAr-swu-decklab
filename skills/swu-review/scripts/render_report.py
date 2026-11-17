@@ -97,7 +97,12 @@ def _provenance(analysis):
         ("Input SHA-256", source.get("sha256")),
         ("Input format", source.get("format")),
         ("Card DB source", db.get("source")),
-        ("Card DB snapshot", db.get("data_as_of")),
+        (
+            "Card DB snapshot",
+            f"{db.get('data_as_of')} (checked {db.get('checked_at')})"
+            if db.get("checked_at")
+            else db.get("data_as_of"),
+        ),
         ("Card DB sets", ", ".join(db.get("sets") or [])),
         ("Card DB cards", db.get("cards")),
         ("Card DB schema hash", db.get("schema_hash")),

@@ -13,6 +13,13 @@
 ## Project
 `edIAr-swu-decklab` - Star Wars: Unlimited Premier deck review tools.
 
+## Pull requests
+- One PR answers one question. If the title needs "and", it is two PRs.
+- Documentation travels with the feature it describes, in the same PR.
+- A defect found along the way gets its own commit, not a fold-in.
+- Never add code that another commit of the same PR deletes.
+- Order by dependency, so every PR is green and reviewable on its own.
+
 ## Where to look
 - `skills/swu-review/SKILL.md` - the skill: review protocol, commands, flags, snapshots
 - `docs/rules.md` - legality rules (source of truth)

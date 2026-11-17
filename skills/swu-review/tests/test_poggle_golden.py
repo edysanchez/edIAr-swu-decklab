@@ -162,7 +162,7 @@ class PoggleGoldenTest(unittest.TestCase):
         ids = {lim["id"] for lim in out["limitations"]}
         expected = {
             "data-snapshot",
-            "premier-only-db",
+            "incomplete-catalogue",
             "price-snapshot",
             "draw-goldfish",
             "no-rules-engine",

@@ -1594,7 +1594,7 @@
       "statement": "Only 2 of 39 unit slots are Space (5.1%)."
     }
   ],
-  "generated_at": "2026-11-17T08:21:42Z",
+  "generated_at": "2026-11-17T09:25:09Z",
   "input": {
     "format": "case",
     "n": 50,
@@ -1694,11 +1694,11 @@
         "cards"
       ],
       "category": "data",
-      "detail": "Reprint legality by card version cannot be verified. An old printing may be reported as unresolved even when a Premier reprint exists.",
-      "id": "premier-only-db",
+      "detail": "A payload that does not match the count published by the API (a prerelease set, a failed download) is refused instead of stored, so its cards are reported as unresolved and its reprints cannot be seen.",
+      "id": "incomplete-catalogue",
       "impact": "degraded",
-      "mitigation": "Resolve by name+subtitle or add non-Premier printings to the DB.",
-      "statement": "Only Premier sets are fetched; older printings are not in the local DB."
+      "mitigation": "Run fetch_cards.py: it retries incomplete sets and reports them. The per-set state lives in data/swudb/sets_index.json.",
+      "statement": "Sets that are missing or incomplete in the local catalogue are invisible to this analysis."
     },
     {
       "affects": [

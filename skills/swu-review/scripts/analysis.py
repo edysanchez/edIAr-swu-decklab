@@ -691,16 +691,23 @@ def _limitations(db, composition, unresolved, findings):
             "mitigation": "Re-run fetch_cards.py and check db.data_as_of.",
         },
         {
-            "id": "premier-only-db",
+            "id": "incomplete-catalogue",
             "category": "data",
             "impact": "degraded",
-            "statement": "Only Premier sets are fetched; older printings are not in the local DB.",
+            "statement": (
+                "Sets that are missing or incomplete in the local catalogue are "
+                "invisible to this analysis."
+            ),
             "affects": ["legality", "cards"],
             "detail": (
-                "Reprint legality by card version cannot be verified. An old printing "
-                "may be reported as unresolved even when a Premier reprint exists."
+                "A payload that does not match the count published by the API (a "
+                "prerelease set, a failed download) is refused instead of stored, so "
+                "its cards are reported as unresolved and its reprints cannot be seen."
             ),
-            "mitigation": "Resolve by name+subtitle or add non-Premier printings to the DB.",
+            "mitigation": (
+                "Run fetch_cards.py: it retries incomplete sets and reports them. "
+                "The per-set state lives in data/swudb/sets_index.json."
+            ),
         },
     ]
 

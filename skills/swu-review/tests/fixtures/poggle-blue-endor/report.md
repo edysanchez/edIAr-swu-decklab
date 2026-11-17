@@ -10,7 +10,7 @@
 
 | Field | Value |
 |---|---|
-| Generated at | 2026-11-17T08:21:42Z |
+| Generated at | 2026-11-17T09:25:09Z |
 | Tool version | 0.1.0-dev |
 | Rules version | 2026-11-09 |
 | Schema version | 0.1.0 |
@@ -608,7 +608,7 @@ Only 2 of 39 unit slots are Space (5.1%).
 | ID | Impact | Category | Statement |
 |---|---|---|---|
 | `data-snapshot` | info | data | Card data snapshot: 2026-11-17 from api.swu-db.com (11 sets, 2445 cards). |
-| `premier-only-db` | degraded | data | Only Premier sets are fetched; older printings are not in the local DB. |
+| `incomplete-catalogue` | degraded | data | Sets that are missing or incomplete in the local catalogue are invisible to this analysis. |
 | `price-snapshot` | info | data | Prices are market USD from swu-db, snapshot 2026-11-17, coverage 100.0%. |
 | `draw-goldfish` | degraded | model | Draw odds use a goldfish model. |
 | `no-rules-engine` | info | model | Card text is reproduced from the DB, not interpreted. |
@@ -621,10 +621,10 @@ Only 2 of 39 unit slots are Space (5.1%).
   - Affects: legality, composition, cards, draw_odds
   - Detail: Any set released after the snapshot is invisible to this analysis.
   - Mitigation: Re-run fetch_cards.py and check db.data_as_of.
-- **`premier-only-db`**
+- **`incomplete-catalogue`**
   - Affects: legality, cards
-  - Detail: Reprint legality by card version cannot be verified. An old printing may be reported as unresolved even when a Premier reprint exists.
-  - Mitigation: Resolve by name+subtitle or add non-Premier printings to the DB.
+  - Detail: A payload that does not match the count published by the API (a prerelease set, a failed download) is refused instead of stored, so its cards are reported as unresolved and its reprints cannot be seen.
+  - Mitigation: Run fetch_cards.py: it retries incomplete sets and reports them. The per-set state lives in data/swudb/sets_index.json.
 - **`price-snapshot`**
   - Affects: composition.price
   - Detail: No foil, EUR, shipping or seller variation. Not an appraisal.

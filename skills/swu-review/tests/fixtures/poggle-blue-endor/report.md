@@ -10,18 +10,18 @@
 
 | Field | Value |
 |---|---|
-| Generated at | 2026-11-03T09:36:34Z |
+| Generated at | 2026-11-17T08:21:42Z |
 | Tool version | 0.1.0-dev |
-| Rules version | 2026-10-26 |
+| Rules version | 2026-11-09 |
 | Schema version | 0.1.0 |
-| Input path | cases/poggle-blue-endor/deck.json |
+| Input path | skills/swu-review/tests/fixtures/poggle-blue-endor/deck.json |
 | Input SHA-256 | 9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a |
 | Input format | case |
 | Card DB source | api.swu-db.com |
-| Card DB snapshot | 2026-10-27 |
-| Card DB sets | JTL, LOF, IBH, SEC, LAW, ASH, HMW |
-| Card DB cards | 1634 |
-| Card DB schema hash | 66aa15bcd22bff0933eb4d38b45435cde0f747a217f96dd4f19af38f826095c0 |
+| Card DB snapshot | 2026-11-17 |
+| Card DB sets | JTL, LOF, IBH, SEC, LAW, ASH, HMW, SHD, SOR, TS26, TWI |
+| Card DB cards | 2445 |
+| Card DB schema hash | 67a3e1bb15dd18b61dcb418f2cbc113bd6453f2f408f3436364f8a087972619a |
 
 ## Legality
 
@@ -607,12 +607,12 @@ Only 2 of 39 unit slots are Space (5.1%).
 
 | ID | Impact | Category | Statement |
 |---|---|---|---|
-| `data-snapshot` | info | data | Card data snapshot: 2026-10-27 from api.swu-db.com (7 sets, 1634 cards). |
+| `data-snapshot` | info | data | Card data snapshot: 2026-11-17 from api.swu-db.com (11 sets, 2445 cards). |
 | `premier-only-db` | degraded | data | Only Premier sets are fetched; older printings are not in the local DB. |
-| `price-snapshot` | info | data | Prices are market USD from swu-db, snapshot 2026-10-27, coverage 100.0%. |
+| `price-snapshot` | info | data | Prices are market USD from swu-db, snapshot 2026-11-17, coverage 100.0%. |
 | `draw-goldfish` | degraded | model | Draw odds use a goldfish model. |
 | `no-rules-engine` | info | model | Card text is reproduced from the DB, not interpreted. |
-| `rules-version` | info | rules | Legality follows the local rules verified on 2026-10-26. |
+| `rules-version` | info | rules | Legality follows the local rules verified on 2026-11-09. |
 | `sideboard-legal-only` | info | scope | The sideboard is used for legality only. |
 | `heuristic-thresholds` | degraded | heuristic | Findings use versioned heuristic thresholds, not rules of the game. |
 | `text-semantics-not-analyzed` | degraded | scope | Draw, removal and ramp are not classified in this version. |

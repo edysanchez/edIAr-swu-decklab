@@ -136,18 +136,18 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
         )
 
     def test_warns_about_a_legal_set_without_cards(self):
-        # IBH is legal in the snapshot but the database has no IBH cards, and
-        # there is no `sets_index.json`, so completeness falls back to the sets
-        # the loaded cards mention. IBH is used because no cached card has an IBH
-        # printing, so the set is genuinely absent.
+        # IBH is legal in the snapshot but the catalogue has no IBH cards: the
+        # completeness index says so, and no card carries an IBH printing.
         self.use_snapshot(legal=ALL_SETS)
         card_db = {
             key: card
             for key, card in vd.sc.load_swu_cards().items()
             if card.get("set") != "IBH"
         }
+        complete = set(ALL_SETS) - {"IBH"}
 
-        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db):
+        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db), \
+                mock.patch.object(vd.sc, "complete_sets", return_value=complete):
             _ok, _errors, warnings = vd.validate_deck(
                 self.write_deck(), verbose=False
             )
@@ -266,8 +266,10 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
             for key, card in analysis.sc.load_swu_cards().items()
             if card.get("set") != "IBH"
         }
+        complete = set(ALL_SETS) - {"IBH"}
 
-        with mock.patch.object(analysis.sc, "load_swu_cards", return_value=card_db):
+        with mock.patch.object(analysis.sc, "load_swu_cards", return_value=card_db), \
+                mock.patch.object(analysis.sc, "complete_sets", return_value=complete):
             out = self.analyse()
 
         self.assertTrue(

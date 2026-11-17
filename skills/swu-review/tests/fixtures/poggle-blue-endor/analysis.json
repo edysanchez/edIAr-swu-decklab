@@ -929,7 +929,7 @@
       "coverage_pct": 100.0,
       "currency": "USD",
       "priced_slots": 50,
-      "snapshot": "2026-10-27",
+      "snapshot": "2026-11-17",
       "source": "swu-db",
       "total": 28.19
     },
@@ -946,9 +946,9 @@
     "unique_slots": 20
   },
   "db": {
-    "cards": 1634,
-    "data_as_of": "2026-10-27",
-    "schema_hash": "66aa15bcd22bff0933eb4d38b45435cde0f747a217f96dd4f19af38f826095c0",
+    "cards": 2445,
+    "data_as_of": "2026-11-17",
+    "schema_hash": "67a3e1bb15dd18b61dcb418f2cbc113bd6453f2f408f3436364f8a087972619a",
     "sets": [
       "JTL",
       "LOF",
@@ -956,7 +956,11 @@
       "SEC",
       "LAW",
       "ASH",
-      "HMW"
+      "HMW",
+      "SHD",
+      "SOR",
+      "TS26",
+      "TWI"
     ],
     "source": "api.swu-db.com"
   },
@@ -1590,11 +1594,11 @@
       "statement": "Only 2 of 39 unit slots are Space (5.1%)."
     }
   ],
-  "generated_at": "2026-11-03T09:36:34Z",
+  "generated_at": "2026-11-17T08:21:42Z",
   "input": {
     "format": "case",
     "n": 50,
-    "path": "cases/poggle-blue-endor/deck.json",
+    "path": "skills/swu-review/tests/fixtures/poggle-blue-endor/deck.json",
     "sha256": "9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a"
   },
   "legality": {
@@ -1682,7 +1686,7 @@
       "id": "data-snapshot",
       "impact": "info",
       "mitigation": "Re-run fetch_cards.py and check db.data_as_of.",
-      "statement": "Card data snapshot: 2026-10-27 from api.swu-db.com (7 sets, 1634 cards)."
+      "statement": "Card data snapshot: 2026-11-17 from api.swu-db.com (11 sets, 2445 cards)."
     },
     {
       "affects": [
@@ -1705,7 +1709,7 @@
       "id": "price-snapshot",
       "impact": "info",
       "mitigation": "Read the total as an estimate with the stated coverage.",
-      "statement": "Prices are market USD from swu-db, snapshot 2026-10-27, coverage 100.0%."
+      "statement": "Prices are market USD from swu-db, snapshot 2026-11-17, coverage 100.0%."
     },
     {
       "affects": [
@@ -1739,7 +1743,7 @@
       "id": "rules-version",
       "impact": "info",
       "mitigation": "Check the official Comprehensive Event Guide.",
-      "statement": "Legality follows the local rules verified on 2026-10-26."
+      "statement": "Legality follows the local rules verified on 2026-11-09."
     },
     {
       "affects": [
@@ -1808,7 +1812,7 @@
       "statement": "Price forecasts or investment advice."
     }
   ],
-  "rules_version": "2026-10-26",
+  "rules_version": "2026-11-09",
   "schema_version": "0.1.0",
   "tool_version": "0.1.0-dev"
 }

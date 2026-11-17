@@ -121,6 +121,13 @@ def main(argv=None):
         else:
             if result["fetched"]:
                 print(f"Catalogue: downloaded {', '.join(result['fetched'])}", file=sys.stderr)
+            incomplete = result.get("incomplete") or []
+            if incomplete:
+                print(
+                    f"Catalogue: {', '.join(incomplete)} not complete yet; "
+                    "will retry later",
+                    file=sys.stderr,
+                )
             if result["missing"]:
                 print(
                     f"WARNING: still missing {', '.join(result['missing'])}; "

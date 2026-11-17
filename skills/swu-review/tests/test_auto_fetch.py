@@ -9,6 +9,7 @@ network call.
 
 import json
 import sys
+from datetime import datetime
 import tempfile
 import unittest
 from pathlib import Path
@@ -99,8 +100,30 @@ class RefreshCatalogueTest(unittest.TestCase):
             result = fetch_cards.refresh_catalogue(sets_dir=self.dir)
 
         self.assertEqual(result["status"], "partial")
-        self.assertEqual(result["missing"], ["IC27"])
+        self.assertEqual(result["incomplete"], ["IC27"])
+        self.assertEqual(result["missing"], [])
         self.assertFalse((self.dir / "IC27.json").exists())
+
+    def test_a_recently_checked_incomplete_set_is_not_retried(self):
+        self.write_json("catalogue.json", {"base_sets": ["IC27"]})
+        self.write_json(
+            "sets_index.json",
+            {
+                "IC27": {
+                    "expected": 194,
+                    "received": 57,
+                    "complete": False,
+                    "checked_at": datetime.now().isoformat(),
+                }
+            },
+        )
+        network = mock.Mock(side_effect=AssertionError("no network expected"))
+
+        with mock.patch.object(fetch_cards, "fetch_set_index", network):
+            result = fetch_cards.refresh_catalogue(sets_dir=self.dir)
+
+        self.assertEqual(result["incomplete"], ["IC27"])
+        network.assert_not_called()
 
     def test_network_failure_is_reported_not_raised(self):
         self.write_json("catalogue.json", {"base_sets": ["IC27"]})

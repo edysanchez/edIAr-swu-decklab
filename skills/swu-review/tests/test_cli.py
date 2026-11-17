@@ -19,7 +19,7 @@ CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
 
 def run(*args):
     return subprocess.run(
-        [sys.executable, str(SCRIPT), *map(str, args)],
+        [sys.executable, str(SCRIPT), "--no-fetch", *map(str, args)],
         cwd=str(REPO_ROOT),
         capture_output=True,
         text=True,

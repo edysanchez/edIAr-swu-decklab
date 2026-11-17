@@ -31,8 +31,13 @@ USER_AGENT = "edIAr-swu-decklab/0.1"
 # part of the output: it must be explicit and stable, never the network's.
 SET_ORDER = ("JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW")
 
+# Do not retry a set that was checked and found short more often than this: a
+# prerelease set is incomplete for weeks and re-downloading it on every analysis
+# would cost two requests each time for nothing.
+INCOMPLETE_RETRY_HOURS = 6
+
 # Files in the cache directory that are not per-set payloads.
-NON_SET_FILES = {"cards_normalized", "meta", "sets_index"}
+NON_SET_FILES = {"cards_normalized", "meta", "sets_index", "catalogue"}
 
 
 class FetchError(RuntimeError):
@@ -230,6 +235,18 @@ def is_incomplete(meta):
     return bool(meta) and meta.get("complete") is False
 
 
+def recently_checked(meta, hours=INCOMPLETE_RETRY_HOURS):
+    """Whether an incomplete set was already tried within the retry window."""
+    stamp = (meta or {}).get("checked_at")
+    if not stamp:
+        return False
+    try:
+        checked = datetime.fromisoformat(str(stamp))
+    except ValueError:
+        return False
+    return (datetime.now() - checked).total_seconds() < hours * 3600
+
+
 def load_cached_sets(sets_dir=None):
     """Read the usable cached payloads into ``{set_code: payload}``, in order."""
     directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
@@ -305,12 +322,24 @@ def ensure_sets(
     fetched_any = False
 
     for code in codes:
-        cached = (directory / f"{code}.json").exists()
-        if cached and not refresh and not is_incomplete(index.get(code)):
-            status[code] = {"status": "cached", **(index.get(code) or {})}
-            continue
-
         expected = (metadata.get(code) or {}).get("numberCards")
+        path = directory / f"{code}.json"
+
+        if path.exists() and not refresh:
+            meta = index.get(code)
+            if meta is None:
+                # A cache written before the index existed: measure it instead of
+                # trusting it, and repair it here if it turns out short.
+                meta = completeness(json.loads(path.read_text(encoding="utf-8")), expected)
+                meta["checked_at"] = datetime.now().isoformat()
+                index[code] = meta
+            if not is_incomplete(meta):
+                status[code] = {"status": "cached", **meta}
+                continue
+            if recently_checked(meta):
+                status[code] = {"status": "incomplete", **meta}
+                continue
+
         try:
             data = fetcher(code, timeout=timeout)
         except (HTTPError, URLError, OSError) as exc:
@@ -322,7 +351,7 @@ def ensure_sets(
             continue
 
         result = completeness(data, expected)
-        index[code] = result
+        index[code] = {**result, "checked_at": datetime.now().isoformat()}
         if result["complete"] is False:
             status[code] = {"status": "incomplete", **result}
             continue
@@ -404,29 +433,53 @@ def refresh_catalogue(sets_dir=None, timeout=60, fetcher=None):
     catalogue = read_catalogue(directory)
     base_sets = catalogue.get("base_sets") or []
     if not base_sets:
-        return {"status": "unknown", "fetched": [], "missing": []}
+        return {"status": "unknown", "fetched": [], "incomplete": [], "missing": []}
 
     complete = sc.complete_sets(directory)
     missing = [code for code in base_sets if code not in complete]
     if not missing:
-        return {"status": "up-to-date", "fetched": [], "missing": []}
+        return {"status": "up-to-date", "fetched": [], "incomplete": [], "missing": []}
+
+    # A set already checked and still short is not retried on every run: the
+    # decision needs no request, so no request is made.
+    local_index = read_sets_index(directory)
+    due = [code for code in missing if not recently_checked(local_index.get(code))]
+    if not due:
+        return {
+            "status": "partial",
+            "fetched": [],
+            "incomplete": missing,
+            "missing": [],
+        }
 
     try:
         index = fetch_set_index(timeout=timeout)
     except FetchError as exc:
-        return {"status": "failed", "fetched": [], "missing": missing, "error": str(exc)}
+        return {
+            "status": "failed",
+            "fetched": [],
+            "incomplete": [],
+            "missing": missing,
+            "error": str(exc),
+        }
 
     status = ensure_sets(
         missing, sets_dir=directory, set_index=index, fetcher=fetcher, timeout=timeout
     )
     fetched = [code for code, info in status.items() if info.get("status") == "fetched"]
-    still_missing = [
-        code for code, info in status.items() if info.get("status") != "fetched"
+    incomplete = [
+        code for code, info in status.items() if info.get("status") == "incomplete"
+    ]
+    failed = [
+        code
+        for code, info in status.items()
+        if info.get("status") not in {"fetched", "incomplete", "cached"}
     ]
     return {
-        "status": "partial" if still_missing else "refreshed",
+        "status": "partial" if (incomplete or failed) else "refreshed",
         "fetched": fetched,
-        "missing": still_missing,
+        "incomplete": incomplete,
+        "missing": failed,
     }
 
 

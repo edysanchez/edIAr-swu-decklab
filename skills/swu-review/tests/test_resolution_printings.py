@@ -93,3 +93,79 @@ class ResolutionPrintingsTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ResolveCardTest(unittest.TestCase):
+    """`validate_deck` resolves like `CardIndex`: unknown stays unknown."""
+
+    def setUp(self):
+        self.card_db = sc.load_swu_cards(CARD_DB)
+
+    def test_an_unknown_name_is_not_resolved(self):
+        self.assertIsNone(
+            vd.resolve_card({"name": "Totally Fake Card", "subtitle": ""}, self.card_db)
+        )
+
+    def test_a_typo_is_reported_instead_of_silently_corrected(self):
+        card = self.card_db[FILLER]
+        ref = {
+            "name": "Totally Fake Card",
+            "subtitle": "",
+            "set": card["set"],
+            "number": card["number"],
+        }
+
+        self.assertIsNone(vd.resolve_card(ref, self.card_db))
+
+    def test_a_missing_subtitle_falls_back_to_set_and_number(self):
+        ref = {
+            "name": "Shield Generator Complex",
+            "subtitle": "",
+            "set": "HMW",
+            "number": "022",
+        }
+
+        self.assertEqual(
+            vd.resolve_card(ref, self.card_db),
+            ("Shield Generator Complex", "Endor"),
+        )
+
+    def test_ids_are_normalised(self):
+        ref = {"set": "JTL", "number": "58", "id": "JTL_58"}
+
+        self.assertEqual(vd.resolve_card(ref, self.card_db), ("Academy Graduate", ""))
+
+    def test_an_unknown_card_makes_the_deck_illegal(self):
+        case = json.loads(
+            (TESTS_DIR / "fixtures" / "poggle-blue-endor" / "deck.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        case["mainDeck"][0]["card"]["title"] = "Totally Fake Card"
+        case["mainDeck"][0]["card"]["subtitle"] = ""
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "deck.json"
+            path.write_text(json.dumps(case), encoding="utf-8")
+            ok, errors, _warnings = vd.validate_deck(path, verbose=False)
+
+        self.assertFalse(ok)
+        self.assertTrue(any("Could not resolve" in error for error in errors), errors)
+
+    def test_a_leader_in_the_draw_deck_is_rejected(self):
+        deck = {
+            "leader": {"id": "HMW_012", "count": 1},
+            "base": {"id": "HMW_022", "count": 1},
+            "deck": [{"id": "HMW_177", "count": 50}, {"id": "HMW_012", "count": 1}],
+            "sideboard": [],
+        }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "deck.json"
+            path.write_text(json.dumps(deck), encoding="utf-8")
+            ok, errors, _warnings = vd.validate_deck(path, verbose=False)
+
+        self.assertFalse(ok)
+        self.assertTrue(
+            any("cannot be in the draw deck" in error for error in errors), errors
+        )

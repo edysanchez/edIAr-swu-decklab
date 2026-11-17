@@ -101,6 +101,7 @@ def _known_sets(card_db):
 def _db_meta(card_db_path, card_db, deck_sets=None):
     meta_path = card_db_path.parent / "meta.json"
     index = sc.read_sets_index(card_db_path.parent)
+    sets = sorted({card.get("set", "") for card in card_db.values() if card.get("set")})
     if meta_path.exists():
         with open(meta_path, "r", encoding="utf-8") as f:
             meta = json.load(f)

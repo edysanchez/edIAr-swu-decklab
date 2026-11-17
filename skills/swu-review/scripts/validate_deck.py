@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import swu_cards as sc
 import legal_sets
+from card_resolver import normalize_number, normalize_set, parse_card_id
 import suspended_list
 
 
@@ -127,22 +128,50 @@ def parse_case_format(data):
 
 
 def resolve_card(card_ref, card_db):
-    """Resolve a card reference to its identity."""
-    if isinstance(card_ref, dict):
-        if 'key' in card_ref:
-            return card_ref['key']
-        if 'name' in card_ref:
-            key = sc.card_identity_key(card_ref['name'], card_ref.get('subtitle', ''))
+    """Resolve a card reference to its identity, or ``None`` when unknown.
+
+    Returning a key for a card the database does not contain would make every
+    downstream check skip it (`if card and ...`), which turns an unknown card into
+    a legal one.
+    """
+    if not isinstance(card_ref, dict):
+        return None
+    if 'key' in card_ref:
+        key = tuple(card_ref['key'])
+        if len(key) == 1:
+            key = (key[0], "")
+        return key if key in card_db else None
+    if 'name' in card_ref:
+        key = sc.card_identity_key(card_ref['name'], card_ref.get('subtitle', ''))
+        if key in card_db:
             return key
-        if 'id' in card_ref:
-            set_code = card_ref.get('set', '')
-            number = card_ref.get('number', '')
-            for (name, subtitle), card in card_db.items():
-                if any(
-                    printed_set == set_code and printed_number == number
-                    for printed_set, printed_number in sc.card_printing_ids(card)
-                ):
-                    return (name, subtitle)
+    # A case-format entry can carry a name whose subtitle is missing; the
+    # set/number pair is still authoritative, so fall back to it -- but only when
+    # the name agrees, so a typo is reported instead of silently corrected.
+    key = _resolve_by_printing(card_ref, card_db)
+    if key is not None and 'name' in card_ref:
+        if key[0] != str(card_ref['name']).strip():
+            return None
+    return key
+
+
+def _resolve_by_printing(card_ref, card_db):
+    """Resolve ``{set, number}`` (or ``{id: "SET_NUM"}``) against every printing."""
+    set_code = normalize_set(card_ref.get('set', ''))
+    number = normalize_number(card_ref.get('number', ''))
+    if not set_code or not number:
+        parsed = parse_card_id(card_ref.get('id'))
+        if parsed:
+            set_code, number = normalize_set(parsed[0]), normalize_number(parsed[1])
+    if not set_code or not number:
+        return None
+    for key, card in card_db.items():
+        if any(
+            normalize_set(printed_set) == set_code
+            and normalize_number(printed_number) == number
+            for printed_set, printed_number in sc.card_printing_ids(card)
+        ):
+            return key
     return None
 
 
@@ -302,6 +331,13 @@ def validate_deck(deck_path, verbose=True, auto_fetch=False):
                 name = str(key)
             errors.append(f"Too many copies of {name}: {count} (max 3)")
     
+    for key in deck_cards:
+        card = card_db.get(key)
+        if card and card.get('type') in ('Leader', 'Base'):
+            errors.append(
+                f"{card['type']} {card['name']} cannot be in the draw deck"
+            )
+
     for key in deck_cards:
         card = card_db.get(key)
         if card and not legal.is_legal_any(sc.card_printings(card)):

@@ -415,3 +415,17 @@ class DbProvenanceTest(unittest.TestCase):
         db = analysis._db_meta(self.dir / "cards_normalized.json", card_db, {"HMW", "JTL"})
 
         self.assertEqual(db["data_as_of"], "2026-10-27")
+
+
+class DbMetaWithoutMetaJsonTest(unittest.TestCase):
+    """`--card-db` accepts a directory with only the catalogue."""
+
+    def test_missing_meta_json_does_not_crash(self):
+        import tempfile as _tempfile
+
+        with _tempfile.TemporaryDirectory() as tmp:
+            card_db = {("Filler", ""): {"set": "HMW", "number": "001"}}
+            db = analysis._db_meta(Path(tmp) / "cards_normalized.json", card_db, {"HMW"})
+
+        self.assertEqual(db["data_as_of"], "unknown")
+        self.assertEqual(db["sets"], ["HMW"])

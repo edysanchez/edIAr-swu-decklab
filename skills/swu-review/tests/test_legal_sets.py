@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Contract for the dynamic Premier legal-set check (RED first).
+"""Contract for the dynamic Premier legal-set check.
 
-`legal_sets.py` does not exist yet: these tests define the behaviour before the
-implementation, mirroring `docs/rules.md`:
+These tests mirror `docs/rules.md`:
 
 - the legal set list is a dated snapshot, not a constant;
 - a snapshot wins over the built-in registry, and disagreements are reported;
@@ -26,7 +25,7 @@ SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 import constants as C  # noqa: E402
-import legal_sets  # noqa: E402  (fails first: RED)
+import legal_sets  # noqa: E402
 
 FAR_PAST = "2000-01-01"
 FAR_FUTURE = "2099-01-01"

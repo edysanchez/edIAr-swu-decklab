@@ -147,9 +147,6 @@ class CardPrintingsTest(unittest.TestCase):
         self.assertEqual(sc.card_printings({}), [])
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 def payload(numbers, set_code="IC27"):
     return {
@@ -395,7 +392,7 @@ class MainTest(unittest.TestCase):
     def test_downloads_and_writes_meta(self):
         self.patch_index()
         with mock.patch.object(
-            fetch_cards, "fetch_set", side_effect=lambda code: payload(["001", "002"], code)
+            fetch_cards, "fetch_set", side_effect=lambda code, timeout=60: payload(["001", "002"], code)
         ):
             with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 code = fetch_cards.main([])
@@ -409,7 +406,7 @@ class MainTest(unittest.TestCase):
     def test_incomplete_set_makes_the_run_fail(self):
         self.patch_index({"JTL": {"numberCards": 3, "isBaseSet": True}})
         with mock.patch.object(
-            fetch_cards, "fetch_set", side_effect=lambda code: payload(["001"], code)
+            fetch_cards, "fetch_set", side_effect=lambda code, timeout=60: payload(["001"], code)
         ):
             with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 code = fetch_cards.main([])
@@ -447,7 +444,7 @@ class IsolationTest(unittest.TestCase):
         self.addCleanup(handle.cleanup)
         tmp = Path(handle.name)
 
-        with mock.patch.object(fetch_cards, "fetch_set", side_effect=lambda code: payload(["001"], code)):
+        with mock.patch.object(fetch_cards, "fetch_set", side_effect=lambda code, timeout=60: payload(["001"], code)):
             fetch_cards.ensure_sets(
                 ["IC27"],
                 sets_dir=tmp,
@@ -517,3 +514,6 @@ class MetaDatesTest(unittest.TestCase):
         meta = json.loads((self.dir / "meta.json").read_text(encoding="utf-8"))
         self.assertEqual(meta["sets"], ["JTL"])
         self.assertEqual(meta["fetched_at"], "2026-10-27T00:00:00")
+
+if __name__ == "__main__":
+    unittest.main()

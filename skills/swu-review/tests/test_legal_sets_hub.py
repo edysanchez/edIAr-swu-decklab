@@ -26,7 +26,7 @@ SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 sys.path.insert(0, str(TESTS_DIR))
 
-import fetch_legal_sets  # noqa: E402  (fails first: RED)
+import fetch_legal_sets  # noqa: E402
 import legal_sets  # noqa: E402
 
 FIXTURE = TESTS_DIR / "fixtures" / "competitivehub" / "premier-format-and-rotation.html"

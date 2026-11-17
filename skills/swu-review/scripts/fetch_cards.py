@@ -107,14 +107,14 @@ def select_sets(index, sets=None, include_all=False):
     return sorted(code for code, meta in index.items() if meta.get("isBaseSet"))
 
 
-def fetch_set(set_code):
+def fetch_set(set_code, timeout=60):
     """Fetch a set from swu-db API."""
     url = f"{API_BASE}/cards/{set_code}"
     print(f"Fetching {url}...", file=sys.stderr)
     
     req = Request(url, headers={"User-Agent": USER_AGENT})
     try:
-        with urlopen(req, timeout=60) as response:
+        with urlopen(req, timeout=timeout) as response:
             data = json.loads(response.read().decode('utf-8'))
         return data
     except HTTPError as e:
@@ -328,7 +328,7 @@ def ensure_sets(
     index = read_sets_index(directory)
     metadata = set_index or {}
     if fetcher is None:
-        fetcher = lambda code, timeout=timeout: fetch_set(code)  # noqa: E731
+        fetcher = lambda code, timeout=timeout: fetch_set(code, timeout=timeout)  # noqa: E731
 
     status = {}
     fetched_any = False
@@ -580,7 +580,9 @@ def main(argv=None):
     directory = Path(CARD_DB_PATH).parent
     try:
         index = fetch_set_index(timeout=args.timeout)
-        codes = select_sets(index, sets=args.sets, include_all=args.all)
+        codes = select_sets(
+            index, sets=args.sets, include_all=args.all and not args.base
+        )
     except FetchError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1

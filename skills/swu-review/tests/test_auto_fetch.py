@@ -86,7 +86,7 @@ class RefreshCatalogueTest(unittest.TestCase):
 
         index = {"JTL": {"numberCards": 1}, "IC27": {"numberCards": 2}}
         with mock.patch.object(fetch_cards, "fetch_set_index", return_value=index), \
-                mock.patch.object(fetch_cards, "fetch_set", side_effect=lambda code: payload(["001", "002"], code)):
+                mock.patch.object(fetch_cards, "fetch_set", side_effect=lambda code, timeout=60: payload(["001", "002"], code)):
             result = fetch_cards.refresh_catalogue(sets_dir=self.dir)
 
         self.assertEqual(result["status"], "refreshed")
@@ -98,7 +98,7 @@ class RefreshCatalogueTest(unittest.TestCase):
         index = {"IC27": {"numberCards": 3}}
 
         with mock.patch.object(fetch_cards, "fetch_set_index", return_value=index), \
-                mock.patch.object(fetch_cards, "fetch_set", side_effect=lambda code: payload(["001"], code)):
+                mock.patch.object(fetch_cards, "fetch_set", side_effect=lambda code, timeout=60: payload(["001"], code)):
             result = fetch_cards.refresh_catalogue(sets_dir=self.dir)
 
         self.assertEqual(result["status"], "partial")

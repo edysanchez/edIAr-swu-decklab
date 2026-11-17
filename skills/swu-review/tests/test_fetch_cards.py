@@ -243,3 +243,48 @@ class EnsureSetsTest(unittest.TestCase):
 
         self.assertIn("Card 001", cards)
         self.assertEqual(cards["Card 001"]["set"], "JTL")
+
+
+class CompleteSetsTest(unittest.TestCase):
+    """A set counts as present only when it is complete and on disk."""
+
+    def setUp(self):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        self.dir = Path(handle.name)
+
+    def write_set(self, code, numbers=("001",)):
+        (self.dir / f"{code}.json").write_text(
+            json.dumps(payload(numbers, code)), encoding="utf-8"
+        )
+
+    def write_index(self, data):
+        (self.dir / "sets_index.json").write_text(json.dumps(data), encoding="utf-8")
+
+    def test_complete_set_with_a_file_counts(self):
+        self.write_set("JTL", ("001", "002"))
+        self.write_index({"JTL": {"expected": 2, "received": 2, "complete": True}})
+
+        self.assertEqual(sc.complete_sets(self.dir), {"JTL"})
+
+    def test_incomplete_set_does_not_count(self):
+        self.write_set("IC27", ("001",))
+        self.write_index({"IC27": {"expected": 3, "received": 1, "complete": False}})
+
+        self.assertEqual(sc.complete_sets(self.dir), set())
+
+    def test_complete_entry_without_the_file_does_not_count(self):
+        self.write_index({"LOF": {"expected": 2, "received": 2, "complete": True}})
+
+        self.assertEqual(sc.complete_sets(self.dir), set())
+
+    def test_unknown_completeness_does_not_count(self):
+        self.write_set("JTL", ("001",))
+        self.write_index({"JTL": {"expected": None, "received": 1, "complete": None}})
+
+        self.assertEqual(sc.complete_sets(self.dir), set())
+
+    def test_absent_index_is_empty_not_an_error(self):
+        self.write_set("JTL", ("001",))
+
+        self.assertEqual(sc.complete_sets(self.dir), set())

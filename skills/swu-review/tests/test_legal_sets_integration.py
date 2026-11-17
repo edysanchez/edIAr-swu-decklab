@@ -136,9 +136,10 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
         )
 
     def test_warns_about_a_legal_set_without_cards(self):
-        # IBH is legal in the snapshot but the database has no IBH cards.
-        # IBH is used because no cached card has an IBH printing, so the set is
-        # genuinely absent rather than covered by another printing.
+        # IBH is legal in the snapshot but the database has no IBH cards, and
+        # there is no `sets_index.json`, so completeness falls back to the sets
+        # the loaded cards mention. IBH is used because no cached card has an IBH
+        # printing, so the set is genuinely absent.
         self.use_snapshot(legal=ALL_SETS)
         card_db = {
             key: card
@@ -154,6 +155,36 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
         self.assertTrue(
             any("IBH" in warning and "fetch_cards" in warning for warning in warnings),
             warnings,
+        )
+
+    def test_warns_about_a_partially_downloaded_set(self):
+        # LOF cards are on disk, but the completeness index says the set is
+        # short: mentioning a set is not the same as holding it in full.
+        self.use_snapshot(legal=ALL_SETS)
+        complete = set(ALL_SETS) - {"LOF"}
+
+        with mock.patch.object(vd.sc, "complete_sets", return_value=complete):
+            _ok, _errors, warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertTrue(
+            any("LOF" in warning and "fetch_cards" in warning for warning in warnings),
+            warnings,
+        )
+
+    def test_no_coverage_warning_with_a_legacy_cache(self):
+        # No index at all: completeness cannot be proven, so mentioned sets count
+        # and the review stays quiet instead of warning on every run.
+        self.use_snapshot(legal=ALL_SETS)
+
+        with mock.patch.object(vd.sc, "complete_sets", return_value=set()):
+            _ok, _errors, warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertFalse(
+            any("fetch_cards" in warning for warning in warnings), warnings
         )
 
     def test_accepts_a_card_reprinted_in_a_legal_set(self):
@@ -242,6 +273,21 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
         self.assertTrue(
             any(
                 "IBH" in warning and "fetch_cards" in warning
+                for warning in out["legality"]["warnings"]
+            ),
+            out["legality"]["warnings"],
+        )
+
+    def test_analysis_warns_about_a_partially_downloaded_set(self):
+        self.use_snapshot(legal=ALL_SETS)
+        complete = set(ALL_SETS) - {"LOF"}
+
+        with mock.patch.object(analysis.sc, "complete_sets", return_value=complete):
+            out = self.analyse()
+
+        self.assertTrue(
+            any(
+                "LOF" in warning and "fetch_cards" in warning
                 for warning in out["legality"]["warnings"]
             ),
             out["legality"]["warnings"],

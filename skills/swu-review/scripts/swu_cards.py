@@ -70,6 +70,35 @@ def card_printings(card: Dict[str, Any]) -> List[str]:
     return [card["set"]] if card.get("set") else []
 
 
+def read_sets_index(sets_dir=None) -> Dict[str, Dict[str, Any]]:
+    """Read the per-set completeness index; an absent index is not an error."""
+    directory = Path(sets_dir) if sets_dir is not None else get_data_dir() / "swudb"
+    path = directory / "sets_index.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def complete_sets(sets_dir=None) -> set:
+    """Set codes the catalogue holds in full.
+
+    A set counts only when the index says it is complete **and** its raw payload
+    still exists: an index entry without a file is a deleted cache, not data.
+    """
+    directory = Path(sets_dir) if sets_dir is not None else get_data_dir() / "swudb"
+    index = read_sets_index(directory)
+    return {
+        code
+        for code, meta in index.items()
+        if (meta or {}).get("complete") is True
+        and (directory / f"{code}.json").exists()
+    }
+
+
 def card_db_sets(card_db: Dict[Tuple[str, str], Dict[str, Any]]) -> set:
     """Return every set code the loaded card database has cards from."""
     known = set()

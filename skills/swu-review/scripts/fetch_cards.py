@@ -18,6 +18,7 @@ from urllib.error import URLError, HTTPError
 sys.path.insert(0, str(Path(__file__).parent))
 
 import constants as C
+import swu_cards as sc
 
 CARD_DB_PATH = C.CARD_DB_PATH
 
@@ -139,16 +140,8 @@ def cached_set_codes(sets_dir=None):
 
 
 def read_sets_index(sets_dir=None):
-    """Read the per-set completeness index; an absent index is not an error."""
-    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
-    path = directory / "sets_index.json"
-    if not path.exists():
-        return {}
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {}
-    return data if isinstance(data, dict) else {}
+    """Read the per-set completeness index (shared with `swu_cards`)."""
+    return sc.read_sets_index(sets_dir)
 
 
 def write_sets_index(index, sets_dir=None):

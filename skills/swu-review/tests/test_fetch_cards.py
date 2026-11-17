@@ -9,11 +9,14 @@ them makes that rule impossible to apply.
 These tests feed synthetic API rows, so they never touch the network.
 """
 
+import io
 import json
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 TESTS_DIR = Path(__file__).resolve().parent
 SKILL_DIR = TESTS_DIR.parent
@@ -288,3 +291,136 @@ class CompleteSetsTest(unittest.TestCase):
         self.write_set("JTL", ("001",))
 
         self.assertEqual(sc.complete_sets(self.dir), set())
+
+
+class FakeResponse:
+    def __init__(self, data):
+        self._data = json.dumps(data).encode("utf-8")
+
+    def read(self):
+        return self._data
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
+
+
+SETS_PAYLOAD = [
+    {"setId": "JTL", "fullName": "Jump To Lightspeed", "numberCards": 262, "isBaseSet": True},
+    {"setId": "IC27", "fullName": "Icons 2027", "numberCards": 194, "isBaseSet": True},
+    {"setId": "JTLOP", "fullName": "JTL OP Promo", "numberCards": 40, "parentSetId": "JTL"},
+]
+
+
+class SetIndexTest(unittest.TestCase):
+    def test_reads_the_bare_list_response(self):
+        with mock.patch.object(fetch_cards, "urlopen", return_value=FakeResponse(SETS_PAYLOAD)):
+            index = fetch_cards.fetch_set_index()
+
+        self.assertEqual(sorted(index), ["IC27", "JTL", "JTLOP"])
+        self.assertEqual(index["JTL"]["numberCards"], 262)
+        self.assertTrue(index["JTL"]["isBaseSet"])
+        self.assertFalse(index["JTLOP"]["isBaseSet"])
+        self.assertEqual(index["JTLOP"]["parentSetId"], "JTL")
+
+    def test_empty_response_is_an_error(self):
+        with mock.patch.object(fetch_cards, "urlopen", return_value=FakeResponse([])):
+            with self.assertRaises(fetch_cards.FetchError):
+                fetch_cards.fetch_set_index()
+
+    def test_default_selection_is_base_sets(self):
+        index = {"JTL": {"isBaseSet": True}, "IC27": {"isBaseSet": True}, "JTLOP": {"isBaseSet": False}}
+
+        self.assertEqual(fetch_cards.select_sets(index), ["IC27", "JTL"])
+
+    def test_all_includes_promos(self):
+        index = {"JTL": {"isBaseSet": True}, "JTLOP": {"isBaseSet": False}}
+
+        self.assertEqual(fetch_cards.select_sets(index, include_all=True), ["JTL", "JTLOP"])
+
+    def test_explicit_selection_is_normalised(self):
+        index = {"JTL": {"isBaseSet": True}, "IC27": {"isBaseSet": True}}
+
+        self.assertEqual(fetch_cards.select_sets(index, sets=" jtl , IC27 "), ["JTL", "IC27"])
+
+    def test_unknown_code_is_rejected(self):
+        with self.assertRaises(fetch_cards.FetchError):
+            fetch_cards.select_sets({"JTL": {}}, sets="JTL,SOR")
+
+
+class MainTest(unittest.TestCase):
+    def setUp(self):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        self.dir = Path(handle.name)
+        patcher = mock.patch.object(
+            fetch_cards, "CARD_DB_PATH", str(self.dir / "cards_normalized.json")
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def patch_index(self, index=None):
+        patcher = mock.patch.object(
+            fetch_cards, "fetch_set_index", return_value=index or {"JTL": {"numberCards": 2, "isBaseSet": True}}
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_dry_run_writes_nothing(self):
+        self.patch_index()
+        fetcher = mock.Mock()
+        with mock.patch.object(fetch_cards, "fetch_set", fetcher):
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                code = fetch_cards.main(["--dry-run"])
+
+        self.assertEqual(code, 0)
+        fetcher.assert_not_called()
+        self.assertEqual(list(self.dir.iterdir()), [])
+
+    def test_downloads_and_writes_meta(self):
+        self.patch_index()
+        with mock.patch.object(
+            fetch_cards, "fetch_set", side_effect=lambda code: payload(["001", "002"], code)
+        ):
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                code = fetch_cards.main([])
+
+        self.assertEqual(code, 0)
+        self.assertTrue((self.dir / "JTL.json").exists())
+        meta = json.loads((self.dir / "meta.json").read_text(encoding="utf-8"))
+        self.assertEqual(meta["sets"], ["JTL"])
+        self.assertEqual(meta["total_unique_cards"], 2)
+
+    def test_incomplete_set_makes_the_run_fail(self):
+        self.patch_index({"JTL": {"numberCards": 3, "isBaseSet": True}})
+        with mock.patch.object(
+            fetch_cards, "fetch_set", side_effect=lambda code: payload(["001"], code)
+        ):
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                code = fetch_cards.main([])
+
+        self.assertEqual(code, 1)
+        self.assertFalse((self.dir / "JTL.json").exists())
+
+    def test_refresh_downloads_a_cached_set_again(self):
+        (self.dir / "JTL.json").write_text(
+            json.dumps(payload(["001", "002"], "JTL")), encoding="utf-8"
+        )
+        calls = []
+
+        def fetcher(code, timeout=60):
+            calls.append(code)
+            return payload(["001", "002"], code)
+
+        status = fetch_cards.ensure_sets(
+            ["JTL"],
+            sets_dir=self.dir,
+            set_index={"JTL": {"numberCards": 2}},
+            fetcher=fetcher,
+            refresh=True,
+        )
+
+        self.assertEqual(calls, ["JTL"])
+        self.assertEqual(status["JTL"]["status"], "fetched")

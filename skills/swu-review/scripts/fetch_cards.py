@@ -7,6 +7,7 @@ Normalizes to only VariantType == 'Normal', excludes tokens.
 Deduplicates by name + subtitle identity.
 """
 
+import argparse
 import json
 import os
 import sys
@@ -22,8 +23,8 @@ import swu_cards as sc
 
 CARD_DB_PATH = C.CARD_DB_PATH
 
-PREMIER_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
 API_BASE = "https://api.swu-db.com"
+USER_AGENT = "edIAr-swu-decklab/0.1"
 
 # Canonical order for rebuilding the normalised catalogue. A card printed in
 # several sets keeps the record of the last set in this order, so the order is
@@ -34,12 +35,79 @@ SET_ORDER = ("JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW")
 NON_SET_FILES = {"cards_normalized", "meta", "sets_index"}
 
 
+class FetchError(RuntimeError):
+    """The catalogue cannot be built from what the API returned."""
+
+
+def fetch_set_index(timeout=60):
+    """Read ``/sets`` into ``{set_code: metadata}``.
+
+    The endpoint answers with a bare list, not the ``{"data": [...]}`` envelope
+    used by ``/cards/{SET}``.
+    """
+    url = f"{API_BASE}/sets"
+    request = Request(url, headers={"User-Agent": USER_AGENT})
+    try:
+        with urlopen(request, timeout=timeout) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except (HTTPError, URLError, OSError, ValueError) as exc:
+        raise FetchError(f"could not read {url}: {exc}") from exc
+
+    entries = data.get("data") if isinstance(data, dict) else data
+    if not isinstance(entries, list):
+        raise FetchError(f"{url} did not return a list of sets")
+
+    index = {}
+    for entry in entries:
+        code = str(entry.get("setId") or "").strip().upper()
+        if not code:
+            continue
+        cards = entry.get("numberCards")
+        try:
+            cards = int(cards)
+        except (TypeError, ValueError):
+            cards = None
+        index[code] = {
+            "name": entry.get("fullName") or code,
+            "numberCards": cards,
+            "releaseDate": entry.get("releaseDate"),
+            "isBaseSet": bool(entry.get("isBaseSet")),
+            "parentSetId": entry.get("parentSetId"),
+        }
+
+    if not index:
+        raise FetchError(f"{url} returned no usable sets")
+    return index
+
+
+def select_sets(index, sets=None, include_all=False):
+    """Choose which sets to fetch: explicit list, everything, or base sets."""
+    if sets:
+        codes = []
+        for chunk in str(sets).split(","):
+            code = chunk.strip().upper()
+            if code and code not in codes:
+                codes.append(code)
+        unknown = [code for code in codes if code not in index]
+        if unknown:
+            raise FetchError(
+                f"unknown set code(s): {', '.join(unknown)}; "
+                f"known: {', '.join(sorted(index))}"
+            )
+        return codes
+
+    if include_all:
+        return sorted(index)
+
+    return sorted(code for code, meta in index.items() if meta.get("isBaseSet"))
+
+
 def fetch_set(set_code):
     """Fetch a set from swu-db API."""
     url = f"{API_BASE}/cards/{set_code}"
     print(f"Fetching {url}...", file=sys.stderr)
     
-    req = Request(url, headers={"User-Agent": "edIAr-swu-decklab/0.1"})
+    req = Request(url, headers={"User-Agent": USER_AGENT})
     try:
         with urlopen(req, timeout=60) as response:
             data = json.loads(response.read().decode('utf-8'))
@@ -214,7 +282,10 @@ def store_set(code, data, sets_dir=None):
     return path
 
 
-def ensure_sets(codes, sets_dir=None, set_index=None, fetcher=None, out_path=None, timeout=60):
+def ensure_sets(
+    codes, sets_dir=None, set_index=None, fetcher=None, out_path=None,
+    timeout=60, refresh=False,
+):
     """Download the sets that are missing or incomplete.
 
     ``set_index`` is the metadata from /sets (``{code: {"numberCards": n}}``).
@@ -235,7 +306,7 @@ def ensure_sets(codes, sets_dir=None, set_index=None, fetcher=None, out_path=Non
 
     for code in codes:
         cached = (directory / f"{code}.json").exists()
-        if cached and not is_incomplete(index.get(code)):
+        if cached and not refresh and not is_incomplete(index.get(code)):
             status[code] = {"status": "cached", **(index.get(code) or {})}
             continue
 
@@ -262,7 +333,7 @@ def ensure_sets(codes, sets_dir=None, set_index=None, fetcher=None, out_path=Non
 
     write_sets_index(index, directory)
     if fetched_any:
-        rebuild_normalized(directory, out_path or C.CARD_DB_PATH)
+        rebuild_normalized(directory, out_path or CARD_DB_PATH)
     return status
 
 
@@ -290,49 +361,102 @@ def rebuild_normalized(sets_dir=None, out_path=None):
     return cards
 
 
-def main():
-    # CARD_DB_PATH = "data/swudb/cards_normalized.json" (from constants.py)
-    # Ensure the parent directory exists
-    swu_db_dir = Path(CARD_DB_PATH).parent
-    swu_db_dir.mkdir(parents=True, exist_ok=True)
-    
-    print("Fetching Premier sets from swu-db...", file=sys.stderr)
-    all_data = {}
-    
-    for set_code in PREMIER_SETS:
-        data = fetch_set(set_code)
-        if data:
-            all_data[set_code] = data
-            # Save raw set data
-            set_file = Path(CARD_DB_PATH).parent / f"{set_code}.json"
-            with open(set_file, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False)
-            print(f"  Saved {set_file} ({len(data.get('data', []))} rows)", file=sys.stderr)
-    
-    print("\nNormalizing cards...", file=sys.stderr)
-    cards = normalize_cards(all_data)
-    
-    # Save normalized cards
-    normalized_file = Path(CARD_DB_PATH)
-    with open(normalized_file, 'w', encoding='utf-8') as f:
-        json.dump(cards, f, ensure_ascii=False, indent=2)
-    
-    print(f"Saved {normalized_file} ({len(cards)} unique cards)", file=sys.stderr)
-    
-    # Save metadata
+def plan_lines(codes, index, directory, refresh=False):
+    """Describe what a run would do, without touching anything."""
+    complete = sc.complete_sets(directory)
+    local = read_sets_index(directory)
+    lines = [f"{len(codes)} set(s) selected"]
+    if not local:
+        lines.append("  (no sets_index.json: completeness of cached sets is unknown)")
+    for code in codes:
+        expected = (index.get(code) or {}).get("numberCards")
+        exists = (directory / f"{code}.json").exists()
+        if exists and not refresh and not is_incomplete(local.get(code)):
+            state = "cached"
+        elif exists and is_incomplete(local.get(code)) and not refresh:
+            state = "incomplete"
+        else:
+            state = "fetch"
+        lines.append(f"  {code:6} {state:11} expected {expected}")
+    return lines
+
+
+def write_meta(directory=None):
+    """Record what the catalogue holds, so `db.data_as_of` stays honest."""
+    directory = Path(directory) if directory is not None else Path(CARD_DB_PATH).parent
+    normalized = directory / "cards_normalized.json"
+    cards = json.loads(normalized.read_text(encoding="utf-8")) if normalized.exists() else {}
+    local = read_sets_index(directory)
+    sets = [code for code in cached_set_codes(directory) if not is_incomplete(local.get(code))]
     meta = {
         "fetched_at": datetime.now().isoformat(),
         "source": "api.swu-db.com",
-        "sets": PREMIER_SETS,
-        "total_unique_cards": len(cards)
+        "sets": sets,
+        "total_unique_cards": len(cards),
     }
-    meta_file = Path(CARD_DB_PATH).parent / "meta.json"
-    with open(meta_file, 'w', encoding='utf-8') as f:
-        json.dump(meta, f, indent=2)
-    
-    print(f"Saved {meta_file}", file=sys.stderr)
-    print(f"\nDone! {len(cards)} unique Premier cards cached.", file=sys.stderr)
+    path = directory / "meta.json"
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, path)
+    return path
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--sets", help="comma separated set codes")
+    parser.add_argument(
+        "--all", action="store_true", help="every set listed by /sets, promos included"
+    )
+    parser.add_argument(
+        "--base", action="store_true", help="only base sets (this is the default)"
+    )
+    parser.add_argument("--refresh", action="store_true", help="re-download cached sets")
+    parser.add_argument("--dry-run", action="store_true", help="report, do not write")
+    parser.add_argument("--timeout", type=int, default=60)
+    args = parser.parse_args(argv)
+
+    directory = Path(CARD_DB_PATH).parent
+    try:
+        index = fetch_set_index(timeout=args.timeout)
+        codes = select_sets(index, sets=args.sets, include_all=args.all)
+    except FetchError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+    if args.dry_run:
+        for line in plan_lines(codes, index, directory, args.refresh):
+            print(line)
+        return 0
+
+    print(f"Checking {len(codes)} set(s) against {API_BASE}...", file=sys.stderr)
+    status = ensure_sets(
+        codes,
+        sets_dir=directory,
+        set_index=index,
+        refresh=args.refresh,
+        timeout=args.timeout,
+    )
+    write_meta(directory)
+
+    for code in codes:
+        info = status.get(code) or {}
+        expected = (index.get(code) or {}).get("numberCards")
+        state = info.get("status", "?")
+        detail = ""
+        if info.get("received") is not None:
+            detail = f" ({info['received']}/{expected})"
+        print(f"  {code:6} {state:11}{detail}", file=sys.stderr)
+
+    failed = [code for code, info in status.items() if info.get("status") not in {"cached", "fetched"}]
+    if failed:
+        print(
+            f"WARNING: {len(failed)} set(s) still missing or incomplete: "
+            f"{', '.join(sorted(failed))}",
+            file=sys.stderr,
+        )
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

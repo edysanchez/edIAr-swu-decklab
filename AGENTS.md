@@ -18,7 +18,6 @@
 - `docs/rules.md` - legality rules (source of truth)
 - `docs/metrics.md` - metric definitions
 - `docs/data-sources.md` - sources, freshness and licensing
-- `docs/code-health.md` - known debt and follow-ups
 
 ## Skill: swu-review
 Location: `skills/swu-review/`

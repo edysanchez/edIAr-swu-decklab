@@ -87,9 +87,9 @@ def matches(card, filters):
         return False
     if filters.unique and not card.get("unique"):
         return False
-    if filters.sets and str(card.get("set", "")).upper() not in {
-        value.upper() for value in filters.sets
-    }:
+    if filters.sets and not {
+        str(value).upper() for value in filters.sets
+    } & {code.upper() for code in sc.card_printings(card)}:
         return False
     if filters.cost_min is not None or filters.cost_max is not None:
         cost = _cost(card)

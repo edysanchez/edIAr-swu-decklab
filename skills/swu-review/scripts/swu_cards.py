@@ -66,10 +66,36 @@ def card_printings(card: Dict[str, Any]) -> List[str]:
     identity, with ``printings`` when more than one set is known and ``set``
     otherwise.
     """
-    printings = [str(code) for code in (card.get("printings") or []) if code]
-    if printings:
-        return printings
+    codes = []
+    for entry in card.get("printings") or []:
+        code = entry.get("set") if isinstance(entry, dict) else entry
+        if code and str(code) not in codes:
+            codes.append(str(code))
+    if codes:
+        return codes
     return [card["set"]] if card.get("set") else []
+
+
+def card_printing_ids(card: Dict[str, Any]) -> List[Tuple[str, str]]:
+    """Every ``(set, number)`` the card is known to be printed as.
+
+    A deck may reference any printing, so resolution must accept all of them,
+    not just the canonical one kept on the record.
+    """
+    ids = []
+    if card.get("set"):
+        ids.append((str(card["set"]), str(card.get("number", "") or "")))
+
+    for entry in card.get("printings") or []:
+        if isinstance(entry, dict):
+            pair = (str(entry.get("set") or ""), str(entry.get("number", "") or ""))
+            if pair[0] and pair not in ids:
+                ids.append(pair)
+        elif entry:
+            pair = (str(entry), "")
+            if pair not in ids:
+                ids.append(pair)
+    return ids
 
 
 def read_sets_index(sets_dir=None) -> Dict[str, Dict[str, Any]]:

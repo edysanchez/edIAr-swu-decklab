@@ -10,7 +10,7 @@
 
 | Field | Value |
 |---|---|
-| Generated at | 2026-11-17T09:25:09Z |
+| Generated at | 2026-11-17T10:28:18Z |
 | Tool version | 0.1.0-dev |
 | Rules version | 2026-11-09 |
 | Schema version | 0.1.0 |
@@ -21,7 +21,7 @@
 | Card DB snapshot | 2026-11-17 |
 | Card DB sets | JTL, LOF, IBH, SEC, LAW, ASH, HMW, SHD, SOR, TS26, TWI |
 | Card DB cards | 2445 |
-| Card DB schema hash | 67a3e1bb15dd18b61dcb418f2cbc113bd6453f2f408f3436364f8a087972619a |
+| Card DB schema hash | bac8c35284e8f2640cadb562bd8bfde30b7ac803d14d4145cd1cfa38aa18d79e |
 
 ## Legality
 

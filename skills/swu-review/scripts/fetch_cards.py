@@ -154,11 +154,15 @@ def normalize_cards(all_cards_data):
             # its printings comes from a Premier-legal product. The surviving
             # `set` stays the last one fetched, for display.
             card_set = row.get('Set', set_code)
+            card_number = str(row.get('Number', '') or '')
             printings = []
             if key in cards:
-                printings = list(cards[key].get('printings') or [cards[key]['set']])
-            if card_set and card_set not in printings:
-                printings.append(card_set)
+                printings = list(cards[key].get('printings') or [])
+                if not printings and cards[key].get('set'):
+                    printings = [{"set": cards[key]['set'], "number": str(cards[key].get('number', ''))}]
+            printing = {"set": card_set, "number": card_number}
+            if card_set and printing not in printings:
+                printings.append(printing)
 
             record = {
                 "name": name,

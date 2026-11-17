@@ -138,7 +138,10 @@ def resolve_card(card_ref, card_db):
             set_code = card_ref.get('set', '')
             number = card_ref.get('number', '')
             for (name, subtitle), card in card_db.items():
-                if card.get('set') == set_code and card.get('number') == number:
+                if any(
+                    printed_set == set_code and printed_number == number
+                    for printed_set, printed_number in sc.card_printing_ids(card)
+                ):
                     return (name, subtitle)
     return None
 

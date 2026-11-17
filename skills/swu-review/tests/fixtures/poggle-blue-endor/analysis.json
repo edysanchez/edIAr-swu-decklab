@@ -948,7 +948,7 @@
   "db": {
     "cards": 2445,
     "data_as_of": "2026-11-17",
-    "schema_hash": "67a3e1bb15dd18b61dcb418f2cbc113bd6453f2f408f3436364f8a087972619a",
+    "schema_hash": "bac8c35284e8f2640cadb562bd8bfde30b7ac803d14d4145cd1cfa38aa18d79e",
     "sets": [
       "JTL",
       "LOF",
@@ -1594,7 +1594,7 @@
       "statement": "Only 2 of 39 unit slots are Space (5.1%)."
     }
   ],
-  "generated_at": "2026-11-17T09:25:09Z",
+  "generated_at": "2026-11-17T10:28:18Z",
   "input": {
     "format": "case",
     "n": 50,

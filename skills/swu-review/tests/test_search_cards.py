@@ -95,6 +95,22 @@ class FilterTest(unittest.TestCase):
     def test_set_filter(self):
         self.assertEqual(self.names(sets=("sor",)), ["Old Printing"])
 
+    def test_set_filter_sees_every_printing(self):
+        cards = {
+            ("Reprinted", ""): card(
+                "Reprinted",
+                set="SOR",
+                printings=[
+                    {"set": "JTL", "number": "258"},
+                    {"set": "SOR", "number": "250"},
+                ],
+            )
+        }
+
+        found = search_cards.search(cards, search_cards.Filters(sets=("JTL",)))
+
+        self.assertEqual([item["name"] for item in found], ["Reprinted"])
+
     def test_unique_filter(self):
         self.assertEqual(self.names(unique=True), [])
 

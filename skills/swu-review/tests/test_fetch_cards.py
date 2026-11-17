@@ -63,7 +63,13 @@ class NormalizePrintingsTest(unittest.TestCase):
         )
 
         card = cards["Adept ARC-170"]
-        self.assertEqual(card["printings"], ["JTL", "HMW"])
+        self.assertEqual(
+            card["printings"],
+            [
+                {"set": "JTL", "number": "114"},
+                {"set": "HMW", "number": "177"},
+            ],
+        )
         self.assertEqual(card["set"], "HMW")  # last fetched wins for display
 
     def test_repeated_printing_is_not_duplicated(self):
@@ -74,8 +80,11 @@ class NormalizePrintingsTest(unittest.TestCase):
             }
         )
 
-        self.assertEqual(cards["Adept ARC-170"]["printings"], ["JTL", "HMW"])
-        self.assertEqual(len(cards["Adept ARC-170"]["printings"]), 2)
+        printings = cards["Adept ARC-170"]["printings"]
+        self.assertEqual(
+            [(entry["set"], entry["number"]) for entry in printings],
+            [("JTL", "114"), ("HMW", "177")],
+        )
 
     def test_tokens_and_variants_are_excluded(self):
         cards = fetch_cards.normalize_cards(

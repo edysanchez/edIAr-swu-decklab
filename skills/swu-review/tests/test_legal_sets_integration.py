@@ -24,6 +24,8 @@ SCRIPTS_DIR = SKILL_DIR / "scripts"
 
 sys.path.insert(0, str(SCRIPTS_DIR))
 
+from datetime import date, timedelta  # noqa: E402
+
 import analysis  # noqa: E402
 import constants as C  # noqa: E402
 import validate_deck as vd  # noqa: E402
@@ -51,6 +53,13 @@ JTL_LEADER_DECK = {
     "sideboard": [],
 }
 
+IC27_DECK = {
+    "leader": {"id": "HMW_012", "count": 1},
+    "base": {"id": "HMW_022", "count": 1},
+    "deck": [{"id": "IC27_012", "count": 1}, {"id": "HMW_177", "count": 49}],
+    "sideboard": [],
+}
+
 JTL_BASE_DECK = {
     "leader": {"id": "HMW_012", "count": 1},
     "base": {"id": "JTL_024", "count": 1},  # Data Vault, Scarif
@@ -59,14 +68,14 @@ JTL_BASE_DECK = {
 }
 
 
-def snapshot(legal, fetched_at="2026-11-12T00:00:00Z", as_of="2026-11-12"):
+def snapshot(legal=ALL_SETS, fetched_at="2026-11-12T00:00:00Z", as_of="2026-11-12", products=()):
     return {
         "source": "test",
         "fetched_at": fetched_at,
         "as_of": as_of,
         "legal": legal,
         "next_change": None,
-        "products": [],
+        "products": list(products),
     }
 
 
@@ -294,6 +303,39 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
             ),
             out["legality"]["warnings"],
         )
+
+    def test_unresolved_card_names_the_missing_set(self):
+        today = date.today()
+        self.use_snapshot(
+            as_of=(today - timedelta(days=1)).isoformat(),
+            products=[
+                {"code": "IC27", "name": "Icons 2027", "legal_from": today.isoformat()}
+            ],
+        )
+
+        out = self.analyse(IC27_DECK)
+
+        reasons = [entry["reason"] for entry in out["deck"]["unresolved"]]
+        self.assertTrue(
+            any("IC27" in reason and "fetch_cards" in reason for reason in reasons),
+            reasons,
+        )
+
+    def test_limitation_names_the_missing_set(self):
+        today = date.today()
+        self.use_snapshot(
+            as_of=(today - timedelta(days=1)).isoformat(),
+            products=[
+                {"code": "IC27", "name": "Icons 2027", "legal_from": today.isoformat()}
+            ],
+        )
+
+        out = self.analyse(IC27_DECK)
+
+        limitation = next(
+            item for item in out["limitations"] if item["id"] == "incomplete-catalogue"
+        )
+        self.assertIn("IC27", limitation["detail"])
 
     def test_stale_snapshot_warning_reaches_the_analysis(self):
         self.use_snapshot(legal=ALL_SETS, fetched_at="2020-01-01T00:00:00Z", as_of="2020-01-01")

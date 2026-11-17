@@ -30,7 +30,7 @@ import constants as C
 import legal_sets
 import suspended_list
 import swu_cards as sc
-from card_resolver import CardIndex, UnresolvedCard
+from card_resolver import CardIndex, UnresolvedCard, parse_card_id
 from draw_odds import p_at_least_one
 from validate_deck import load_deck
 from domain.services.aspect_penalty_service import AspectPenaltyService
@@ -126,12 +126,44 @@ def _db_meta(card_db_path, card_db):
     }
 
 
-def _resolve_ref(index, ref, zone, unresolved):
+def _ref_set(ref):
+    """The set code a deck reference points at, if it carries one."""
+    if not isinstance(ref, dict):
+        return None
+    code = ref.get("set")
+    if code:
+        return str(code).strip().upper()
+    parsed = parse_card_id(ref.get("id"))
+    return parsed[0] if parsed else None
+
+
+def _unresolved_reason(reason, ref, legal, known_sets):
+    """Explain a miss instead of leaving one generic message for every cause."""
+    code = _ref_set(ref)
+    if not code or legal is None:
+        return reason
+    if not legal.is_legal(code):
+        return f"set {code} is not Premier-legal"
+    if known_sets is not None and code not in known_sets:
+        return (
+            f"set {code} is Premier-legal but not in the local catalogue; "
+            "run fetch_cards.py"
+        )
+    return reason
+
+
+def _resolve_ref(index, ref, zone, unresolved, legal=None, known_sets=None):
     try:
         return index.resolve(ref)
     except UnresolvedCard as exc:
         safe_ref = ref if isinstance(ref, dict) else {"value": ref}
-        unresolved.append({"zone": zone, "ref": safe_ref, "reason": exc.reason})
+        unresolved.append(
+            {
+                "zone": zone,
+                "ref": safe_ref,
+                "reason": _unresolved_reason(exc.reason, ref, legal, known_sets),
+            }
+        )
         return None
 
 
@@ -674,7 +706,7 @@ def _findings(composition, main_counts, card_db, unresolved):
     return sorted(findings, key=lambda f: f["id"])
 
 
-def _limitations(db, composition, unresolved, findings):
+def _limitations(db, composition, unresolved, findings, legal=None, known_sets=None):
     n = composition["n"]
     price = composition["price"]
     items = [
@@ -710,6 +742,13 @@ def _limitations(db, composition, unresolved, findings):
             ),
         },
     ]
+
+    if legal is not None and known_sets is not None:
+        missing = sorted(legal.effective_codes() - set(known_sets))
+        if missing:
+            for item in items:
+                if item["id"] == "incomplete-catalogue":
+                    item["detail"] += f" Missing right now: {', '.join(missing)}."
 
     if unresolved:
         items.append({
@@ -901,23 +940,38 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     card_db = sc.load_swu_cards(card_db_path)
     index = CardIndex(card_db)
 
+    # Legality is needed before resolution: an unresolved card should say
+    # whether its set is legal but missing from the catalogue.
+    known_sets = _known_sets(card_db)
+    legal = legal_sets.load(known_sets=known_sets)
+
     deck = load_deck(deck_path)
     unresolved = []
 
-    leader = _resolve_ref(index, deck.get("leader"), "leader", unresolved)
-    base = _resolve_ref(index, deck.get("base"), "base", unresolved)
+    leader = _resolve_ref(
+        index, deck.get("leader"), "leader", unresolved,
+        legal=legal, known_sets=known_sets,
+    )
+    base = _resolve_ref(
+        index, deck.get("base"), "base", unresolved,
+        legal=legal, known_sets=known_sets,
+    )
 
     main_counts = Counter()
     for entry in deck.get("deck", []):
         count = max(1, _entry_count(entry))
-        resolved = _resolve_ref(index, entry, "main", unresolved)
+        resolved = _resolve_ref(
+            index, entry, "main", unresolved, legal=legal, known_sets=known_sets
+        )
         if resolved:
             main_counts[resolved.key] += count
 
     side_counts = Counter()
     for entry in deck.get("sideboard", []):
         count = max(1, _entry_count(entry))
-        resolved = _resolve_ref(index, entry, "sideboard", unresolved)
+        resolved = _resolve_ref(
+            index, entry, "sideboard", unresolved, legal=legal, known_sets=known_sets
+        )
         if resolved:
             side_counts[resolved.key] += count
 
@@ -933,12 +987,14 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     legality = _legality(
         leader, base, main_counts, side_counts, unresolved, card_db, zone_counts,
         suspended=suspended_list.load(card_db),
-        legal=legal_sets.load(known_sets=_known_sets(card_db)),
+        legal=legal,
     )
     legality["aspect_penalty"] = _aspect_penalty(leader, base, main_counts, card_repository)
     composition = _composition(main_counts, card_db, db["data_as_of"], cm_index)
     findings = _findings(composition, main_counts, card_db, unresolved)
-    limitations = _limitations(db, composition, unresolved, findings)
+    limitations = _limitations(
+        db, composition, unresolved, findings, legal=legal, known_sets=known_sets
+    )
 
     provided_aspects = set()
     if leader:

@@ -47,6 +47,13 @@ class LegalSets:
     warnings: List[str] = field(default_factory=list)
     policy: Optional[LegalSetPolicy] = None
 
+    def effective_codes(self, on=None) -> set:
+        """Set codes legal today: the list plus anything legal by release date."""
+        codes = set(self.codes)
+        if self.policy is not None:
+            codes |= set(self.policy.available_but_unlisted(on or date.today()))
+        return codes
+
     def is_legal_any(self, set_codes, on=None) -> bool:
         """Return whether any printing of a card is legal as of this snapshot.
 
@@ -101,7 +108,8 @@ def _coverage_warnings(codes, known_sets):
     if not missing:
         return []
     return [
-        "The legal-set list includes sets with no cards in the card database: "
+        "The legal-set list includes sets with no complete cards in the "
+        "card database: "
         f"{', '.join(missing)}. Decks using them will report unresolved cards. "
         "Run fetch_cards.py."
     ]
@@ -114,7 +122,7 @@ def load(snapshot_path=None, known_sets=None):
     when given, legal sets with no cards are reported as warnings.
     """
     result = _load(snapshot_path)
-    result.warnings.extend(_coverage_warnings(result.codes, known_sets))
+    result.warnings.extend(_coverage_warnings(result.effective_codes(), known_sets))
     return result
 
 

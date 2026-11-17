@@ -16,7 +16,7 @@ import json
 import sys
 import tempfile
 import unittest
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
@@ -126,6 +126,24 @@ class LegalSetsTest(unittest.TestCase):
         self.assertFalse(result.is_legal("IC27"))
         self.assertTrue(
             any("date" in warning.lower() for warning in result.warnings),
+            result.warnings,
+        )
+
+    def test_a_set_legal_by_release_date_is_checked_for_coverage(self):
+        today = date.today()
+        result = legal_sets.load(
+            snapshot_path=self.write(
+                as_of=(today - timedelta(days=1)).isoformat(),
+                products=[
+                    {"code": "IC27", "name": "Icons 2027", "legal_from": today.isoformat()}
+                ],
+            ),
+            known_sets={"JTL", "LOF"},
+        )
+
+        self.assertTrue(result.is_legal("IC27"))  # legal through the date window
+        self.assertTrue(
+            any("IC27" in warning and "fetch_cards" in warning for warning in result.warnings),
             result.warnings,
         )
 

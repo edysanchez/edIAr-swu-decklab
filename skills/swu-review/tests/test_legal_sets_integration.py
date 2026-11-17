@@ -136,12 +136,14 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
         )
 
     def test_warns_about_a_legal_set_without_cards(self):
-        # LOF is legal in the snapshot but the database has no LOF cards.
+        # IBH is legal in the snapshot but the database has no IBH cards.
+        # IBH is used because no cached card has an IBH printing, so the set is
+        # genuinely absent rather than covered by another printing.
         self.use_snapshot(legal=ALL_SETS)
         card_db = {
             key: card
             for key, card in vd.sc.load_swu_cards().items()
-            if card.get("set") != "LOF"
+            if card.get("set") != "IBH"
         }
 
         with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db):
@@ -150,7 +152,7 @@ class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
             )
 
         self.assertTrue(
-            any("LOF" in warning and "fetch_cards" in warning for warning in warnings),
+            any("IBH" in warning and "fetch_cards" in warning for warning in warnings),
             warnings,
         )
 
@@ -231,7 +233,7 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
         card_db = {
             key: card
             for key, card in analysis.sc.load_swu_cards().items()
-            if card.get("set") != "LOF"
+            if card.get("set") != "IBH"
         }
 
         with mock.patch.object(analysis.sc, "load_swu_cards", return_value=card_db):
@@ -239,7 +241,7 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
 
         self.assertTrue(
             any(
-                "LOF" in warning and "fetch_cards" in warning
+                "IBH" in warning and "fetch_cards" in warning
                 for warning in out["legality"]["warnings"]
             ),
             out["legality"]["warnings"],

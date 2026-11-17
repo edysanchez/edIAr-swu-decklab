@@ -5,7 +5,7 @@ Single source for values that were previously duplicated across scripts.
 A follow-up refactor will make the existing scripts import from here too.
 """
 
-SCHEMA_VERSION = "0.1.0"
+SCHEMA_VERSION = "0.2.0"
 TOOL_VERSION = "0.1.0-dev"
 RULES_VERSION = "2026-11-09"
 

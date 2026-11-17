@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| Generated at | 2026-11-17T11:18:23Z |
+| Generated at | 2026-11-17T13:23:11Z |
 | Tool version | 0.1.0-dev |
 | Rules version | 2026-11-09 |
-| Schema version | 0.1.0 |
+| Schema version | 0.2.0 |
 | Input path | skills/swu-review/tests/fixtures/poggle-blue-endor/deck.json |
 | Input SHA-256 | 9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a |
 | Input format | case |

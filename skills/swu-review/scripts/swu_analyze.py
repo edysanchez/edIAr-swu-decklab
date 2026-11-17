@@ -113,7 +113,7 @@ def main(argv=None):
     if json_target == STDOUT and report_target == STDOUT:
         parser.error("cannot send both --json and --report to stdout")
 
-    if not args.no_fetch:
+    if not args.no_fetch and args.card_db is None:
         try:
             result = fetch_cards.refresh_catalogue()
         except Exception as exc:  # never block a review

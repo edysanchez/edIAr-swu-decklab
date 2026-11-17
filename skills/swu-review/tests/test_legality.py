@@ -22,6 +22,7 @@ SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 import analysis  # noqa: E402
+import tempfile  # noqa: E402
 
 FIXTURES_DIR = TESTS_DIR / "fixtures"
 CASE = FIXTURES_DIR / "poggle-blue-endor" / "deck.json"
@@ -52,6 +53,43 @@ def entry_of_type(deck, type_name):
 
 
 @requires_catalogue
+class TextFormatTest(unittest.TestCase):
+    def test_a_text_deck_validates(self):
+        # The Poggle case, written in the SWUDB text format: leader and base on
+        # their own sections, the 50-card deck below.
+        import json as _json
+
+        case = _json.loads(
+            (
+                Path(__file__).resolve().parent
+                / "fixtures"
+                / "poggle-blue-endor"
+                / "deck.json"
+            ).read_text(encoding="utf-8")
+        )
+        main = [
+            f"{entry['count']} | {entry['card']['title']}"
+            + (f" | {entry['card']['subtitle']}" if entry["card"].get("subtitle") else "")
+            for entry in case["mainDeck"]
+            if entry["card"]["type"]["name"] not in ("Leader", "Base")
+        ]
+        deck = (
+            "Leader\n1 | Poggle the Lesser | Let the Executions Begin\n\n"
+            "Base\n1 | Shield Generator Complex | Endor\n\n"
+            "MainDeck\n" + "\n".join(main) + "\n"
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "deck.txt"
+            path.write_text(deck, encoding="utf-8")
+            out = analysis.build_analysis(
+                path, card_db_path=CARD_DB, generated_at="2026-11-03T00:00:00Z"
+            )
+
+        self.assertEqual(out["deck"]["unresolved"], [])
+        self.assertTrue(out["legality"]["ok"], out["legality"]["errors"])
+
+
 class LegalityTest(unittest.TestCase):
     def assert_illegal(self, out, needle):
         self.assertFalse(out["legality"]["ok"])

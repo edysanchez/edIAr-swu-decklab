@@ -365,11 +365,23 @@ def ensure_sets(
             continue
 
         result = completeness(data, expected)
-        stamp = datetime.now().isoformat()
-        index[code] = {**result, "checked_at": stamp, "fetched_at": stamp}
         if result["complete"] is False:
+            previous = index.get(code) or {}
+            if path.exists() and previous.get("complete") is True:
+                # A short refresh must not throw away a good copy: keep the
+                # previous entry and report the attempt instead.
+                status[code] = {
+                    "status": "incomplete",
+                    **previous,
+                    "error": "refresh returned a short payload; kept the cached copy",
+                }
+                continue
+            index[code] = {**result, "checked_at": datetime.now().isoformat()}
             status[code] = {"status": "incomplete", **result}
             continue
+
+        stamp = datetime.now().isoformat()
+        index[code] = {**result, "checked_at": stamp, "fetched_at": stamp}
 
         store_set(code, data, directory)
         status[code] = {"status": "fetched", **result}

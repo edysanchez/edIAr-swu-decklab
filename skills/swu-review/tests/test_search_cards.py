@@ -191,3 +191,14 @@ class MainTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SuspendedFilterTest(unittest.TestCase):
+    def test_a_suspended_card_is_never_legal(self):
+        cards = {("Suspended", ""): card("Suspended"), ("Fine", ""): card("Fine")}
+
+        found = search_cards.search(
+            cards, search_cards.Filters(suspended=frozenset({("Suspended", "")}))
+        )
+
+        self.assertEqual([item["name"] for item in found], ["Fine"])

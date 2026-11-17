@@ -274,14 +274,11 @@ def parse_deck_swu_text(text: str) -> Dict[str, Any]:
         
         if current_section == 'leader':
             if result["leader"] is None:
-                result["leader"] = [card_entry]
+                result["leader"] = card_entry
             else:
-                result["leader"].append(card_entry)
+                result["leader"] = card_entry  # last wins; counts come from _zone_counts
         elif current_section == 'base':
-            if result["base"] is None:
-                result["base"] = [card_entry]
-            else:
-                result["base"].append(card_entry)
+            result["base"] = card_entry  # last wins; counts come from _zone_counts
         elif current_section == 'deck':
             result["deck"].append(card_entry)
         elif current_section == 'sideboard':

@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import legal_sets  # noqa: E402
+import suspended_list  # noqa: E402
 import swu_cards as sc  # noqa: E402
 
 
@@ -45,6 +46,7 @@ class Filters:
     unique: bool = False
     sets: tuple = ()
     legal: object = None
+    suspended: frozenset = frozenset()
 
 
 def _cost(card):
@@ -63,8 +65,10 @@ def _contains(values, wanted):
     return any(needle.lower() in haystack for needle in wanted)
 
 
-def matches(card, filters):
+def matches(key, card, filters):
     """Return whether a card satisfies every active filter."""
+    if filters.suspended and key in filters.suspended:
+        return False
     if filters.name and filters.name.lower() not in str(card.get("name", "")).lower():
         return False
     if filters.text and filters.text.lower() not in str(card.get("frontText") or "").lower():
@@ -129,7 +133,11 @@ def row(key, card):
 
 def search(card_db, filters):
     """Return the matching cards, cheapest first and then by name."""
-    found = [row(key, card) for key, card in card_db.items() if matches(card, filters)]
+    found = [
+        row(key, card)
+        for key, card in card_db.items()
+        if matches(key, card, filters)
+    ]
     found.sort(key=lambda item: (item["cost"] if item["cost"] is not None else 99, item["name"]))
     return found
 
@@ -157,7 +165,10 @@ def _parser():
     parser.add_argument(
         "--legal",
         action="store_true",
-        help="only cards legal in Premier as of the dated legal-set list",
+        help=(
+            "only cards legal in Premier as of the dated legal-set list, "
+            "excluding suspended cards"
+        ),
     )
     parser.add_argument("--limit", type=int, default=None, help="keep the first N matches")
     parser.add_argument("--json", action="store_true", help="JSON instead of a table")
@@ -175,11 +186,13 @@ def main(argv=None):
         return 1
 
     legal = None
+    suspended = frozenset()
     if args.legal:
         known = sc.complete_sets() or sc.card_db_sets(card_db)
         legal = legal_sets.load(known_sets=known)
         for warning in legal.warnings:
             print(f"WARNING: {warning}", file=sys.stderr)
+        suspended = suspended_list.load(card_db).identities
 
     filters = Filters(
         name=args.name,
@@ -195,6 +208,7 @@ def main(argv=None):
         unique=args.unique,
         sets=_csv(args.sets),
         legal=legal,
+        suspended=suspended,
     )
 
     results = search(card_db, filters)

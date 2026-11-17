@@ -27,6 +27,8 @@ import fetch_cards  # noqa: E402
 import swu_analyze  # noqa: E402
 import validate_deck as vd  # noqa: E402
 
+REPO_ROOT = SKILL_DIR.parents[1]
+
 DECK = TESTS_DIR / "fixtures" / "poggle-blue-endor" / "deck.json"
 
 
@@ -163,6 +165,23 @@ class EntryPointTest(unittest.TestCase):
             with mock.patch.object(fetch_cards, "refresh_catalogue") as refresh:
                 with mock.patch("sys.stderr"):
                     code = swu_analyze.main([str(DECK), "--json", str(out), "--no-fetch"])
+
+        self.assertEqual(code, 0)
+        refresh.assert_not_called()
+
+    def test_swu_analyze_does_not_repair_when_a_catalogue_is_given(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "analysis.json"
+            with mock.patch.object(fetch_cards, "refresh_catalogue") as refresh:
+                code = swu_analyze.main(
+                    [
+                        str(DECK),
+                        "--json",
+                        str(out),
+                        "--card-db",
+                        str(REPO_ROOT / "data" / "swudb" / "cards_normalized.json"),
+                    ]
+                )
 
         self.assertEqual(code, 0)
         refresh.assert_not_called()

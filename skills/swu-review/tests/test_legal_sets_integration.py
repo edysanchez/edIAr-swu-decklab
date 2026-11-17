@@ -367,9 +367,6 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class DbProvenanceTest(unittest.TestCase):
     """`data_as_of` describes the sets the deck uses."""
@@ -429,3 +426,6 @@ class DbMetaWithoutMetaJsonTest(unittest.TestCase):
 
         self.assertEqual(db["data_as_of"], "unknown")
         self.assertEqual(db["sets"], ["HMW"])
+
+if __name__ == "__main__":
+    unittest.main()

@@ -517,3 +517,42 @@ class MetaDatesTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RefreshKeepsGoodDataTest(unittest.TestCase):
+    def test_a_short_refresh_does_not_demote_a_good_copy(self):
+        import tempfile as _tempfile
+
+        with _tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            (directory / "JTL.json").write_text(
+                json.dumps(payload(["001", "002"], "JTL")), encoding="utf-8"
+            )
+            (directory / "sets_index.json").write_text(
+                json.dumps(
+                    {
+                        "JTL": {
+                            "expected": 2,
+                            "received": 2,
+                            "complete": True,
+                            "fetched_at": "2026-11-01T00:00:00",
+                            "checked_at": "2026-11-01T00:00:00",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            status = fetch_cards.ensure_sets(
+                ["JTL"],
+                sets_dir=directory,
+                set_index={"JTL": {"numberCards": 2}},
+                fetcher=lambda code, timeout=60: payload(["001"], "JTL"),
+                refresh=True,
+            )
+
+            self.assertEqual(status["JTL"]["status"], "incomplete")
+            self.assertIn("kept the cached copy", status["JTL"]["error"])
+            index = json.loads((directory / "sets_index.json").read_text(encoding="utf-8"))
+            self.assertTrue(index["JTL"]["complete"])
+            self.assertEqual(sc.complete_sets(directory), {"JTL"})

@@ -1595,7 +1595,7 @@
       "statement": "Only 2 of 39 unit slots are Space (5.1%)."
     }
   ],
-  "generated_at": "2026-11-17T11:18:23Z",
+  "generated_at": "2026-11-17T13:23:11Z",
   "input": {
     "format": "case",
     "n": 50,
@@ -1814,6 +1814,6 @@
     }
   ],
   "rules_version": "2026-11-09",
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "tool_version": "0.1.0-dev"
 }

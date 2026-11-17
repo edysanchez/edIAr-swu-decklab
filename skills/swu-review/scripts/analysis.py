@@ -89,13 +89,14 @@ def _detect_format(content):
     return "json"
 
 
-def _known_sets(card_db):
+def _known_sets(card_db, card_db_path=None):
     """Sets the catalogue holds in full, falling back to mentioned sets.
 
     The fallback keeps old caches (no `sets_index.json`) quiet: they cannot prove
     completeness, so every set they mention is treated as present.
     """
-    return sc.complete_sets() or sc.card_db_sets(card_db)
+    directory = Path(card_db_path).parent if card_db_path is not None else None
+    return sc.complete_sets(directory) or sc.card_db_sets(card_db)
 
 
 def _db_meta(card_db_path, card_db, deck_sets=None):
@@ -260,9 +261,9 @@ def _zone_counts(content, deck_format):
             card_entry = {"name": name, "subtitle": subtitle, "count": count}
             
             if current_section == 'leader':
-                leaders.append(card_entry)
-            elif current_section == 'base' and current_section != 'done':
-                bases.append(card_entry)
+                leaders.append(count)
+            elif current_section == 'base':
+                bases.append(count)
         
         return leaders, bases
     try:
@@ -774,8 +775,8 @@ def _limitations(db, composition, unresolved, findings, legal=None, known_sets=N
                 ),
                 "affects": ["legality"],
                 "detail": (
-                    "A set that became legal, or a card suspended, after the "
-                    "registry was written is not reflected in this analysis."
+                    "A set that became legal after the registry was written is not "
+                    "reflected; suspensions have their own snapshot."
                 ),
                 "mitigation": (
                     "Run fetch_legal_sets.py to write data/swu/legal-sets.json."
@@ -982,7 +983,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
 
     # Legality is needed before resolution: an unresolved card should say
     # whether its set is legal but missing from the catalogue.
-    known_sets = _known_sets(card_db)
+    known_sets = _known_sets(card_db, card_db_path)
     legal = legal_sets.load(known_sets=known_sets)
 
     deck = load_deck(deck_path)

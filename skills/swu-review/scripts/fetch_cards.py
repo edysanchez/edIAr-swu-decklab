@@ -24,6 +24,14 @@ CARD_DB_PATH = C.CARD_DB_PATH
 PREMIER_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
 API_BASE = "https://api.swu-db.com"
 
+# Canonical order for rebuilding the normalised catalogue. A card printed in
+# several sets keeps the record of the last set in this order, so the order is
+# part of the output: it must be explicit and stable, never the network's.
+SET_ORDER = ("JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW")
+
+# Files in the cache directory that are not per-set payloads.
+NON_SET_FILES = {"cards_normalized", "meta", "sets_index"}
+
 
 def fetch_set(set_code):
     """Fetch a set from swu-db API."""
@@ -108,6 +116,184 @@ def normalize_cards(all_cards_data):
                 record["printings"] = printings
             cards[key] = record
     
+    return cards
+
+
+def set_order_key(code):
+    """Sort key that keeps ``SET_ORDER`` first and unknown sets after it."""
+    known = SET_ORDER.index(code) if code in SET_ORDER else len(SET_ORDER)
+    return (known, code)
+
+
+def cached_set_codes(sets_dir=None):
+    """Return the set codes with a raw payload in the cache, in canonical order."""
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    if not directory.exists():
+        return []
+    codes = [
+        path.stem
+        for path in directory.glob("*.json")
+        if path.stem not in NON_SET_FILES
+    ]
+    return sorted(codes, key=set_order_key)
+
+
+def read_sets_index(sets_dir=None):
+    """Read the per-set completeness index; an absent index is not an error."""
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    path = directory / "sets_index.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def write_sets_index(index, sets_dir=None):
+    """Write the completeness index atomically."""
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / "sets_index.json"
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(
+        json.dumps(index, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8"
+    )
+    os.replace(tmp, path)
+    return path
+
+
+def is_incomplete(meta):
+    """A set is unusable only when it was checked and found short."""
+    return bool(meta) and meta.get("complete") is False
+
+
+def load_cached_sets(sets_dir=None):
+    """Read the usable cached payloads into ``{set_code: payload}``, in order."""
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    index = read_sets_index(directory)
+    payloads = {}
+    for code in cached_set_codes(directory):
+        if is_incomplete(index.get(code)):
+            continue
+        with open(directory / f"{code}.json", "r", encoding="utf-8") as handle:
+            payloads[code] = json.load(handle)
+    return payloads
+
+
+def payload_card_count(payload):
+    """Number of distinct numbered cards in a set payload."""
+    numbers = set()
+    for row in payload.get("data") or []:
+        if "Token" in str(row.get("Type", "")):
+            continue
+        if row.get("VariantType") != "Normal":
+            continue
+        number = str(row.get("Number") or "").strip()
+        if number:
+            numbers.add(number)
+    return len(numbers)
+
+
+def completeness(payload, expected):
+    """Compare a payload with the count the API publishes for the set.
+
+    ``expected is None`` means the set is not described by /sets, so the payload
+    cannot be validated: it is usable but not certified.
+    """
+    received = payload_card_count(payload)
+    return {
+        "expected": expected,
+        "received": received,
+        "complete": None if expected is None else received >= expected,
+    }
+
+
+def store_set(code, data, sets_dir=None):
+    """Store a raw set payload atomically."""
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"{code}.json"
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, path)
+    return path
+
+
+def ensure_sets(codes, sets_dir=None, set_index=None, fetcher=None, out_path=None, timeout=60):
+    """Download the sets that are missing or incomplete.
+
+    ``set_index`` is the metadata from /sets (``{code: {"numberCards": n}}``).
+    Returns ``{code: {"status": "cached" | "fetched" | "incomplete" | "failed"}}``.
+
+    A payload that cannot be validated against the published count is never
+    stored: a half-downloaded set would look complete to every later run.
+    """
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    directory.mkdir(parents=True, exist_ok=True)
+    index = read_sets_index(directory)
+    metadata = set_index or {}
+    if fetcher is None:
+        fetcher = lambda code, timeout=timeout: fetch_set(code)  # noqa: E731
+
+    status = {}
+    fetched_any = False
+
+    for code in codes:
+        cached = (directory / f"{code}.json").exists()
+        if cached and not is_incomplete(index.get(code)):
+            status[code] = {"status": "cached", **(index.get(code) or {})}
+            continue
+
+        expected = (metadata.get(code) or {}).get("numberCards")
+        try:
+            data = fetcher(code, timeout=timeout)
+        except (HTTPError, URLError, OSError) as exc:
+            status[code] = {"status": "failed", "error": str(exc)}
+            continue
+
+        if not data or not data.get("data"):
+            status[code] = {"status": "failed", "error": "empty payload"}
+            continue
+
+        result = completeness(data, expected)
+        index[code] = result
+        if result["complete"] is False:
+            status[code] = {"status": "incomplete", **result}
+            continue
+
+        store_set(code, data, directory)
+        status[code] = {"status": "fetched", **result}
+        fetched_any = True
+
+    write_sets_index(index, directory)
+    if fetched_any:
+        rebuild_normalized(directory, out_path or C.CARD_DB_PATH)
+    return status
+
+
+def write_normalized(cards, out_path=None):
+    """Write ``cards`` atomically so an interrupted rebuild cannot corrupt it."""
+    target = Path(out_path) if out_path is not None else Path(CARD_DB_PATH)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_suffix(target.suffix + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as handle:
+        json.dump(cards, handle, ensure_ascii=False, indent=2)
+    os.replace(tmp, target)
+    return target
+
+
+def rebuild_normalized(sets_dir=None, out_path=None):
+    """Rebuild the normalised catalogue from the cached raw set payloads.
+
+    The raw per-set files are the cache of record; the normalised file is
+    derived. When ``out_path`` is given the result is written, otherwise it is
+    returned for inspection.
+    """
+    cards = normalize_cards(load_cached_sets(sets_dir))
+    if out_path is not None:
+        write_normalized(cards, out_path)
     return cards
 
 

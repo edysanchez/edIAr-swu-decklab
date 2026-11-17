@@ -182,7 +182,28 @@ def calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db):
     return total_penalty, max_penalty
 
 
-def validate_deck(deck_path, verbose=True):
+def _refresh_catalogue():
+    """Repair local catalogue gaps before validating; failures are warnings."""
+    try:
+        import fetch_cards
+        result = fetch_cards.refresh_catalogue()
+    except Exception as exc:  # never block a review
+        print(f"WARNING: could not refresh the card catalogue: {exc}", file=sys.stderr)
+        return
+    if result["fetched"]:
+        print(f"Catalogue: downloaded {', '.join(result['fetched'])}", file=sys.stderr)
+    if result["missing"]:
+        print(
+            f"WARNING: still missing {', '.join(result['missing'])}; "
+            "run fetch_cards.py",
+            file=sys.stderr,
+        )
+
+
+def validate_deck(deck_path, verbose=True, auto_fetch=False):
+    if auto_fetch:
+        _refresh_catalogue()
+
     errors = []
     warnings = []
     
@@ -340,9 +361,14 @@ def main():
     parser.add_argument('deck', help='Path to deck file (SWUDB JSON or text)')
     parser.add_argument('--json', action='store_true', help='Output as JSON')
     parser.add_argument('--quiet', action='store_true', help='Only output result')
+    parser.add_argument(
+        '--no-fetch', action='store_true', help='Do not download missing sets'
+    )
     args = parser.parse_args()
     
-    valid, errors, warnings = validate_deck(args.deck, verbose=not args.quiet)
+    valid, errors, warnings = validate_deck(
+        args.deck, verbose=not args.quiet, auto_fetch=not args.no_fetch
+    )
     
     if args.json:
         result = {"valid": valid, "errors": errors, "warnings": warnings}

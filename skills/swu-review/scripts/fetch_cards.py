@@ -333,7 +333,10 @@ def ensure_sets(
 
     write_sets_index(index, directory)
     if fetched_any:
-        rebuild_normalized(directory, out_path or CARD_DB_PATH)
+        # The rebuilt catalogue belongs next to the sets it was built from, not
+        # to the global cache: a caller working in a temporary directory must not
+        # overwrite the real one.
+        rebuild_normalized(directory, out_path or (directory / "cards_normalized.json"))
     return status
 
 
@@ -359,6 +362,72 @@ def rebuild_normalized(sets_dir=None, out_path=None):
     if out_path is not None:
         write_normalized(cards, out_path)
     return cards
+
+
+def read_catalogue(sets_dir=None):
+    """Read the set list recorded by the last `main` run."""
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    path = directory / "catalogue.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def write_catalogue(base_sets, all_sets, sets_dir=None):
+    """Record which sets the catalogue is supposed to contain."""
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / "catalogue.json"
+    data = {
+        "checked_at": datetime.now().isoformat(),
+        "base_sets": sorted(base_sets),
+        "all_sets": sorted(all_sets),
+    }
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, path)
+    return path
+
+
+def refresh_catalogue(sets_dir=None, timeout=60, fetcher=None):
+    """Repair local gaps in the catalogue. Never raises, never invents sets.
+
+    The set list comes from the last `main` run, so this does not discover new
+    products on its own: it only downloads base sets that are missing or
+    incomplete. With nothing missing it makes no network call at all.
+    """
+    directory = Path(sets_dir) if sets_dir is not None else Path(CARD_DB_PATH).parent
+    catalogue = read_catalogue(directory)
+    base_sets = catalogue.get("base_sets") or []
+    if not base_sets:
+        return {"status": "unknown", "fetched": [], "missing": []}
+
+    complete = sc.complete_sets(directory)
+    missing = [code for code in base_sets if code not in complete]
+    if not missing:
+        return {"status": "up-to-date", "fetched": [], "missing": []}
+
+    try:
+        index = fetch_set_index(timeout=timeout)
+    except FetchError as exc:
+        return {"status": "failed", "fetched": [], "missing": missing, "error": str(exc)}
+
+    status = ensure_sets(
+        missing, sets_dir=directory, set_index=index, fetcher=fetcher, timeout=timeout
+    )
+    fetched = [code for code, info in status.items() if info.get("status") == "fetched"]
+    still_missing = [
+        code for code, info in status.items() if info.get("status") != "fetched"
+    ]
+    return {
+        "status": "partial" if still_missing else "refreshed",
+        "fetched": fetched,
+        "missing": still_missing,
+    }
 
 
 def plan_lines(codes, index, directory, refresh=False):
@@ -437,6 +506,8 @@ def main(argv=None):
         timeout=args.timeout,
     )
     write_meta(directory)
+    base_sets = sorted(code for code, meta in index.items() if meta.get("isBaseSet"))
+    write_catalogue(base_sets, sorted(index), directory)
 
     for code in codes:
         info = status.get(code) or {}

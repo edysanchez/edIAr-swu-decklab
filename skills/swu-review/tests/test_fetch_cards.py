@@ -424,3 +424,22 @@ class MainTest(unittest.TestCase):
 
         self.assertEqual(calls, ["JTL"])
         self.assertEqual(status["JTL"]["status"], "fetched")
+
+
+class IsolationTest(unittest.TestCase):
+    """A fetch into a temporary directory must not touch the real cache."""
+
+    def test_ensure_sets_writes_the_catalogue_next_to_the_sets(self):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        tmp = Path(handle.name)
+
+        with mock.patch.object(fetch_cards, "fetch_set", side_effect=lambda code: payload(["001"], code)):
+            fetch_cards.ensure_sets(
+                ["IC27"],
+                sets_dir=tmp,
+                set_index={"IC27": {"numberCards": 1}},
+            )
+
+        self.assertTrue((tmp / "cards_normalized.json").exists())
+        self.assertEqual((tmp / "cards_normalized.json").parent, tmp)

@@ -36,7 +36,9 @@ def load_swu_cards(card_db_path: Optional[Path] = None) -> Dict[Tuple[str, str],
     if card_db_path is None:
         data_dir = get_data_dir()
         card_db_path = data_dir / "swudb" / "cards_normalized.json"
-    
+    else:
+        card_db_path = Path(card_db_path)
+
     if not card_db_path.exists():
         raise FileNotFoundError(f"Card database not found: {card_db_path}. Run fetch_cards.py first.")
     

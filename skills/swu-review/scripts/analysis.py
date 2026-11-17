@@ -761,6 +761,27 @@ def _limitations(db, composition, unresolved, findings, legal=None, known_sets=N
         },
     ]
 
+    if legal is not None and getattr(legal, "source", "") == "builtin-registry":
+        items.append(
+            {
+                "id": "legality-registry",
+                "category": "data",
+                "impact": "degraded",
+                "statement": (
+                    "Legality came from the built-in registry, not from a dated "
+                    "snapshot."
+                ),
+                "affects": ["legality"],
+                "detail": (
+                    "A set that became legal, or a card suspended, after the "
+                    "registry was written is not reflected in this analysis."
+                ),
+                "mitigation": (
+                    "Run fetch_legal_sets.py to write data/swu/legal-sets.json."
+                ),
+            }
+        )
+
     if legal is not None and known_sets is not None:
         missing = sorted(legal.effective_codes() - set(known_sets))
         if missing:

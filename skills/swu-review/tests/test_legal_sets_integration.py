@@ -341,6 +341,21 @@ class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
         )
         self.assertIn("IC27", limitation["detail"])
 
+    def test_missing_snapshot_is_reported_as_a_limitation(self):
+        with mock.patch.object(C, "LEGAL_SETS_SNAPSHOT_PATH", "/nonexistent/legal.json"):
+            out = self.analyse()
+
+        ids = {item["id"] for item in out["limitations"]}
+        self.assertIn("legality-registry", ids)
+
+    def test_a_snapshot_removes_the_legality_limitation(self):
+        self.use_snapshot(legal=ALL_SETS)
+
+        out = self.analyse()
+
+        ids = {item["id"] for item in out["limitations"]}
+        self.assertNotIn("legality-registry", ids)
+
     def test_stale_snapshot_warning_reaches_the_analysis(self):
         self.use_snapshot(legal=ALL_SETS, fetched_at="2020-01-01T00:00:00Z", as_of="2020-01-01")
 

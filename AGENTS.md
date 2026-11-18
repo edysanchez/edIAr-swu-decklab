@@ -22,6 +22,7 @@
 
 ## Where to look
 - `skills/swu-review/SKILL.md` - the skill: review protocol, commands, flags, snapshots
+- `docs/README.md` - documentation index and publication status
 - `docs/rules.md` - legality rules (source of truth)
 - `docs/metrics.md` - metric definitions
 - `docs/data-sources.md` - sources, freshness and licensing
@@ -38,6 +39,6 @@ flag and snapshot rule. Do not restate them here: add them there.
 
 ### Notes
 - Everything under `data/` is a local cache (gitignored): the card catalogue, the
-  suspended list, the legal-set snapshot and prices. The skill works without it,
-  falling back to the registries in `scripts/constants.py`; what each snapshot
-  means and when it goes stale is documented in `SKILL.md`.
+  suspended list, the legal-set snapshot and prices. The **card catalogue is
+  required**; only the suspended and legal-set registries have fallbacks. What
+  each snapshot means and when it goes stale is documented in `SKILL.md`.

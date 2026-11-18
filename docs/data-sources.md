@@ -9,7 +9,7 @@ Every value derived from these sources must carry the parameters described in
 
 ## Card database
 
-Three sources are used by this project.
+Five sources are used by this project.
 
 ### swu-db (primary)
 - Base: <https://api.swu-db.com>
@@ -24,7 +24,9 @@ Three sources are used by this project.
 - Provides: printed name and subtitle, type, aspects, traits, arenas, cost,
   power, HP, keywords, unique, rarity, variant flags, FrontText, EpicAction,
   BackArt/BackText, FrontArt, cid, tcgplayerId, `MarketPrice`, `LowPrice`,
-  `FoilPrice`, `LowFoilPrice`.
+  `FoilPrice`, `LowFoilPrice`. The normalized record currently stores
+  `FrontText` only; the leader back side is available upstream but not yet in the
+  report (tracked as a known limitation).
 - Shape: `{ "total_cards": <int>, "data": [ ... ] }`. The response contains
   every printing: one row per variant with a different `Number`. Collapse to one
   record per printed name + subtitle, but keep `printings` as a list of
@@ -32,7 +34,9 @@ Three sources are used by this project.
   a Premier-legal product, and resolution must accept any of them. Only
   `VariantType == "Normal"` is used for deck analysis and pricing; exclude rows
   with `Type` starting with `Token` or containing `Token` (`Token Unit`,
-  `Token Upgrade`, `Force Token`).
+  `Token Upgrade`, `Force Token`). A deck that references a Hyperspace or Foil
+  printing number may therefore be unresolved until variant mapping lands
+  (P1-14).
 - Local cache: `data/swudb/`, one raw file per set plus the derived
   `cards_normalized.json`, `sets_index.json` (completeness and per-set dates),
   `catalogue.json` (the intended set list) and `meta.json`.
@@ -107,15 +111,16 @@ Three sources are used by this project.
 - SWUDB text (Melee/Picklist style): sections `Leader`, `Base`, `MainDeck`,
   `Sideboard`, lines like `3 | Card Name | Subtitle` or similar. The user
   provides these; the parser must not scrape them.
-- In-repo format: `cases/*/deck.json` may be used internally, but **must not**
-  contain card texts, images or full database dumps.
+- Local case format: `.local/cases/*/deck.json` may be used internally, but
+  **must not** contain card texts, images or full database dumps. The `cases/`
+  path is gitignored and is not part of the public repository.
 
 ## Prices
 
 ### swu-db (USD)
 - Included in the card rows above. Use only `MarketPrice` for a `VariantType ==
   "Normal"` printing of each card identity.
-- Local cache: `data/swdb/` (or alongside the card cache)
+- Local cache: `data/swudb/` (or alongside the card cache)
 - Currency: USD, TCGplayer reference.
 
 ### Cardmarket (EUR)
@@ -148,6 +153,8 @@ embeds images is a local artifact and never part of the repository.
   Attribution required; cite window, region, sample size and retrieval date.
 - **Melee.gg**: not queried directly; tournament data comes via SWU Meta Stats.
 - Reports must credit the provider they used.
+- **Known gap:** the Poggle test fixtures still contain card text and image URLs;
+  they are being sanitized. They are not an exception to this policy.
 
 ## Freshness rules
 

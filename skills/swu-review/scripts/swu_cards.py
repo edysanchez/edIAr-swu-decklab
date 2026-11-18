@@ -36,7 +36,9 @@ def load_swu_cards(card_db_path: Optional[Path] = None) -> Dict[Tuple[str, str],
     if card_db_path is None:
         data_dir = get_data_dir()
         card_db_path = data_dir / "swudb" / "cards_normalized.json"
-    
+    else:
+        card_db_path = Path(card_db_path)
+
     if not card_db_path.exists():
         raise FileNotFoundError(f"Card database not found: {card_db_path}. Run fetch_cards.py first.")
     
@@ -54,6 +56,83 @@ def load_swu_cards(card_db_path: Optional[Path] = None) -> Dict[Tuple[str, str],
         cards[(name, subtitle)] = v
     
     return cards
+
+
+def card_printings(card: Dict[str, Any]) -> List[str]:
+    """Return every set code a card is known to be printed in.
+
+    `rules.md`: legality follows the card version, so a reprint in a Premier
+    legal product legalises the card. The card database keeps one entry per
+    identity, with ``printings`` when more than one set is known and ``set``
+    otherwise.
+    """
+    codes = []
+    for entry in card.get("printings") or []:
+        code = entry.get("set") if isinstance(entry, dict) else entry
+        if code and str(code) not in codes:
+            codes.append(str(code))
+    if codes:
+        return codes
+    return [card["set"]] if card.get("set") else []
+
+
+def card_printing_ids(card: Dict[str, Any]) -> List[Tuple[str, str]]:
+    """Every ``(set, number)`` the card is known to be printed as.
+
+    A deck may reference any printing, so resolution must accept all of them,
+    not just the canonical one kept on the record.
+    """
+    ids = []
+    if card.get("set"):
+        ids.append((str(card["set"]), str(card.get("number", "") or "")))
+
+    for entry in card.get("printings") or []:
+        if isinstance(entry, dict):
+            pair = (str(entry.get("set") or ""), str(entry.get("number", "") or ""))
+            if pair[0] and pair not in ids:
+                ids.append(pair)
+        elif entry:
+            pair = (str(entry), "")
+            if pair not in ids:
+                ids.append(pair)
+    return ids
+
+
+def read_sets_index(sets_dir=None) -> Dict[str, Dict[str, Any]]:
+    """Read the per-set completeness index; an absent index is not an error."""
+    directory = Path(sets_dir) if sets_dir is not None else get_data_dir() / "swudb"
+    path = directory / "sets_index.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def complete_sets(sets_dir=None) -> set:
+    """Set codes the catalogue holds in full.
+
+    A set counts only when the index says it is complete **and** its raw payload
+    still exists: an index entry without a file is a deleted cache, not data.
+    """
+    directory = Path(sets_dir) if sets_dir is not None else get_data_dir() / "swudb"
+    index = read_sets_index(directory)
+    return {
+        code
+        for code, meta in index.items()
+        if (meta or {}).get("complete") is True
+        and (directory / f"{code}.json").exists()
+    }
+
+
+def card_db_sets(card_db: Dict[Tuple[str, str], Dict[str, Any]]) -> set:
+    """Return every set code the loaded card database has cards from."""
+    known = set()
+    for card in card_db.values():
+        known.update(card_printings(card))
+    return known
 
 
 def card_identity_key(name: str, subtitle: str = "") -> Tuple[str, str]:
@@ -195,14 +274,11 @@ def parse_deck_swu_text(text: str) -> Dict[str, Any]:
         
         if current_section == 'leader':
             if result["leader"] is None:
-                result["leader"] = [card_entry]
+                result["leader"] = card_entry
             else:
-                result["leader"].append(card_entry)
+                result["leader"] = card_entry  # last wins; counts come from _zone_counts
         elif current_section == 'base':
-            if result["base"] is None:
-                result["base"] = [card_entry]
-            else:
-                result["base"].append(card_entry)
+            result["base"] = card_entry  # last wins; counts come from _zone_counts
         elif current_section == 'deck':
             result["deck"].append(card_entry)
         elif current_section == 'sideboard':

@@ -23,13 +23,18 @@ from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+# Add parent directory to path so infrastructure subpackage is findable
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import constants as C
+import legal_sets
+import suspended_list
 import swu_cards as sc
-from card_resolver import CardIndex, UnresolvedCard
+from card_resolver import CardIndex, UnresolvedCard, parse_card_id
 from draw_odds import p_at_least_one
 from validate_deck import load_deck
 from domain.services.aspect_penalty_service import AspectPenaltyService
+from infrastructure.card_db_repository import CardDBRepository
 from infrastructure.card_repository import CardRepository
 
 
@@ -84,17 +89,45 @@ def _detect_format(content):
     return "json"
 
 
-def _db_meta(card_db_path, card_db):
+def _known_sets(card_db, card_db_path=None):
+    """Sets the catalogue holds in full, falling back to mentioned sets.
+
+    The fallback keeps old caches (no `sets_index.json`) quiet: they cannot prove
+    completeness, so every set they mention is treated as present.
+    """
+    directory = Path(card_db_path).parent if card_db_path is not None else None
+    return sc.complete_sets(directory) or sc.card_db_sets(card_db)
+
+
+def _db_meta(card_db_path, card_db, deck_sets=None):
     meta_path = card_db_path.parent / "meta.json"
+    index = sc.read_sets_index(card_db_path.parent)
+    sets = sorted({card.get("set", "") for card in card_db.values() if card.get("set")})
     if meta_path.exists():
         with open(meta_path, "r", encoding="utf-8") as f:
             meta = json.load(f)
         data_as_of = str(meta.get("fetched_at", ""))[:10] or "unknown"
+        checked_at = str(meta.get("checked_at", ""))[:10] or "unknown"
         source = meta.get("source", "unknown")
         sets = meta.get("sets") or sorted({c.get("set", "") for c in card_db.values()})
     else:
         data_as_of = "unknown"
+        checked_at = "unknown"
         source = "unknown"
+
+    # Provenance describes the data this report uses, not the whole cache: the
+    # oldest fetch among the sets in the deck, and when they were last checked.
+    scope = {str(code) for code in (deck_sets or ()) if code}
+    if not scope:
+        scope = set(index)
+    fetched = [(index.get(code) or {}).get("fetched_at") for code in scope]
+    checked = [(index.get(code) or {}).get("checked_at") for code in scope]
+    fetched = [value for value in fetched if value]
+    checked = [value for value in checked if value]
+    if fetched:
+        data_as_of = min(fetched)[:10]
+    if checked:
+        checked_at = max(checked)[:10]
         sets = sorted({c.get("set", "") for c in card_db.values() if c.get("set")})
 
     canonical = json.dumps(
@@ -106,18 +139,51 @@ def _db_meta(card_db_path, card_db):
     return {
         "source": source,
         "data_as_of": data_as_of,
+        "checked_at": checked_at,
         "sets": list(sets),
         "schema_hash": hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
         "cards": len(card_db),
     }
 
 
-def _resolve_ref(index, ref, zone, unresolved):
+def _ref_set(ref):
+    """The set code a deck reference points at, if it carries one."""
+    if not isinstance(ref, dict):
+        return None
+    code = ref.get("set")
+    if code:
+        return str(code).strip().upper()
+    parsed = parse_card_id(ref.get("id"))
+    return parsed[0] if parsed else None
+
+
+def _unresolved_reason(reason, ref, legal, known_sets):
+    """Explain a miss instead of leaving one generic message for every cause."""
+    code = _ref_set(ref)
+    if not code or legal is None:
+        return reason
+    if not legal.is_legal(code):
+        return f"set {code} is not Premier-legal"
+    if known_sets is not None and code not in known_sets:
+        return (
+            f"set {code} is Premier-legal but not in the local catalogue; "
+            "run fetch_cards.py"
+        )
+    return reason
+
+
+def _resolve_ref(index, ref, zone, unresolved, legal=None, known_sets=None):
     try:
         return index.resolve(ref)
     except UnresolvedCard as exc:
         safe_ref = ref if isinstance(ref, dict) else {"value": ref}
-        unresolved.append({"zone": zone, "ref": safe_ref, "reason": exc.reason})
+        unresolved.append(
+            {
+                "zone": zone,
+                "ref": safe_ref,
+                "reason": _unresolved_reason(exc.reason, ref, legal, known_sets),
+            }
+        )
         return None
 
 
@@ -195,9 +261,9 @@ def _zone_counts(content, deck_format):
             card_entry = {"name": name, "subtitle": subtitle, "count": count}
             
             if current_section == 'leader':
-                leaders.append(card_entry)
-            elif current_section == 'base' and current_section != 'done':
-                bases.append(card_entry)
+                leaders.append(count)
+            elif current_section == 'base':
+                bases.append(count)
         
         return leaders, bases
     try:
@@ -343,10 +409,17 @@ def _zone_check(zone, resolved, counts):
     return True, f"Exactly one {zone}"
 
 
-def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts):
+def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts, suspended=None, legal=None):
     errors = []
     warnings = []
     checks = []
+
+    suspended_keys = suspended.identities if suspended is not None else frozenset(C.SUSPENDED)
+    if suspended is not None:
+        warnings.extend(suspended.warnings)
+
+    legal = legal or legal_sets.load()
+    warnings.extend(legal.warnings)
 
     def check(check_id, ok, detail):
         checks.append({"id": check_id, "ok": ok, "detail": detail})
@@ -414,23 +487,35 @@ def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_
         else "; ".join(f"{_identity(k)} has {c} copies (max 3)" for k, c in sorted(over)),
     )
 
+    # The set pool covers leader and base too: a rotated leader makes the deck
+    # illegal even when every card in the draw deck is from a legal product.
+    pool = set(combined)
+    for resolved in (leader, base):
+        if resolved is not None:
+            pool.add(resolved.key)
     bad_sets = [
-        key for key in combined
-        if card_db[key].get("set") not in C.PREMIER_SETS
+        key for key in sorted(pool)
+        if not legal.is_legal_any(sc.card_printings(card_db[key]))
     ]
     check(
         "premier_sets",
         not bad_sets,
         "All cards from Premier sets" if not bad_sets
-        else f"Non-Premier cards: {', '.join(_identity(k) for k in bad_sets)}",
+        else "Non-Premier cards: " + ", ".join(
+            f"{_identity(k)} ({card_db[k].get('set') or 'no set'})"
+            for k in bad_sets
+        ),
     )
 
-    suspended = [key for key in combined if key in C.SUSPENDED]
+    suspended_cards = []
+    for key in (leader_key, base_key, *combined):
+        if key and key in suspended_keys and key not in suspended_cards:
+            suspended_cards.append(key)
     check(
         "suspended",
-        not suspended,
-        "No suspended cards" if not suspended
-        else f"Suspended cards: {', '.join(_identity(k) for k in suspended)}",
+        not suspended_cards,
+        "No suspended cards" if not suspended_cards
+        else f"Suspended cards: {', '.join(_identity(k) for k in suspended_cards)}",
     )
 
     return {
@@ -458,17 +543,9 @@ def _aspect_penalty(
     # Create the domain service with injected repository
     penalty_service = AspectPenaltyService(card_repository)
 
-    # Extract keys from leader and base entities
-    leader_key = None
-    base_key = None
-
-    if leader is not None:
-        # Get the key from the leader card entity
-        leader_key = leader.get("identity", "") if leader else None
-
-    if base is not None:
-        # Get the key from the base card entity
-        base_key = base.get("identity", "") if base else None
+    # Keys are the same (name, subtitle) tuples used by the card database
+    leader_key = leader.key if leader is not None else None
+    base_key = base.key if base is not None else None
 
     # Calculate penalty using the domain service
     return penalty_service.calculate_penalty(
@@ -649,7 +726,7 @@ def _findings(composition, main_counts, card_db, unresolved):
     return sorted(findings, key=lambda f: f["id"])
 
 
-def _limitations(db, composition, unresolved, findings):
+def _limitations(db, composition, unresolved, findings, legal=None, known_sets=None):
     n = composition["n"]
     price = composition["price"]
     items = [
@@ -666,18 +743,53 @@ def _limitations(db, composition, unresolved, findings):
             "mitigation": "Re-run fetch_cards.py and check db.data_as_of.",
         },
         {
-            "id": "premier-only-db",
+            "id": "incomplete-catalogue",
             "category": "data",
             "impact": "degraded",
-            "statement": "Only Premier sets are fetched; older printings are not in the local DB.",
+            "statement": (
+                "Sets that are missing or incomplete in the local catalogue are "
+                "invisible to this analysis."
+            ),
             "affects": ["legality", "cards"],
             "detail": (
-                "Reprint legality by card version cannot be verified. An old printing "
-                "may be reported as unresolved even when a Premier reprint exists."
+                "A payload that does not match the count published by the API (a "
+                "prerelease set, a failed download) is refused instead of stored, so "
+                "its cards are reported as unresolved and its reprints cannot be seen."
             ),
-            "mitigation": "Resolve by name+subtitle or add non-Premier printings to the DB.",
+            "mitigation": (
+                "Run fetch_cards.py: it retries incomplete sets and reports them. "
+                "The per-set state lives in data/swudb/sets_index.json."
+            ),
         },
     ]
+
+    if legal is not None and getattr(legal, "source", "") == "builtin-registry":
+        items.append(
+            {
+                "id": "legality-registry",
+                "category": "data",
+                "impact": "degraded",
+                "statement": (
+                    "Legality came from the built-in registry, not from a dated "
+                    "snapshot."
+                ),
+                "affects": ["legality"],
+                "detail": (
+                    "A set that became legal after the registry was written is not "
+                    "reflected; suspensions have their own snapshot."
+                ),
+                "mitigation": (
+                    "Run fetch_legal_sets.py to write data/swu/legal-sets.json."
+                ),
+            }
+        )
+
+    if legal is not None and known_sets is not None:
+        missing = sorted(legal.effective_codes() - set(known_sets))
+        if missing:
+            for item in items:
+                if item["id"] == "incomplete-catalogue":
+                    item["detail"] += f" Missing right now: {', '.join(missing)}."
 
     if unresolved:
         items.append({
@@ -841,12 +953,22 @@ def _draw_odds(main_counts, card_db, n, max_round):
     }
 
 
-def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=None, cm_index=None):
+def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=None, cm_index=None, card_repository=None):
     """Build the full analysis dict for a deck file.
 
     ``cm_index`` is an optional :class:`cardmarket.CardmarketIndex`. When given,
     ``composition.price_eur`` is added next to the USD block; when omitted, the
     output is unchanged.
+
+    Args:
+        deck_path: Path to the deck file.
+        card_db_path: Path to the card database JSON file.
+        generated_at: ISO format timestamp when the analysis was generated.
+        max_round: Maximum number of draws for draw odds calculation.
+        cm_index: Optional Cardmarket index for price data.
+        card_repository: CardRepository implementation for card data access.
+            If not provided, the loaded card database is wrapped in a
+            CardDBRepository.
     """
     deck_path = Path(deck_path)
     content = deck_path.read_text(encoding="utf-8")
@@ -859,36 +981,67 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     card_db = sc.load_swu_cards(card_db_path)
     index = CardIndex(card_db)
 
+    # Legality is needed before resolution: an unresolved card should say
+    # whether its set is legal but missing from the catalogue.
+    known_sets = _known_sets(card_db, card_db_path)
+    legal = legal_sets.load(known_sets=known_sets)
+
     deck = load_deck(deck_path)
     unresolved = []
 
-    leader = _resolve_ref(index, deck.get("leader"), "leader", unresolved)
-    base = _resolve_ref(index, deck.get("base"), "base", unresolved)
+    leader = _resolve_ref(
+        index, deck.get("leader"), "leader", unresolved,
+        legal=legal, known_sets=known_sets,
+    )
+    base = _resolve_ref(
+        index, deck.get("base"), "base", unresolved,
+        legal=legal, known_sets=known_sets,
+    )
 
     main_counts = Counter()
     for entry in deck.get("deck", []):
         count = max(1, _entry_count(entry))
-        resolved = _resolve_ref(index, entry, "main", unresolved)
+        resolved = _resolve_ref(
+            index, entry, "main", unresolved, legal=legal, known_sets=known_sets
+        )
         if resolved:
             main_counts[resolved.key] += count
 
     side_counts = Counter()
     for entry in deck.get("sideboard", []):
         count = max(1, _entry_count(entry))
-        resolved = _resolve_ref(index, entry, "sideboard", unresolved)
+        resolved = _resolve_ref(
+            index, entry, "sideboard", unresolved, legal=legal, known_sets=known_sets
+        )
         if resolved:
             side_counts[resolved.key] += count
 
     n = sum(main_counts.values())
-    db = _db_meta(card_db_path, card_db)
+    deck_sets = {str(card_db[key].get("set") or "") for key in main_counts if key in card_db}
+    deck_sets |= {str(card_db[key].get("set") or "") for key in side_counts if key in card_db}
+    for resolved in (leader, base):
+        if resolved is not None and resolved.card.get("set"):
+            deck_sets.add(str(resolved.card["set"]))
+    deck_sets.discard("")
+    db = _db_meta(card_db_path, card_db, deck_sets)
     zone_counts = _zone_counts(content, deck_format)
+
+    # Use provided card_repository or wrap the card database we already loaded.
+    # The repository must expose the same keys as main_counts: (name, subtitle).
+    if card_repository is None:
+        card_repository = CardDBRepository(card_db)
+
     legality = _legality(
-        leader, base, main_counts, side_counts, unresolved, card_db, zone_counts
+        leader, base, main_counts, side_counts, unresolved, card_db, zone_counts,
+        suspended=suspended_list.load(card_db),
+        legal=legal,
     )
     legality["aspect_penalty"] = _aspect_penalty(leader, base, main_counts, card_repository)
     composition = _composition(main_counts, card_db, db["data_as_of"], cm_index)
     findings = _findings(composition, main_counts, card_db, unresolved)
-    limitations = _limitations(db, composition, unresolved, findings)
+    limitations = _limitations(
+        db, composition, unresolved, findings, legal=legal, known_sets=known_sets
+    )
 
     provided_aspects = set()
     if leader:

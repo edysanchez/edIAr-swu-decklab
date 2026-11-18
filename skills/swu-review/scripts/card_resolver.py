@@ -15,6 +15,8 @@ Anything else raises :class:`UnresolvedCard`. The resolver never invents a card.
 from dataclasses import dataclass
 from typing import Any, Dict, Tuple
 
+from swu_cards import card_printing_ids
+
 
 class UnresolvedCard(Exception):
     """A deck reference that cannot be matched to the local card database."""
@@ -65,10 +67,11 @@ class CardIndex:
             name, _subtitle = key
             self.by_name.setdefault(name, []).append(key)
 
-            set_code = normalize_set(card.get("set"))
-            number = normalize_number(card.get("number"))
-            if set_code and number:
-                self.by_set_number[(set_code, number)] = key
+            for set_code, number in card_printing_ids(card):
+                set_code = normalize_set(set_code)
+                number = normalize_number(number)
+                if set_code and number:
+                    self.by_set_number[(set_code, number)] = key
 
     def resolve(self, ref: Any) -> Resolved:
         if not isinstance(ref, dict):

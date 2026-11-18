@@ -16,6 +16,7 @@ class InMemoryCardRepository(CardRepository):
     """
     
     def __init__(self, initial_cards: Dict[str, dict] = None):
+        self._legal_sets: List[str] = []
         """Initialize with optional pre-loaded cards.
         
         Args:

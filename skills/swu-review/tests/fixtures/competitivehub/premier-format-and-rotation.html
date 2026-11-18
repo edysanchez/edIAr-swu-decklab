@@ -1,0 +1,76 @@
+<!--
+  Synthetic fixture mirroring the markup of
+  https://www.swu-competitivehub.com/premier-format-and-rotation/ as observed
+  on 2026-11-12. It keeps the structural contract the parser relies on:
+
+  - the "Legal sets" section, with "Today, <date>" and the list of legal set
+    codes (the authoritative subset);
+  - the "Next change: <product> becomes legal on <date>" line;
+  - per-block lists where every set carries its code, name and "Release:" date;
+  - a "Rotated out" block whose sets must never leak into the legal list.
+
+  Class names come from the live page; the parser deliberately does not depend
+  on them, only on the structure above.
+-->
+<html>
+<body>
+<section class="Page-module__zmht7W__section" id="legal-sets">
+  <div class="Page-module__zmht7W__titreSection"><h2>Legal sets</h2></div>
+  <p class="page-module__FCTDkq__chapo">Sets are grouped in blocks. All sets of a block enter Premier on their release and leave it together.</p>
+
+  <div class="page-module__FCTDkq__aujourdhui">
+    <div class="page-module__FCTDkq__aujourdhuiTete">
+      <span class="page-module__FCTDkq__etat page-module__FCTDkq__etatLegal">Legal in Premier</span>
+      <span class="page-module__FCTDkq__aujourdhuiDate">Today, Nov 12, 2026</span>
+    </div>
+    <ul class="page-module__FCTDkq__aujourdhuiSets">
+      <li><img src="/legacy/uploads/2025/05/jtl_logo-300x85.webp" alt="Jump to Lightspeed" title="Jump to Lightspeed"/><span>JTL</span></li>
+      <li><img src="/legacy/uploads/2025/07/lof_logo-300x85.png" alt="Legends of the Force" title="Legends of the Force"/><span>LOF</span></li>
+      <li><img src="/legacy/uploads/2026/05/intro_battle_hoth_logo-300x85.webp" alt="Intro Battle: Hoth" title="Intro Battle: Hoth"/><span>IBH</span></li>
+      <li><img src="/legacy/uploads/2025/09/sec_logo-300x85.png" alt="Secrets of Power" title="Secrets of Power"/><span>SEC</span></li>
+      <li><img src="/legacy/uploads/2025/09/a-lawless-time_logo-300x85.webp" alt="A Lawless Time" title="A Lawless Time"/><span>LAW</span></li>
+      <li><img src="/legacy/uploads/2025/09/ashes-of-the-empire_logo-1-300x85.webp" alt="Ashes of the Empire" title="Ashes of the Empire"/><span>ASH</span></li>
+      <li><img src="/legacy/uploads/2025/09/Homeworlds_logo-1-300x85.webp" alt="Homeworlds" title="Homeworlds"/><span>HMW</span></li>
+    </ul>
+    <p class="page-module__FCTDkq__aujourdhuiProchain"><strong>Next change: </strong>Icons 2027 Edition becomes legal on Nov 20, 2026.</p>
+  </div>
+
+  <div class="page-module__FCTDkq__blocs">
+    <article class="page-module__FCTDkq__bloc page-module__FCTDkq__blocLegal">
+      <header class="page-module__FCTDkq__enteteBloc"><h3>Block A</h3><span class="page-module__FCTDkq__etat page-module__FCTDkq__etatLegal">Legal in Premier</span></header>
+      <ul class="page-module__FCTDkq__sets">
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2025/05/jtl_logo.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">JTL</span>Jump to Lightspeed</span><span class="page-module__FCTDkq__sortie">Release: Mar 14, 2025</span></span></li>
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2025/07/lof_logo.png" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">LOF</span>Legends of the Force</span><span class="page-module__FCTDkq__sortie">Release: Jul 11, 2025</span></span></li>
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2026/05/intro_battle_hoth_logo.png" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">IBH</span>Intro Battle: Hoth</span><span class="page-module__FCTDkq__sortie">Release: Oct 3, 2025</span></span></li>
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2025/09/sec_logo.png" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">SEC</span>Secrets of Power</span><span class="page-module__FCTDkq__sortie">Release: Nov 7, 2025</span></span></li>
+      </ul>
+    </article>
+
+    <article class="page-module__FCTDkq__bloc page-module__FCTDkq__blocLegal">
+      <header class="page-module__FCTDkq__enteteBloc"><h3>Block B</h3><span class="page-module__FCTDkq__etat page-module__FCTDkq__etatLegal">Legal in Premier</span></header>
+      <ul class="page-module__FCTDkq__sets">
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2025/09/a-lawless-time_logo.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">LAW</span>A Lawless Time</span><span class="page-module__FCTDkq__sortie">Release: Mar 13, 2026</span></span></li>
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2025/09/ashes-of-the-empire_logo-1.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">ASH</span>Ashes of the Empire</span><span class="page-module__FCTDkq__sortie">Release: Jul 17, 2026</span></span></li>
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2025/09/Homeworlds_logo-1.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">HMW</span>Homeworlds</span><span class="page-module__FCTDkq__sortie">Release: Oct 9, 2026</span></span></li>
+      </ul>
+    </article>
+
+    <article class="page-module__FCTDkq__bloc">
+      <header class="page-module__FCTDkq__enteteBloc"><h3>Block C</h3><span class="page-module__FCTDkq__etat">Not legal yet</span></header>
+      <ul class="page-module__FCTDkq__sets">
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2026/09/ic27_logo.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">IC27</span>Icons 2027 Edition</span><span class="page-module__FCTDkq__sortie page-module__FCTDkq__sortieAVenir">Legal from Nov 20, 2026</span></span></li>
+      </ul>
+    </article>
+
+    <article class="page-module__FCTDkq__bloc">
+      <header class="page-module__FCTDkq__enteteBloc"><h3>Rotated out</h3><span class="page-module__FCTDkq__etat">Not legal in Premier</span></header>
+      <ul class="page-module__FCTDkq__sets">
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2024/03/sor_logo.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">SOR</span>Spark of Rebellion</span><span class="page-module__FCTDkq__sortie">Release: Mar 8, 2024</span></span></li>
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2024/07/shd_logo.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">SHD</span>Shadows of the Galaxy</span><span class="page-module__FCTDkq__sortie">Release: Jul 12, 2024</span></span></li>
+        <li class="page-module__FCTDkq__set"><img class="page-module__FCTDkq__logo" src="/legacy/uploads/2024/11/twi_logo.webp" alt=""/><span class="page-module__FCTDkq__infosSet"><span class="page-module__FCTDkq__nomTuile"><span class="page-module__FCTDkq__code">TWI</span>Twilight of the Republic</span><span class="page-module__FCTDkq__sortie">Release: Nov 8, 2024</span></span></li>
+      </ul>
+    </article>
+  </div>
+</section>
+</body>
+</html>

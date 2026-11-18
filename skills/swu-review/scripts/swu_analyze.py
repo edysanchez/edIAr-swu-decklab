@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
+import fetch_cards  # noqa: E402
 from analysis import build_analysis  # noqa: E402
 from render_report import render_report  # noqa: E402
 import cardmarket  # noqa: E402
@@ -76,6 +77,11 @@ def _parser():
         action="store_true",
         help="Do not add the optional Cardmarket EUR price block.",
     )
+    parser.add_argument(
+        "--no-fetch",
+        action="store_true",
+        help="Do not download missing sets before analysing.",
+    )
     return parser
 
 
@@ -106,6 +112,12 @@ def main(argv=None):
 
     if json_target == STDOUT and report_target == STDOUT:
         parser.error("cannot send both --json and --report to stdout")
+
+    if not args.no_fetch and args.card_db is None:
+        try:
+            fetch_cards.refresh_catalogue_reporting()
+        except Exception as exc:  # never block a review
+            print(f"WARNING: could not refresh the card catalogue: {exc}", file=sys.stderr)
 
     try:
         cm_index = None

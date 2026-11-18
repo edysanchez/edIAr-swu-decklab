@@ -5,20 +5,77 @@ description: Analyze and validate Star Wars: Unlimited Premier decks using local
 
 # SWU Review
 
-A minimal skill for reviewing Star Wars: Unlimited Premier decks. It uses only local card data from `data/swudb/` (fetched from swu-db) and the rules in [`docs/rules.md`](../../docs/rules.md). No card texts, images, or DB dumps are included in the repo.
+A minimal skill for reviewing Star Wars: Unlimited Premier decks. It uses a local card catalogue from `data/swudb/` (fetched from swu-db) and the rules in [`docs/rules.md`](../../docs/rules.md). The analysis CLIs repair missing sets over the network unless `--no-fetch` is passed. Card texts and images are not redistributed; see [Known limitations](#known-limitations) for the fixture gap.
+
+**Scope:** this skill targets the v0.1 functional core: Premier decks of at least 50 main-deck cards, a local catalogue, JSON and Markdown output, and no meta layer. It does not model matchups, recommend cuts/adds inside the artefacts, interpret card-text semantics, or support Twin Suns. If a request falls outside that scope, say so instead of stretching the pipeline.
 
 ## Requirements
 
 - Python 3
 - Card database cached via `fetch_cards.py` (stored in `data/swudb/cards_normalized.json`, gitignored)
+- Suspended list cached via `fetch_suspended.py` (stored in `data/swu/suspended.json`, gitignored). Without it, the built-in registry in `scripts/constants.py` is used.
+- Premier legal sets cached via `fetch_legal_sets.py` (stored in `data/swu/legal-sets.json`, gitignored). Without it, `constants.PREMIER_SETS` is used.
 
 ## Setup
 
-Fetch Premier cards:
+Fetch the card catalogue:
 
 ```bash
 python3 skills/swu-review/scripts/fetch_cards.py
 ```
+
+The set list comes from `GET https://api.swu-db.com/sets`, so it follows the game
+instead of a hardcoded list: every base set is fetched, promos only with `--all`.
+Each payload is checked against the published `numberCards` before it is stored,
+and a set that comes back short (a prerelease set, for example) is refused rather
+than half-written. A default run that selects a not-yet-complete prerelease set
+may exit 1; use `--sets` to select the sets you need, or ignore the warning until
+the set ships.
+
+| Flag | Effect |
+|---|---|
+| *(none)* | every base set |
+| `--all` | every set, promos included |
+| `--base` | base sets only (the default) |
+| `--sets JTL,IC27` | explicit list |
+| `--refresh` | re-download even when cached |
+| `--dry-run` | report the plan, write nothing |
+
+The raw per-set files are the cache of record; `cards_normalized.json` is derived
+from them in a fixed order, so it can always be rebuilt with
+`rebuild_normalized()`.
+
+Both analysis CLIs repair local gaps before reading the deck: with a
+`catalogue.json` from the last `fetch_cards.py` run they download missing or
+incomplete base sets, and say so on stderr. They never invent sets, never block a
+review on a failed download, and accept `--no-fetch`. The library functions
+(`build_analysis`, `validate_deck`) never touch the network.
+
+Fetch the Premier suspended list from SWU Competitive Hub:
+
+```bash
+python3 skills/swu-review/scripts/fetch_suspended.py
+```
+
+The hub page is the operational source: it is one server-rendered page that is
+updated the same day FFG announces a suspension, and it also records when a card
+leaves the list. The snapshot wins over the built-in registry when present;
+every disagreement is reported as a warning so the registry can be updated with
+the official announcement link. A snapshot older than 45 days is reported as
+stale.
+
+Fetch the Premier legal-set list from the same hub:
+
+```bash
+python3 skills/swu-review/scripts/fetch_legal_sets.py
+```
+
+The snapshot records the page's own date, the legal set codes, the announced
+next change and every product's release date. A product released after the
+snapshot was written is legal from its release date (`docs/rules.md`), so the
+resolver applies that override only inside the gap between the snapshot date and
+today. The snapshot is stale after 14 days, or as soon as its announced next
+change date has passed; both cases are reported as warnings.
 
 Optionally fetch Cardmarket EUR prices (public bulk files, cached in
 `data/cm/`):
@@ -31,6 +88,9 @@ Without that cache, analysis still runs and only the USD price block is
 produced.
 
 ## Strategic review protocol
+
+See [`Council.md`](Council.md) for the multi-perspective protocol and its
+checklist.
 
 > This protocol is for optional strategic commentary **outside** the analysis
 > artefacts. `analysis.json` and `report.md` never contain recommendations,
@@ -61,7 +121,9 @@ When analyzing lines of play:
 
 ## Accepted deck formats
 
-All tools share the same normalization layer. Supported formats:
+All tools are intended to share one normalization layer. Until the parity fix
+lands, `swu_analyze` is the authoritative path and `validate_deck` may disagree
+on the same file. Supported formats:
 
 | Format | Example | Notes |
 |---|---|---|
@@ -104,6 +166,7 @@ python3 skills/swu-review/scripts/swu_analyze.py path/to/deck.json --json
 #   --max-round N     last round in draw odds (default 6)
 #   --cm-cache PATH   Cardmarket cache directory (defaults to data/cm/)
 #   --no-eur          omit the optional Cardmarket EUR price block
+#   --no-fetch        do not download missing sets before analysing
 ```
 
 The contract is [`analysis.schema.json`](analysis.schema.json). It covers:
@@ -149,15 +212,19 @@ See [Card analysis (v0.1)](#card-analysis-v01) above. This is the recommended
 path for a deck review.
 
 ### Validate deck legality
-Checks against [`docs/rules.md`](../../docs/rules.md) (exactly 1 leader/base, >=50 draw deck, <=10 sideboard, max 3 copies by name+subtitle across deck+sideboard, Premier sets only, suspended cards). Aspect penalty is reported but does not block legality.
+Checks against [`docs/rules.md`](../../docs/rules.md) (summary only; `docs/rules.md` wins: exactly 1 leader/base, >=50 draw deck, <=10 sideboard, max 3 copies by name+subtitle across deck+sideboard, Premier sets only, suspended cards). Aspect penalty is calculated but does not block legality; the `--json` block does not include it, so use `swu_analyze` when you need the full penalty. In `--json` mode, pass `--quiet` to get pure JSON on stdout.
 
 ```bash
 python3 skills/swu-review/scripts/validate_deck.py path/to/deck.json
 python3 skills/swu-review/scripts/validate_deck.py path/to/deck.json --json
+
+# --no-fetch: do not repair the catalogue first
+python3 skills/swu-review/scripts/validate_deck.py path/to/deck.json --no-fetch
 ```
 
-### Analyze deck
-Reports curve, type split, arena split, distinct cards, unique slots, aspect penalty, and price (from swu-db market prices in local cache). Calculations use the local card DB only.
+### Analyze deck (legacy)
+Reports a subset of the card-analysis metrics. Prefer `swu_analyze.py`; this
+command is kept for compatibility and does not produce the full JSON contract.
 
 ```bash
 python3 skills/swu-review/scripts/analyze_deck.py path/to/deck.json
@@ -165,13 +232,53 @@ python3 skills/swu-review/scripts/analyze_deck.py path/to/deck.json --json
 ```
 
 ### Draw odds
-Hypergeometric draw odds with **+2 cards per regroup phase** (see [`docs/metrics.md`](../../docs/metrics.md)). Leader and base are excluded from the draw pool (N=50). Copies are grouped by **name + subtitle** identity. Supports mulligan, grouping by `cost`, `arena`, `type`, or name substring.
+Hypergeometric draw odds with **+2 cards per regroup phase** (see [`docs/metrics.md`](../../docs/metrics.md)). Leader and base are excluded; `N` is the main-deck size (at least 50, not always 50). Copies are grouped by **name + subtitle** identity. Supports grouping by `cost`, `arena`, `type`, or name substring. The `--mulligan` flag is experimental and outside F1: its later-round probability is not yet correct, so do not rely on it. Call the axis **rounds**, not turns; the CLI still uses `--max-turn`.
 
 ```bash
 python3 skills/swu-review/scripts/draw_odds.py path/to/deck.json --max-turn 6
 python3 skills/swu-review/scripts/draw_odds.py path/to/deck.json --group cost:2
 python3 skills/swu-review/scripts/draw_odds.py path/to/deck.json --mulligan --json
 ```
+
+### Search the catalogue
+
+`search_cards.py` answers "which cards match these constraints?" and prints only
+the matches. It does not rank or recommend: choosing a card is the reviewer's
+job.
+
+```bash
+# Cheapest Space units legal in Premier
+python3 skills/swu-review/scripts/search_cards.py \
+  --legal --type Unit --arena Space --cost-max 3
+
+# JSON for further processing
+python3 skills/swu-review/scripts/search_cards.py --legal --aspect Villainy --json
+```
+
+| Filter | Values |
+|---|---|
+| `--name`, `--text` | substring, case-insensitive |
+| `--aspect`, `--type`, `--trait`, `--keyword` | comma separated |
+| `--cost-min`, `--cost-max` | integers; cards without a cost are excluded |
+| `--arena` | `Ground` or `Space` |
+| `--rarity`, `--unique` | |
+| `--set` | comma separated set codes |
+| `--legal` | checks every printing against the dated legal-set snapshot |
+| `--limit`, `--json`, `--card-db` | output control |
+
+## Known limitations
+
+- **One resolver is not yet shared.** `validate_deck` and `swu_analyze` can
+  disagree on the same file; `swu_analyze` is authoritative until parity lands.
+- **Mulligan is experimental.** `--mulligan` is not monotonic across rounds and
+  is outside F1.
+- **Card text in fixtures.** The Poggle deck and golden fixtures still contain
+  card text and image URLs; they are being sanitized. This does not change the
+  redistribution policy.
+- **Leader back side.** The report currently shows the front side only; the
+  deployed side is tracked as a P1.
+- **Displayed printing.** A reprint can be shown with a rotated set and price;
+  the display rule is being fixed.
 
 ## Notes
 

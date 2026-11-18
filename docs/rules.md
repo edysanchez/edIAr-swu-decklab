@@ -2,9 +2,10 @@
 
 Single source of truth for **Star Wars: Unlimited Premier** deck legality in this
 repository. Validators, the `swu-review` skill and all documentation must follow
-this file. Do not restate these rules elsewhere.
+this file. Short command summaries in `SKILL.md` are non-authoritative; this file
+wins. Do not restate the full rules elsewhere.
 
-_Last verified: 2026-10-26._
+_Last verified: 2026-11-09._
 
 ## Sources
 
@@ -44,8 +45,10 @@ Leaders and bases cannot be in the sideboard or in the draw deck.
 
 ## Card pool
 
-Only cards from products designated **Premier-legal** may be used. As of
-2026-10-26 the official list is:
+Only cards from products designated **Premier-legal** may be used. The dated
+`legal-sets.json` snapshot is the operational source; the table below is the
+offline fallback and was last checked on 2026-10-26. Re-verify it before a
+release.
 
 | Set | Code |
 |---|---|
@@ -82,10 +85,42 @@ is officially released.
 
 ## Suspended cards
 
-No cards are suspended in Premier as of 2026-10-26.
+A suspended card is **not legal in any event of that format**, competitive or
+casual, while it remains on the list. Suspension is by printed name and
+subtitle: other printings of the same name are unaffected.
 
-The suspension list is part of the Comprehensive Event Guide and can change
-between set releases. Check it before relying on this file.
+As of 2026-11-09 the Premier suspended list is:
+
+| Card | Set | No. | Type | Announced |
+|---|---|---|---|---|
+| Cad Bane, *Still Faster Than You* | ASH | 011 | Leader | 2026-08-24 |
+| Chimaera, *A Frightening Reality* | ASH | 052 | Unit | 2026-11-09 |
+| Koska Reeves, *Warrior of Mandalore* | ASH | 079 | Unit | 2026-11-09 |
+| Neel, *The Cutest Boy* | ASH | 248 | Unit | 2026-11-09 |
+| Aggressive Negotiations | SEC | 179 | Event | 2026-11-09 |
+
+Official sources (one announcement per entry, no community lists):
+
+- [Cad Bane Leader Card Suspended](https://starwarsunlimited.com/articles/cad-banned)
+  (2026-08-24).
+- [Premier Format Update: November 2026](https://starwarsunlimited.com/articles/premier-format-update-november-2026)
+  (2026-11-09, effective immediately).
+
+The machine-readable copy lives in `skills/swu-review/scripts/constants.py`
+(`SUSPENDED_CARDS`, with a per-card `source`); keep both in sync.
+
+**Caveat:** FFG publishes suspensions as individual articles, not as a
+standing list, and the Comprehensive Event Guide can lag behind them. v1.5
+(updated 2026-10-09) still states that no Premier cards are suspended, even
+though Cad Bane had been announced on 2026-08-24. When the guide and a dated
+announcement disagree, the newest announcement wins.
+
+For automation, `fetch_suspended.py` parses the
+[SWU Competitive Hub suspended list](https://www.swu-competitivehub.com/suspended-list/)
+into `data/swu/suspended.json`. That snapshot is the operational source when
+present; `constants.SUSPENDED_CARDS` is the offline fallback and the place where
+each card cites its official announcement. Differences between the two are
+reported as warnings, never applied silently.
 
 ## Errata
 
@@ -100,6 +135,17 @@ The aspect penalty is **not** a legality rule.
 A deck may include cards whose aspects are not provided by its leader or base.
 When such a card is played, the player pays **2 additional resources for each
 missing aspect icon**.
+
+Aspects are counted as **icons, not as a set**. Each icon on the card must be
+matched by an icon from the leader or the base, so a card with two icons of the
+same aspect needs that aspect from two sources. Sources are the leader's printed
+aspect icons and the base's own.
+
+> **Example.** A leader with Aggression and Villainy plus a base with Vigilance
+> provides one Aggression. A unit with two Aggression icons is missing one icon
+> and costs **2** extra resources. With a leader that provides no Aggression at
+> all, the same unit is missing two icons and costs **4**. The same unit under a
+> leader with Aggression and a base with Aggression is missing nothing.
 
 A validator must never reject a deck for containing off-aspect cards. It should
 report the penalty as a property of the deck (for example, the total penalty if

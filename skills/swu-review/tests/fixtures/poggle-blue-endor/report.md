@@ -10,18 +10,18 @@
 
 | Field | Value |
 |---|---|
-| Generated at | 2026-11-03T09:36:34Z |
+| Generated at | 2026-11-17T13:23:11Z |
 | Tool version | 0.1.0-dev |
-| Rules version | 2026-10-26 |
-| Schema version | 0.1.0 |
-| Input path | cases/poggle-blue-endor/deck.json |
+| Rules version | 2026-11-09 |
+| Schema version | 0.2.0 |
+| Input path | skills/swu-review/tests/fixtures/poggle-blue-endor/deck.json |
 | Input SHA-256 | 9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a |
 | Input format | case |
 | Card DB source | api.swu-db.com |
-| Card DB snapshot | 2026-10-27 |
-| Card DB sets | JTL, LOF, IBH, SEC, LAW, ASH, HMW |
-| Card DB cards | 1634 |
-| Card DB schema hash | 66aa15bcd22bff0933eb4d38b45435cde0f747a217f96dd4f19af38f826095c0 |
+| Card DB snapshot | 2026-10-27 (checked 2026-11-17) |
+| Card DB sets | JTL, LOF, IBH, SEC, LAW, ASH, HMW, SHD, SOR, TS26, TWI |
+| Card DB cards | 2445 |
+| Card DB schema hash | bac8c35284e8f2640cadb562bd8bfde30b7ac803d14d4145cd1cfa38aa18d79e |
 
 ## Legality
 
@@ -607,12 +607,12 @@ Only 2 of 39 unit slots are Space (5.1%).
 
 | ID | Impact | Category | Statement |
 |---|---|---|---|
-| `data-snapshot` | info | data | Card data snapshot: 2026-10-27 from api.swu-db.com (7 sets, 1634 cards). |
-| `premier-only-db` | degraded | data | Only Premier sets are fetched; older printings are not in the local DB. |
+| `data-snapshot` | info | data | Card data snapshot: 2026-10-27 from api.swu-db.com (11 sets, 2445 cards). |
+| `incomplete-catalogue` | degraded | data | Sets that are missing or incomplete in the local catalogue are invisible to this analysis. |
 | `price-snapshot` | info | data | Prices are market USD from swu-db, snapshot 2026-10-27, coverage 100.0%. |
 | `draw-goldfish` | degraded | model | Draw odds use a goldfish model. |
 | `no-rules-engine` | info | model | Card text is reproduced from the DB, not interpreted. |
-| `rules-version` | info | rules | Legality follows the local rules verified on 2026-10-26. |
+| `rules-version` | info | rules | Legality follows the local rules verified on 2026-11-09. |
 | `sideboard-legal-only` | info | scope | The sideboard is used for legality only. |
 | `heuristic-thresholds` | degraded | heuristic | Findings use versioned heuristic thresholds, not rules of the game. |
 | `text-semantics-not-analyzed` | degraded | scope | Draw, removal and ramp are not classified in this version. |
@@ -621,10 +621,10 @@ Only 2 of 39 unit slots are Space (5.1%).
   - Affects: legality, composition, cards, draw_odds
   - Detail: Any set released after the snapshot is invisible to this analysis.
   - Mitigation: Re-run fetch_cards.py and check db.data_as_of.
-- **`premier-only-db`**
+- **`incomplete-catalogue`**
   - Affects: legality, cards
-  - Detail: Reprint legality by card version cannot be verified. An old printing may be reported as unresolved even when a Premier reprint exists.
-  - Mitigation: Resolve by name+subtitle or add non-Premier printings to the DB.
+  - Detail: A payload that does not match the count published by the API (a prerelease set, a failed download) is refused instead of stored, so its cards are reported as unresolved and its reprints cannot be seen.
+  - Mitigation: Run fetch_cards.py: it retries incomplete sets and reports them. The per-set state lives in data/swudb/sets_index.json.
 - **`price-snapshot`**
   - Affects: composition.price
   - Detail: No foil, EUR, shipping or seller variation. Not an appraisal.

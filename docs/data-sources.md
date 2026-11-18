@@ -9,28 +9,60 @@ Every value derived from these sources must carry the parameters described in
 
 ## Card database
 
-Three sources are used by this project.
+Five sources are used by this project.
 
 ### swu-db (primary)
 - Base: <https://api.swu-db.com>
-- Endpoint used: `GET https://api.swu-db.com/cards/{SET}`
-- Verified: 2026-10-26
-- Set coverage: all 51 sets listed on `/sets`. Premier sets are covered by 7
-  requests (JTL, LOF, IBH, SEC, LAW, ASH, HMW).
+- Endpoints used: `GET https://api.swu-db.com/sets` for the catalogue, then
+  `GET https://api.swu-db.com/cards/{SET}` per set.
+- Verified: 2026-11-17.
+- Set coverage: every **base set** returned by `/sets` is fetched (11 of 12 on
+  2026-11-17; IC27 is listed with a release date but serves an incomplete
+  payload, so it is refused). Promos and exclusives are fetched only with
+  `--all`. The set list is never hardcoded: it follows the API, and the Premier
+  legality list is a separate question answered by the hub snapshot below.
 - Provides: printed name and subtitle, type, aspects, traits, arenas, cost,
   power, HP, keywords, unique, rarity, variant flags, FrontText, EpicAction,
   BackArt/BackText, FrontArt, cid, tcgplayerId, `MarketPrice`, `LowPrice`,
-  `FoilPrice`, `LowFoilPrice`.
+  `FoilPrice`, `LowFoilPrice`. The normalized record currently stores
+  `FrontText` only; the leader back side is available upstream but not yet in the
+  report (tracked as a known limitation).
 - Shape: `{ "total_cards": <int>, "data": [ ... ] }`. The response contains
-  every printing: one row per variant with a different `Number`. Deduplicate by
-  printed name + subtitle. Only `VariantType == "Normal"` is used for deck
-  analysis and pricing; exclude rows with `Type` starting with `Token` or
-  containing `Token` (`Token Unit`, `Token Upgrade`, `Force Token`).
-- Local cache: `data/swudb/`
-- Freshness: record the retrieval date. Compare `numberCards` from `/sets` with
-  the number of distinct non-token identities to detect drift.
+  every printing: one row per variant with a different `Number`. Collapse to one
+  record per printed name + subtitle, but keep `printings` as a list of
+  `{set, number}`: `docs/rules.md` makes a card legal when *any* printing is from
+  a Premier-legal product, and resolution must accept any of them. Only
+  `VariantType == "Normal"` is used for deck analysis and pricing; exclude rows
+  with `Type` starting with `Token` or containing `Token` (`Token Unit`,
+  `Token Upgrade`, `Force Token`). A deck that references a Hyperspace or Foil
+  printing number may therefore be unresolved until variant mapping lands
+  (P1-14).
+- Local cache: `data/swudb/`, one raw file per set plus the derived
+  `cards_normalized.json`, `sets_index.json` (completeness and per-set dates),
+  `catalogue.json` (the intended set list) and `meta.json`.
+- Freshness: every payload is checked against `numberCards` from `/sets` before
+  it is stored; a short payload is refused rather than half-written. Incomplete
+  sets are retried after a window, and `meta.json` reports the oldest data and
+  the last check separately.
 - Terms: no public terms of use found as of 2026-10-26. Treat as a community
   source, cache only locally, do not mirror wholesale.
+
+### SWU Competitive Hub (Premier lists)
+- Site: <https://www.swu-competitivehub.com>
+- Pages used: `/suspended-list/` and `/premier-format-and-rotation/`
+- Verified: 2026-11-17 (both server-rendered, no JavaScript needed)
+- Provides: the suspended cards per format, the Premier-legal set list with the
+  announced next change, and per-product release dates.
+- Why a third party: FFG publishes suspensions as individual announcements and
+  the Comprehensive Event Guide lags behind them, so there is no
+  machine-readable official feed. `docs/rules.md` remains the rulebook; the hub
+  is the operational snapshot.
+- Local cache: `data/swu/suspended.json` and `data/swu/legal-sets.json`; the
+  built-in registries in `scripts/constants.py` are the offline fallback, and any
+  disagreement is reported as a warning.
+- Freshness: suspensions go stale after 45 days; the legal-set snapshot after 14
+  days or as soon as its announced change date has passed.
+- Terms: community source; cache locally, do not mirror wholesale.
 
 ### Official FFG API (authority and audit)
 - Endpoint: `https://admin.starwarsunlimited.com/api/cards` (Strapi)
@@ -79,15 +111,16 @@ Three sources are used by this project.
 - SWUDB text (Melee/Picklist style): sections `Leader`, `Base`, `MainDeck`,
   `Sideboard`, lines like `3 | Card Name | Subtitle` or similar. The user
   provides these; the parser must not scrape them.
-- In-repo format: `cases/*/deck.json` may be used internally, but **must not**
-  contain card texts, images or full database dumps.
+- Local case format: `.local/cases/*/deck.json` may be used internally, but
+  **must not** contain card texts, images or full database dumps. The `cases/`
+  path is gitignored and is not part of the public repository.
 
 ## Prices
 
 ### swu-db (USD)
 - Included in the card rows above. Use only `MarketPrice` for a `VariantType ==
   "Normal"` printing of each card identity.
-- Local cache: `data/swdb/` (or alongside the card cache)
+- Local cache: `data/swudb/` (or alongside the card cache)
 - Currency: USD, TCGplayer reference.
 
 ### Cardmarket (EUR)
@@ -120,6 +153,8 @@ embeds images is a local artifact and never part of the repository.
   Attribution required; cite window, region, sample size and retrieval date.
 - **Melee.gg**: not queried directly; tournament data comes via SWU Meta Stats.
 - Reports must credit the provider they used.
+- **Known gap:** the Poggle test fixtures still contain card text and image URLs;
+  they are being sanitized. They are not an exception to this policy.
 
 ## Freshness rules
 

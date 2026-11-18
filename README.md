@@ -3,7 +3,8 @@
 An open-source, data-grounded toolkit for **Star Wars: Unlimited (SWU) Premier**
 deck analysis and review.
 
-**Status:** early development. See the [roadmap](docs/ROADMAP.md).
+**Status:** early development. See the [roadmap](docs/ROADMAP.md) and the
+[documentation index](docs/README.md).
 
 ## Goals
 
@@ -14,23 +15,35 @@ Deck reviews that are:
 - honest about data freshness and time windows;
 - reproducible from a decklist.
 
+## Scope
+
+The v0.1 target is the functional core: a Premier analysis tool with one leader,
+one base, at least 50 main-deck cards, local data, JSON and Markdown output.
+Priority is functionality first, audience second: v0.2 makes it shareable, v1.0
+makes it distributable. The detailed scope, non-goals and capability matrix are
+kept with the local working records.
+
 ## Repository layout
 
 A *skill* is a portable bundle of instructions and scripts that an AI agent
 (OpenCode, Claude Code, etc.) can load when the task matches. `swu-review`
-will hold the review workflow, reference material and generic scripts.
+holds the review workflow, reference material and generic scripts.
 
 Some paths are planned; files are added as the project grows.
 
 ```
-skills/swu-review/   # portable AI skill: SKILL.md, scripts, reference
-cases/               # case studies (decklists + notes)
-docs/                # rules, metrics, data sources, roadmap
+skills/swu-review/   # portable AI skill: SKILL.md, scripts, reference, tests
+docs/                # rules, metrics, scope, data sources, roadmap
 ```
 
-Card data is cached locally in `data/` and is not published.
+Local case studies, generated reports and scratch files live in `.local/`,
+`reports/` and `cases/`; all three are gitignored. Card data is cached locally in
+`data/` and is not published.
 
 ## Principles
+
+Principles 3 and 5 describe the optional meta layer (F4). F1 does not model meta,
+matchups or play lines.
 
 1. **No invented cards.** Every card, cost and ability comes from the card
    database.
@@ -50,7 +63,9 @@ Card data is cached locally in `data/` and is not published.
 
 - **Code:** MIT, see [`LICENSE`](LICENSE).
 - **Card data, text and images:** © Fantasy Flight Games / Asmodee / Lucasfilm.
-  Not included in this repository.
+  Not included in this repository. The Poggle test fixture still contains card
+  text while it is being sanitized; see the known gap in
+  [`docs/data-sources.md`](docs/data-sources.md).
 - **Unofficial fan project:** not affiliated with, endorsed by, or sponsored by
   Fantasy Flight Games, Asmodee or Lucasfilm.
 

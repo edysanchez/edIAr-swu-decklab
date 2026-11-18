@@ -16,6 +16,10 @@ Rules:
 
 ## Registry
 
+<!-- Stable anchors used by analysis.json source.registry. -->
+<a id="arena-imbalance"></a>
+<a id="price-coverage"></a>
+
 | id | metric path | operator | threshold | severity | since | rationale |
 |---|---|---|---|---|---|---|
 | `arena-imbalance` | `composition.arenas.space_pct` | `<` | `15` (% of unit slots) | `warning` | 0.1.0 | A deck whose unit base is almost entirely Ground has no answer to Space units in the other arena. 15% is the floor used by the Poggle case study; it is a convention, not a rule of the game. |

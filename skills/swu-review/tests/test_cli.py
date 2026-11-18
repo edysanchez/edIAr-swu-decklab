@@ -9,6 +9,8 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPT = SKILL_DIR / "scripts" / "swu_analyze.py"
@@ -19,13 +21,14 @@ CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
 
 def run(*args):
     return subprocess.run(
-        [sys.executable, str(SCRIPT), *map(str, args)],
+        [sys.executable, str(SCRIPT), "--no-fetch", *map(str, args)],
         cwd=str(REPO_ROOT),
         capture_output=True,
         text=True,
     )
 
 
+@requires_catalogue
 class CliTest(unittest.TestCase):
     def test_json_to_stdout_is_pure_json(self):
         result = run(CASE, "--card-db", CARD_DB, "--json")
@@ -33,7 +36,7 @@ class CliTest(unittest.TestCase):
         self.assertEqual(result.stderr, "")
 
         data = json.loads(result.stdout)
-        self.assertEqual(data["schema_version"], "0.1.0")
+        self.assertEqual(data["schema_version"], "0.2.0")
         self.assertEqual(data["composition"]["n"], 50)
 
     def test_writes_json_and_report_files(self):

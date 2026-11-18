@@ -11,9 +11,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 import swu_cards as sc
-
-PREMIER_SETS = {"JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"}
-SUSPENDED = set()  # None as of 2026-10-26
+import legal_sets
+from card_resolver import normalize_number, normalize_set, parse_card_id
+import suspended_list
 
 
 def load_deck(deck_path):
@@ -128,19 +128,50 @@ def parse_case_format(data):
 
 
 def resolve_card(card_ref, card_db):
-    """Resolve a card reference to its identity."""
-    if isinstance(card_ref, dict):
-        if 'key' in card_ref:
-            return card_ref['key']
-        if 'name' in card_ref:
-            key = sc.card_identity_key(card_ref['name'], card_ref.get('subtitle', ''))
+    """Resolve a card reference to its identity, or ``None`` when unknown.
+
+    Returning a key for a card the database does not contain would make every
+    downstream check skip it (`if card and ...`), which turns an unknown card into
+    a legal one.
+    """
+    if not isinstance(card_ref, dict):
+        return None
+    if 'key' in card_ref:
+        key = tuple(card_ref['key'])
+        if len(key) == 1:
+            key = (key[0], "")
+        return key if key in card_db else None
+    if 'name' in card_ref:
+        key = sc.card_identity_key(card_ref['name'], card_ref.get('subtitle', ''))
+        if key in card_db:
             return key
-        if 'id' in card_ref:
-            set_code = card_ref.get('set', '')
-            number = card_ref.get('number', '')
-            for (name, subtitle), card in card_db.items():
-                if card.get('set') == set_code and card.get('number') == number:
-                    return (name, subtitle)
+    # A case-format entry can carry a name whose subtitle is missing; the
+    # set/number pair is still authoritative, so fall back to it -- but only when
+    # the name agrees, so a typo is reported instead of silently corrected.
+    key = _resolve_by_printing(card_ref, card_db)
+    if key is not None and 'name' in card_ref:
+        if key[0] != str(card_ref['name']).strip():
+            return None
+    return key
+
+
+def _resolve_by_printing(card_ref, card_db):
+    """Resolve ``{set, number}`` (or ``{id: "SET_NUM"}``) against every printing."""
+    set_code = normalize_set(card_ref.get('set', ''))
+    number = normalize_number(card_ref.get('number', ''))
+    if not set_code or not number:
+        parsed = parse_card_id(card_ref.get('id'))
+        if parsed:
+            set_code, number = normalize_set(parsed[0]), normalize_number(parsed[1])
+    if not set_code or not number:
+        return None
+    for key, card in card_db.items():
+        if any(
+            normalize_set(printed_set) == set_code
+            and normalize_number(printed_number) == number
+            for printed_set, printed_number in sc.card_printing_ids(card)
+        ):
+            return key
     return None
 
 
@@ -183,7 +214,34 @@ def calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db):
     return total_penalty, max_penalty
 
 
-def validate_deck(deck_path, verbose=True):
+def _refresh_catalogue():
+    """Repair local catalogue gaps before validating; failures are warnings."""
+    try:
+        import fetch_cards
+        result = fetch_cards.refresh_catalogue()
+    except Exception as exc:  # never block a review
+        print(f"WARNING: could not refresh the card catalogue: {exc}", file=sys.stderr)
+        return
+    if result["fetched"]:
+        print(f"Catalogue: downloaded {', '.join(result['fetched'])}", file=sys.stderr)
+    incomplete = result.get("incomplete") or []
+    if incomplete:
+        print(
+            f"Catalogue: {', '.join(incomplete)} not complete yet; will retry later",
+            file=sys.stderr,
+        )
+    if result["missing"]:
+        print(
+            f"WARNING: still missing {', '.join(result['missing'])}; "
+            "run fetch_cards.py",
+            file=sys.stderr,
+        )
+
+
+def validate_deck(deck_path, verbose=True, auto_fetch=False):
+    if auto_fetch:
+        _refresh_catalogue()
+
     errors = []
     warnings = []
     
@@ -192,6 +250,13 @@ def validate_deck(deck_path, verbose=True):
     except FileNotFoundError as e:
         print(f"ERROR: {e}", file=sys.stderr)
         sys.exit(1)
+
+    suspended = suspended_list.load(card_db)
+    warnings.extend(suspended.warnings)
+
+    known_sets = sc.complete_sets() or sc.card_db_sets(card_db)
+    legal = legal_sets.load(known_sets=known_sets)
+    warnings.extend(legal.warnings)
     
     try:
         deck = load_deck(deck_path)
@@ -268,19 +333,36 @@ def validate_deck(deck_path, verbose=True):
     
     for key in deck_cards:
         card = card_db.get(key)
-        if card and card['set'] not in PREMIER_SETS:
+        if card and card.get('type') in ('Leader', 'Base'):
+            errors.append(
+                f"{card['type']} {card['name']} cannot be in the draw deck"
+            )
+
+    for key in deck_cards:
+        card = card_db.get(key)
+        if card and not legal.is_legal_any(sc.card_printings(card)):
             errors.append(f"Card {card['name']} is from non-Premier set {card['set']}")
     
     for key in sideboard_cards:
         card = card_db.get(key)
-        if card and card['set'] not in PREMIER_SETS:
+        if card and not legal.is_legal_any(sc.card_printings(card)):
             errors.append(f"Sideboard card {card['name']} is from non-Premier set {card['set']}")
     
+    for label, key in (("Leader", leader_key), ("Base", base_key)):
+        card = card_db.get(key)
+        if card and not legal.is_legal_any(sc.card_printings(card)):
+            errors.append(f"{label} {card['name']} is from non-Premier set {card['set']}")
+    
     for key in all_identities:
-        if key in SUSPENDED:
+        if key in suspended.identities:
             card = card_db.get(key)
-            name = card['name'] if card else str(key)
-            errors.append(f"Card {name} is suspended")
+            if card:
+                label = f"{card['name']} - {card['subtitle']}" if card.get('subtitle') else card['name']
+                errors.append(
+                    f"Card {label} ({card['set']} {card['number']}) is suspended in Premier"
+                )
+            else:
+                errors.append(f"Card {key} is suspended in Premier")
     
     total_penalty, max_penalty = calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db)
     
@@ -309,6 +391,10 @@ def validate_deck(deck_path, verbose=True):
                 print(f"     - {err}")
         else:
             print(f"  ✅ LEGAL")
+        if warnings:
+            print(f"\n  ⚠️  WARNINGS ({len(warnings)}):")
+            for warning in warnings:
+                print(f"     - {warning}")
         print("=" * 60)
     
     return len(errors) == 0, errors, warnings
@@ -320,9 +406,14 @@ def main():
     parser.add_argument('deck', help='Path to deck file (SWUDB JSON or text)')
     parser.add_argument('--json', action='store_true', help='Output as JSON')
     parser.add_argument('--quiet', action='store_true', help='Only output result')
+    parser.add_argument(
+        '--no-fetch', action='store_true', help='Do not download missing sets'
+    )
     args = parser.parse_args()
     
-    valid, errors, warnings = validate_deck(args.deck, verbose=not args.quiet)
+    valid, errors, warnings = validate_deck(
+        args.deck, verbose=not args.quiet, auto_fetch=not args.no_fetch
+    )
     
     if args.json:
         result = {"valid": valid, "errors": errors, "warnings": warnings}

@@ -1,0 +1,431 @@
+#!/usr/bin/env python3
+"""The pipeline must read the dated legal-set list, not the constants tuple.
+
+`constants.PREMIER_SETS` is the fallback, not the source. These tests drop a set
+from the snapshot and expect both entry points to reject a card from it: with
+the old hardcoded check that could never happen, because the card database only
+contains Premier sets.
+
+They also check that the snapshot's freshness warnings reach the analysis, and
+that the registry still applies when no snapshot exists.
+"""
+
+import json
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
+SKILL_DIR = TESTS_DIR.parent
+REPO_ROOT = SKILL_DIR.parents[1]
+SCRIPTS_DIR = SKILL_DIR / "scripts"
+
+sys.path.insert(0, str(SCRIPTS_DIR))
+
+from datetime import date, timedelta  # noqa: E402
+
+import analysis  # noqa: E402
+import constants as C  # noqa: E402
+import validate_deck as vd  # noqa: E402
+
+CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
+FIXED_TIME = "2026-11-03T00:00:00Z"
+
+ALL_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
+WITHOUT_JTL = ["LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
+
+# Poggle (HMW) + Shield Generator (HMW) + 3x Adept ARC-170 (JTL).
+DECK = {
+    "leader": {"id": "HMW_012", "count": 1},
+    "base": {"id": "HMW_022", "count": 1},
+    "deck": [{"id": "JTL_114", "count": 3}],
+    "sideboard": [],
+}
+
+# A JTL leader and a JTL base with an otherwise HMW deck: the set pool applies
+# to the leader and base slots too (`docs/rules.md`).
+JTL_LEADER_DECK = {
+    "leader": {"id": "JTL_016", "count": 1},  # Admiral Ackbar
+    "base": {"id": "HMW_022", "count": 1},
+    "deck": [{"id": "HMW_177", "count": 50}],
+    "sideboard": [],
+}
+
+IC27_DECK = {
+    "leader": {"id": "HMW_012", "count": 1},
+    "base": {"id": "HMW_022", "count": 1},
+    "deck": [{"id": "IC27_012", "count": 1}, {"id": "HMW_177", "count": 49}],
+    "sideboard": [],
+}
+
+JTL_BASE_DECK = {
+    "leader": {"id": "HMW_012", "count": 1},
+    "base": {"id": "JTL_024", "count": 1},  # Data Vault, Scarif
+    "deck": [{"id": "HMW_177", "count": 50}],
+    "sideboard": [],
+}
+
+
+def snapshot(legal=ALL_SETS, fetched_at="2026-11-12T00:00:00Z", as_of="2026-11-12", products=()):
+    return {
+        "source": "test",
+        "fetched_at": fetched_at,
+        "as_of": as_of,
+        "legal": legal,
+        "next_change": None,
+        "products": list(products),
+    }
+
+
+class RunMixin:
+    def write_deck(self, deck=None):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        path = Path(handle.name) / "deck.json"
+        path.write_text(json.dumps(deck or DECK), encoding="utf-8")
+        return path
+
+    def use_snapshot(self, **overrides):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        path = Path(handle.name) / "legal-sets.json"
+        path.write_text(json.dumps(snapshot(**overrides)), encoding="utf-8")
+        patcher = mock.patch.object(C, "LEGAL_SETS_SNAPSHOT_PATH", str(path))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return path
+
+    def analyse(self, deck=None):
+        return analysis.build_analysis(
+            self.write_deck(deck),
+            card_db_path=CARD_DB,
+            generated_at=FIXED_TIME,
+        )
+
+
+@requires_catalogue
+class ValidateDeckLegalSetsTest(RunMixin, unittest.TestCase):
+    def test_rejects_a_set_the_snapshot_drops(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        _ok, errors, _warnings = vd.validate_deck(self.write_deck(), verbose=False)
+
+        self.assertTrue(
+            any("non-Premier set JTL" in error for error in errors), errors
+        )
+
+    def test_accepts_the_set_when_the_snapshot_lists_it(self):
+        self.use_snapshot(legal=ALL_SETS)
+
+        _ok, errors, _warnings = vd.validate_deck(self.write_deck(), verbose=False)
+
+        self.assertFalse(any("non-Premier" in error for error in errors), errors)
+
+    def test_rejects_a_leader_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        _ok, errors, _warnings = vd.validate_deck(
+            self.write_deck(JTL_LEADER_DECK), verbose=False
+        )
+
+        self.assertTrue(
+            any("non-Premier set JTL" in error for error in errors), errors
+        )
+
+    def test_rejects_a_base_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        _ok, errors, _warnings = vd.validate_deck(
+            self.write_deck(JTL_BASE_DECK), verbose=False
+        )
+
+        self.assertTrue(
+            any("non-Premier set JTL" in error for error in errors), errors
+        )
+
+    def test_warns_about_a_legal_set_without_cards(self):
+        # IBH is legal in the snapshot but the catalogue has no IBH cards: the
+        # completeness index says so, and no card carries an IBH printing.
+        self.use_snapshot(legal=ALL_SETS)
+        card_db = {
+            key: card
+            for key, card in vd.sc.load_swu_cards().items()
+            if card.get("set") != "IBH"
+        }
+        complete = set(ALL_SETS) - {"IBH"}
+
+        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db), \
+                mock.patch.object(vd.sc, "complete_sets", return_value=complete):
+            _ok, _errors, warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertTrue(
+            any("IBH" in warning and "fetch_cards" in warning for warning in warnings),
+            warnings,
+        )
+
+    def test_warns_about_a_partially_downloaded_set(self):
+        # LOF cards are on disk, but the completeness index says the set is
+        # short: mentioning a set is not the same as holding it in full.
+        self.use_snapshot(legal=ALL_SETS)
+        complete = set(ALL_SETS) - {"LOF"}
+
+        with mock.patch.object(vd.sc, "complete_sets", return_value=complete):
+            _ok, _errors, warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertTrue(
+            any("LOF" in warning and "fetch_cards" in warning for warning in warnings),
+            warnings,
+        )
+
+    def test_no_coverage_warning_with_a_legacy_cache(self):
+        # No index at all: completeness cannot be proven, so mentioned sets count
+        # and the review stays quiet instead of warning on every run.
+        self.use_snapshot(legal=ALL_SETS)
+
+        with mock.patch.object(vd.sc, "complete_sets", return_value=set()):
+            _ok, _errors, warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertFalse(
+            any("fetch_cards" in warning for warning in warnings), warnings
+        )
+
+    def test_accepts_a_card_reprinted_in_a_legal_set(self):
+        # The deck entry points at JTL, which the snapshot drops, but the card
+        # also exists in HMW: `docs/rules.md` makes it legal.
+        self.use_snapshot(legal=WITHOUT_JTL)
+        card_db = dict(vd.sc.load_swu_cards())
+        key = ("Adept ARC-170", "")
+        card_db[key] = dict(card_db[key], printings=["JTL", "HMW"])
+
+        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db):
+            _ok, errors, _warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertFalse(any("non-Premier" in error for error in errors), errors)
+
+    def test_rejects_a_card_without_a_legal_printing(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+        card_db = dict(vd.sc.load_swu_cards())
+        key = ("Adept ARC-170", "")
+        card_db[key] = dict(card_db[key], printings=["JTL"])
+
+        with mock.patch.object(vd.sc, "load_swu_cards", return_value=card_db):
+            _ok, errors, _warnings = vd.validate_deck(
+                self.write_deck(), verbose=False
+            )
+
+        self.assertTrue(
+            any("non-Premier set JTL" in error for error in errors), errors
+        )
+
+    def test_without_a_snapshot_the_registry_applies(self):
+        with mock.patch.object(C, "LEGAL_SETS_SNAPSHOT_PATH", "/nonexistent/legal.json"):
+            _ok, errors, _warnings = vd.validate_deck(self.write_deck(), verbose=False)
+
+        self.assertFalse(any("non-Premier" in error for error in errors), errors)
+
+
+@requires_catalogue
+class AnalysisLegalSetsTest(RunMixin, unittest.TestCase):
+    def premier_sets_check(self, out):
+        return next(c for c in out["legality"]["checks"] if c["id"] == "premier_sets")
+
+    def test_analysis_follows_the_snapshot(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        check = self.premier_sets_check(self.analyse())
+
+        self.assertFalse(check["ok"], check)
+        self.assertIn("JTL", check["detail"])
+
+    def test_analysis_accepts_the_set_when_the_snapshot_lists_it(self):
+        self.use_snapshot(legal=ALL_SETS)
+
+        check = self.premier_sets_check(self.analyse())
+
+        self.assertTrue(check["ok"], check)
+
+    def test_analysis_flags_a_leader_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        check = self.premier_sets_check(self.analyse(JTL_LEADER_DECK))
+
+        self.assertFalse(check["ok"], check)
+        self.assertIn("Admiral Ackbar", check["detail"])
+
+    def test_analysis_flags_a_base_from_a_dropped_set(self):
+        self.use_snapshot(legal=WITHOUT_JTL)
+
+        check = self.premier_sets_check(self.analyse(JTL_BASE_DECK))
+
+        self.assertFalse(check["ok"], check)
+        self.assertIn("JTL", check["detail"])
+
+    def test_analysis_warns_about_a_legal_set_without_cards(self):
+        self.use_snapshot(legal=ALL_SETS)
+        card_db = {
+            key: card
+            for key, card in analysis.sc.load_swu_cards().items()
+            if card.get("set") != "IBH"
+        }
+        complete = set(ALL_SETS) - {"IBH"}
+
+        with mock.patch.object(analysis.sc, "load_swu_cards", return_value=card_db), \
+                mock.patch.object(analysis.sc, "complete_sets", return_value=complete):
+            out = self.analyse()
+
+        self.assertTrue(
+            any(
+                "IBH" in warning and "fetch_cards" in warning
+                for warning in out["legality"]["warnings"]
+            ),
+            out["legality"]["warnings"],
+        )
+
+    def test_analysis_warns_about_a_partially_downloaded_set(self):
+        self.use_snapshot(legal=ALL_SETS)
+        complete = set(ALL_SETS) - {"LOF"}
+
+        with mock.patch.object(analysis.sc, "complete_sets", return_value=complete):
+            out = self.analyse()
+
+        self.assertTrue(
+            any(
+                "LOF" in warning and "fetch_cards" in warning
+                for warning in out["legality"]["warnings"]
+            ),
+            out["legality"]["warnings"],
+        )
+
+    def test_unresolved_card_names_the_missing_set(self):
+        today = date.today()
+        self.use_snapshot(
+            as_of=(today - timedelta(days=1)).isoformat(),
+            products=[
+                {"code": "IC27", "name": "Icons 2027", "legal_from": today.isoformat()}
+            ],
+        )
+
+        out = self.analyse(IC27_DECK)
+
+        reasons = [entry["reason"] for entry in out["deck"]["unresolved"]]
+        self.assertTrue(
+            any("IC27" in reason and "fetch_cards" in reason for reason in reasons),
+            reasons,
+        )
+
+    def test_limitation_names_the_missing_set(self):
+        today = date.today()
+        self.use_snapshot(
+            as_of=(today - timedelta(days=1)).isoformat(),
+            products=[
+                {"code": "IC27", "name": "Icons 2027", "legal_from": today.isoformat()}
+            ],
+        )
+
+        out = self.analyse(IC27_DECK)
+
+        limitation = next(
+            item for item in out["limitations"] if item["id"] == "incomplete-catalogue"
+        )
+        self.assertIn("IC27", limitation["detail"])
+
+    def test_missing_snapshot_is_reported_as_a_limitation(self):
+        with mock.patch.object(C, "LEGAL_SETS_SNAPSHOT_PATH", "/nonexistent/legal.json"):
+            out = self.analyse()
+
+        ids = {item["id"] for item in out["limitations"]}
+        self.assertIn("legality-registry", ids)
+
+    def test_a_snapshot_removes_the_legality_limitation(self):
+        self.use_snapshot(legal=ALL_SETS)
+
+        out = self.analyse()
+
+        ids = {item["id"] for item in out["limitations"]}
+        self.assertNotIn("legality-registry", ids)
+
+    def test_stale_snapshot_warning_reaches_the_analysis(self):
+        self.use_snapshot(legal=ALL_SETS, fetched_at="2020-01-01T00:00:00Z", as_of="2020-01-01")
+
+        out = self.analyse()
+
+        self.assertTrue(
+            any("days" in warning.lower() for warning in out["legality"]["warnings"]),
+            out["legality"]["warnings"],
+        )
+
+
+
+class DbProvenanceTest(unittest.TestCase):
+    """`data_as_of` describes the sets the deck uses."""
+
+    def setUp(self):
+        handle = tempfile.TemporaryDirectory()
+        self.addCleanup(handle.cleanup)
+        self.dir = Path(handle.name)
+
+    def test_dates_follow_the_deck_sets(self):
+        (self.dir / "sets_index.json").write_text(
+            json.dumps(
+                {
+                    "JTL": {"complete": True, "fetched_at": "2026-10-27T10:00:00", "checked_at": "2026-11-17T09:00:00"},
+                    "HMW": {"complete": True, "fetched_at": "2026-11-17T09:00:00", "checked_at": "2026-11-17T09:00:00"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        card_db = {
+            ("Filler", ""): {"set": "HMW", "number": "001"},
+        }
+
+        db = analysis._db_meta(self.dir / "cards_normalized.json", card_db, {"HMW"})
+
+        self.assertEqual(db["data_as_of"], "2026-11-17")
+        self.assertEqual(db["checked_at"], "2026-11-17")
+
+    def test_an_old_set_in_the_deck_keeps_the_old_date(self):
+        (self.dir / "sets_index.json").write_text(
+            json.dumps(
+                {
+                    "JTL": {"complete": True, "fetched_at": "2026-10-27T10:00:00", "checked_at": "2026-11-17T09:00:00"},
+                    "HMW": {"complete": True, "fetched_at": "2026-11-17T09:00:00", "checked_at": "2026-11-17T09:00:00"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        card_db = {
+            ("Filler", ""): {"set": "HMW", "number": "001"},
+        }
+
+        db = analysis._db_meta(self.dir / "cards_normalized.json", card_db, {"HMW", "JTL"})
+
+        self.assertEqual(db["data_as_of"], "2026-10-27")
+
+
+class DbMetaWithoutMetaJsonTest(unittest.TestCase):
+    """`--card-db` accepts a directory with only the catalogue."""
+
+    def test_missing_meta_json_does_not_crash(self):
+        import tempfile as _tempfile
+
+        with _tempfile.TemporaryDirectory() as tmp:
+            card_db = {("Filler", ""): {"set": "HMW", "number": "001"}}
+            db = analysis._db_meta(Path(tmp) / "cards_normalized.json", card_db, {"HMW"})
+
+        self.assertEqual(db["data_as_of"], "unknown")
+        self.assertEqual(db["sets"], ["HMW"])
+
+if __name__ == "__main__":
+    unittest.main()

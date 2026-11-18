@@ -946,9 +946,10 @@
     "unique_slots": 20
   },
   "db": {
-    "cards": 1634,
+    "cards": 2445,
+    "checked_at": "2026-11-17",
     "data_as_of": "2026-10-27",
-    "schema_hash": "66aa15bcd22bff0933eb4d38b45435cde0f747a217f96dd4f19af38f826095c0",
+    "schema_hash": "bac8c35284e8f2640cadb562bd8bfde30b7ac803d14d4145cd1cfa38aa18d79e",
     "sets": [
       "JTL",
       "LOF",
@@ -956,7 +957,11 @@
       "SEC",
       "LAW",
       "ASH",
-      "HMW"
+      "HMW",
+      "SHD",
+      "SOR",
+      "TS26",
+      "TWI"
     ],
     "source": "api.swu-db.com"
   },
@@ -1590,11 +1595,11 @@
       "statement": "Only 2 of 39 unit slots are Space (5.1%)."
     }
   ],
-  "generated_at": "2026-11-03T09:36:34Z",
+  "generated_at": "2026-11-17T13:23:11Z",
   "input": {
     "format": "case",
     "n": 50,
-    "path": "cases/poggle-blue-endor/deck.json",
+    "path": "skills/swu-review/tests/fixtures/poggle-blue-endor/deck.json",
     "sha256": "9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a"
   },
   "legality": {
@@ -1682,7 +1687,7 @@
       "id": "data-snapshot",
       "impact": "info",
       "mitigation": "Re-run fetch_cards.py and check db.data_as_of.",
-      "statement": "Card data snapshot: 2026-10-27 from api.swu-db.com (7 sets, 1634 cards)."
+      "statement": "Card data snapshot: 2026-10-27 from api.swu-db.com (11 sets, 2445 cards)."
     },
     {
       "affects": [
@@ -1690,11 +1695,11 @@
         "cards"
       ],
       "category": "data",
-      "detail": "Reprint legality by card version cannot be verified. An old printing may be reported as unresolved even when a Premier reprint exists.",
-      "id": "premier-only-db",
+      "detail": "A payload that does not match the count published by the API (a prerelease set, a failed download) is refused instead of stored, so its cards are reported as unresolved and its reprints cannot be seen.",
+      "id": "incomplete-catalogue",
       "impact": "degraded",
-      "mitigation": "Resolve by name+subtitle or add non-Premier printings to the DB.",
-      "statement": "Only Premier sets are fetched; older printings are not in the local DB."
+      "mitigation": "Run fetch_cards.py: it retries incomplete sets and reports them. The per-set state lives in data/swudb/sets_index.json.",
+      "statement": "Sets that are missing or incomplete in the local catalogue are invisible to this analysis."
     },
     {
       "affects": [
@@ -1739,7 +1744,7 @@
       "id": "rules-version",
       "impact": "info",
       "mitigation": "Check the official Comprehensive Event Guide.",
-      "statement": "Legality follows the local rules verified on 2026-10-26."
+      "statement": "Legality follows the local rules verified on 2026-11-09."
     },
     {
       "affects": [
@@ -1808,7 +1813,7 @@
       "statement": "Price forecasts or investment advice."
     }
   ],
-  "rules_version": "2026-10-26",
-  "schema_version": "0.1.0",
+  "rules_version": "2026-11-09",
+  "schema_version": "0.2.0",
   "tool_version": "0.1.0-dev"
 }

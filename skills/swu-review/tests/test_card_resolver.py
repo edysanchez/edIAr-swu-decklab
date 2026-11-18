@@ -6,6 +6,8 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
@@ -18,6 +20,7 @@ from card_resolver import CardIndex, UnresolvedCard  # noqa: E402
 CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
 
 
+@requires_catalogue
 class CardResolverTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

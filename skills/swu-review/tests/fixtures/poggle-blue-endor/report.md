@@ -102,7 +102,9 @@ Total penalty: **0**; maximum on a single card: **0**.
 | Rarity | Common |
 | Unique | yes |
 
-> Action [C=1, Exhaust]: Ready a friendly Creature unit and deal 1 damage to it.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, aspect:Villainy, trait:OFFICIAL, trait:SEPARATIST, type:Leader, unique
 
@@ -125,9 +127,9 @@ Total penalty: **0**; maximum on a single card: **0**.
 | Rarity | Common |
 | Unique | no |
 
-_No card text in local database._
+_Text missing from local database._
 
-**Flags:** no price
+**Flags:** no price, text missing
 
 **Derived tags:** aspect:Vigilance, trait:ENDOR, type:Base
 
@@ -150,7 +152,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-> When Played: If you control another Ewok unit or an Endor base, you may deal 1 damage to a base and 1 damage to an enemy unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, trait:EWOK, type:Unit
 
@@ -171,8 +175,9 @@ _No card text in local database._
 | Rarity | Uncommon |
 | Unique | yes |
 
-> Restore 1 (When this unit attacks, heal 1 damage from your base.) 
-> This unit gets +1/+0 while defending.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Vigilance, keyword:Restore, trait:CREATURE, type:Unit, unique
 
@@ -193,7 +198,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-> Grit (This unit gets +1/+0 for each damage on it.)
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, keyword:Grit, trait:CREATURE, type:Unit
 
@@ -214,7 +221,9 @@ _No card text in local database._
 | Rarity | Uncommon |
 | Unique | no |
 
-> When a friendly unit is dealt damage and survives: Deal 1 damage to any number of bases. Use this ability only once each round.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, aspect:Vigilance, trait:UNDERWORLD, type:Unit
 
@@ -235,8 +244,9 @@ _No card text in local database._
 | Rarity | Rare |
 | Unique | yes |
 
-> This unit can't attack unless it's damaged. 
-> When this unit attacks and defeats a unit: Heal 2 damage from this unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Vigilance, trait:CREATURE, type:Unit, unique
 
@@ -257,7 +267,9 @@ _No card text in local database._
 | Rarity | Uncommon |
 | Unique | yes |
 
-> On Attack: You may deal 1 damage to an upgraded unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Vigilance, aspect:Villainy, trait:CLONE, trait:IMPERIAL, trait:TROOPER, type:Unit, unique
 
@@ -278,7 +290,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-> When Defeated: You may give a Weakness token to a damaged unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Vigilance, trait:CREATURE, type:Unit
 
@@ -299,8 +313,9 @@ _No card text in local database._
 | Rarity | Rare |
 | Unique | yes |
 
-> Grit 
-> On Attack: You may deal 3 damage to a friendly Creature unit (including this one) and ready this unit. Use this ability only once each round.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, keyword:Grit, trait:CREATURE, type:Unit, unique
 
@@ -321,8 +336,9 @@ _No card text in local database._
 | Rarity | Rare |
 | Unique | yes |
 
-> Other friendly units get -2/-2. 
-> On Attack: You may give a Weakness token to a unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Vigilance, aspect:Villainy, trait:CLONE, trait:CREATURE, type:Unit, unique
 
@@ -343,7 +359,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-_No card text in local database._
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, aspect:Villainy, trait:CREATURE, type:Unit
 
@@ -364,7 +382,9 @@ _No card text in local database._
 | Rarity | Uncommon |
 | Unique | yes |
 
-> When this unit is dealt damage and survives: Deal 2 damage to each enemy base.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, aspect:Villainy, trait:CREATURE, type:Unit, unique
 
@@ -385,7 +405,9 @@ _No card text in local database._
 | Rarity | Legendary |
 | Unique | yes |
 
-> When Attack Ends: You may give a Weakness token to this unit. If you do, create a Beast token for each Weakness token on this unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Vigilance, aspect:Villainy, trait:CREATURE, type:Unit, unique
 
@@ -406,8 +428,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-> Restore 2 (When this unit attacks, heal 2 damage from your base.)
-> When Played: You may exhaust a unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Space, aspect:Vigilance, keyword:Restore, trait:CREATURE, type:Unit
 
@@ -428,10 +451,9 @@ _No card text in local database._
 | Rarity | Legendary |
 | Unique | no |
 
-> Overwhelm
-> On Attack/When Defeated: If you control an Endor base, each opponent chooses one:
-> You deal 3 damage to a unit or base they control.
-> They discard a card from their hand and defeat a resource they control.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** arena:Ground, aspect:Aggression, keyword:Overwhelm, trait:CREATURE, type:Unit
 
@@ -452,7 +474,9 @@ _No card text in local database._
 | Rarity | Rare |
 | Unique | no |
 
-> Defeat a friendly Creature unit. If you do, play a Creature unit that costs up to 3 more than the defeated unit from your hand for free.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** aspect:Vigilance, trait:INNATE, type:Event
 
@@ -473,8 +497,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-> Deal 1 damage to an enemy unit. 
-> If you control an Endor base, you may attack with a unit. It gets +2/+0 for this attack.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** aspect:Aggression, trait:DISASTER, type:Event
 
@@ -495,8 +520,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-> Create a Beast token.
-> Deal 1 damage to a friendly ground unit and 1 damage to an enemy ground unit.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** aspect:Aggression, trait:DISASTER, type:Event
 
@@ -517,8 +543,9 @@ _No card text in local database._
 | Rarity | Common |
 | Unique | no |
 
-> Attach to a friendly unit.
-> When Played: You may exhaust a unit in attached unit's arena.
+_Text missing from local database._
+
+**Flags:** text missing
 
 **Derived tags:** aspect:Vigilance, trait:INNATE, type:Upgrade
 

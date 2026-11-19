@@ -23,6 +23,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import constants as C
 import swu_cards as sc
@@ -30,6 +31,7 @@ from card_resolver import CardIndex, UnresolvedCard
 from draw_odds import p_at_least_one
 from validate_deck import load_deck
 from domain.services.aspect_penalty_service import AspectPenaltyService
+from infrastructure.card_db_repository import CardDBRepository
 from infrastructure.card_repository import CardRepository
 
 
@@ -195,9 +197,9 @@ def _zone_counts(content, deck_format):
             card_entry = {"name": name, "subtitle": subtitle, "count": count}
             
             if current_section == 'leader':
-                leaders.append(card_entry)
-            elif current_section == 'base' and current_section != 'done':
-                bases.append(card_entry)
+                leaders.append(count)
+            elif current_section == 'base':
+                bases.append(count)
         
         return leaders, bases
     try:
@@ -458,17 +460,9 @@ def _aspect_penalty(
     # Create the domain service with injected repository
     penalty_service = AspectPenaltyService(card_repository)
 
-    # Extract keys from leader and base entities
-    leader_key = None
-    base_key = None
-
-    if leader is not None:
-        # Get the key from the leader card entity
-        leader_key = leader.get("identity", "") if leader else None
-
-    if base is not None:
-        # Get the key from the base card entity
-        base_key = base.get("identity", "") if base else None
+    # Keys are the same (name, subtitle) tuples used by the card database
+    leader_key = leader.key if leader is not None else None
+    base_key = base.key if base is not None else None
 
     # Calculate penalty using the domain service
     return penalty_service.calculate_penalty(
@@ -857,6 +851,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
         card_db_path = C.CARD_DB_PATH
     card_db_path = Path(card_db_path)
     card_db = sc.load_swu_cards(card_db_path)
+    card_repository = CardDBRepository(card_db)
     index = CardIndex(card_db)
 
     deck = load_deck(deck_path)

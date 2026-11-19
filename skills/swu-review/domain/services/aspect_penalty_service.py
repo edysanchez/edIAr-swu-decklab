@@ -5,8 +5,8 @@ implementation. This allows for easy testing with InMemoryCardRepository
 and easy substitution of the data source in production.
 """
 
-from typing import Dict, List, Optional, Set
-from infrastructure.card_repository import CardRepository
+from typing import Dict, Optional, Set
+from infrastructure.card_repository import CardRepository, Identity
 
 
 class AspectPenaltyService:
@@ -35,17 +35,17 @@ class AspectPenaltyService:
     
     def calculate_penalty(
         self,
-        leader_key: Optional[str],
-        base_key: Optional[str],
-        main_counts: Dict[str, int]
+        leader_key: Optional[Identity],
+        base_key: Optional[Identity],
+        main_counts: Dict[Identity, int]
     ) -> dict:
         """Calculate the aspect penalty for all main-deck cards.
         
         Args:
-            leader_key: Identity key of the leader card (e.g., "HMW_012")
+            leader_key: ``(name, subtitle)`` identity of the leader card,
                        or None if no leader
-            base_key: Identity key of the base card or None
-            main_counts: Dictionary mapping card keys to copy counts
+            base_key: ``(name, subtitle)`` identity of the base card, or None
+            main_counts: Dictionary mapping card identities to copy counts
             
         Returns:
             Dictionary with keys: total, max, per_card

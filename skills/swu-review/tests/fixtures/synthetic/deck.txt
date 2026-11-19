@@ -1,0 +1,24 @@
+Leader
+1 | Synthetic Leader | Prime
+
+Base
+1 | Synthetic Base | Endor
+
+MainDeck
+3 | Synthetic Unit 01
+3 | Synthetic Unit 02
+3 | Synthetic Unit 03
+3 | Synthetic Unit 04
+3 | Synthetic Unit 05
+3 | Synthetic Unit 06
+3 | Synthetic Unit 07
+3 | Synthetic Unit 08
+3 | Synthetic Unit 09
+3 | Synthetic Unit 10
+3 | Synthetic Unit 11
+3 | Synthetic Unit 12
+3 | Synthetic Unit 13
+3 | Synthetic Unit 14
+3 | Synthetic Unit 15
+3 | Synthetic Unit 16
+2 | Synthetic Villain Unit

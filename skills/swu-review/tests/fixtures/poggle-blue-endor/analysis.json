@@ -25,7 +25,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 6,
       "identity": "Poggle the Lesser|Let the Executions Begin",
@@ -36,8 +36,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "Let the Executions Begin",
-      "text": "Action [C=1, Exhaust]: Ready a friendly Creature unit and deal 1 damage to it.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "SEPARATIST",
         "OFFICIAL"
@@ -66,7 +66,7 @@
       "flags": {
         "no_price": true,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 30,
       "identity": "Shield Generator Complex|Endor",
@@ -77,8 +77,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "Endor",
-      "text": "",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "ENDOR"
       ],
@@ -109,7 +109,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 2,
       "identity": "Adamant Ewoks",
@@ -120,8 +120,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "",
-      "text": "When Played: If you control another Ewok unit or an Endor base, you may deal 1 damage to a base and 1 damage to an enemy unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "EWOK"
       ],
@@ -154,7 +154,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 3,
       "identity": "Batcher|Loyal Hound",
@@ -167,8 +167,8 @@
       "rarity": "Uncommon",
       "set": "HMW",
       "subtitle": "Loyal Hound",
-      "text": "Restore 1 (When this unit attacks, heal 1 damage from your base.) \nThis unit gets +1/+0 while defending.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -200,7 +200,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 4,
       "identity": "Feisty Blurrg",
@@ -213,8 +213,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "",
-      "text": "Grit (This unit gets +1/+0 for each damage on it.)",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -247,7 +247,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 4,
       "identity": "Rancor Keeper",
@@ -258,8 +258,8 @@
       "rarity": "Uncommon",
       "set": "ASH",
       "subtitle": "",
-      "text": "When a friendly unit is dealt damage and survives: Deal 1 damage to any number of bases. Use this ability only once each round.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "UNDERWORLD"
       ],
@@ -291,7 +291,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 5,
       "identity": "Oggdo Bogdo|Bogano Brute",
@@ -302,8 +302,8 @@
       "rarity": "Rare",
       "set": "LOF",
       "subtitle": "Bogano Brute",
-      "text": "This unit can't attack unless it's damaged. \nWhen this unit attacks and defeats a unit: Heal 2 damage from this unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -339,7 +339,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 5,
       "identity": "Scorch|Imperial Commando",
@@ -350,8 +350,8 @@
       "rarity": "Uncommon",
       "set": "HMW",
       "subtitle": "Imperial Commando",
-      "text": "On Attack: You may deal 1 damage to an upgraded unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "IMPERIAL",
         "CLONE",
@@ -384,7 +384,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 4,
       "identity": "Venomous Wyyyshokk",
@@ -395,8 +395,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "",
-      "text": "When Defeated: You may give a Weakness token to a damaged unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -429,7 +429,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 6,
       "identity": "Arena Nexu|Starved for Prey",
@@ -442,8 +442,8 @@
       "rarity": "Rare",
       "set": "HMW",
       "subtitle": "Starved for Prey",
-      "text": "Grit \nOn Attack: You may deal 3 damage to a friendly Creature unit (including this one) and ready this unit. Use this ability only once each round.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -478,7 +478,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 6,
       "identity": "Clone of the Zillo Beast|Emperor's Experiment",
@@ -489,8 +489,8 @@
       "rarity": "Rare",
       "set": "HMW",
       "subtitle": "Emperor's Experiment",
-      "text": "Other friendly units get -2/-2. \nOn Attack: You may give a Weakness token to a unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CLONE",
         "CREATURE"
@@ -524,7 +524,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 5,
       "identity": "Filthy Dianoga",
@@ -535,8 +535,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "",
-      "text": "",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -570,7 +570,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 6,
       "identity": "Arena Acklay|Screaming Predator",
@@ -581,8 +581,8 @@
       "rarity": "Uncommon",
       "set": "HMW",
       "subtitle": "Screaming Predator",
-      "text": "When this unit is dealt damage and survives: Deal 2 damage to each enemy base.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -616,7 +616,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 7,
       "identity": "The Great Progenitor|First of the Drengir",
@@ -627,8 +627,8 @@
       "rarity": "Legendary",
       "set": "HMW",
       "subtitle": "First of the Drengir",
-      "text": "When Attack Ends: You may give a Weakness token to this unit. If you do, create a Beast token for each Weakness token on this unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -660,7 +660,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 5,
       "identity": "Starlit Purrgil",
@@ -673,8 +673,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "",
-      "text": "Restore 2 (When this unit attacks, heal 2 damage from your base.)\nWhen Played: You may exhaust a unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -706,7 +706,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 7,
       "identity": "Giant Gorax",
@@ -719,8 +719,8 @@
       "rarity": "Legendary",
       "set": "HMW",
       "subtitle": "",
-      "text": "Overwhelm\nOn Attack/When Defeated: If you control an Endor base, each opponent chooses one:\nYou deal 3 damage to a unit or base they control.\nThey discard a card from their hand and defeat a resource they control.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "CREATURE"
       ],
@@ -748,7 +748,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": null,
       "identity": "Always a Bigger Fish",
@@ -759,8 +759,8 @@
       "rarity": "Rare",
       "set": "HMW",
       "subtitle": "",
-      "text": "Defeat a friendly Creature unit. If you do, play a Creature unit that costs up to 3 more than the defeated unit from your hand for free.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "INNATE"
       ],
@@ -788,7 +788,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": null,
       "identity": "Nightfall",
@@ -799,8 +799,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "",
-      "text": "Deal 1 damage to an enemy unit. \nIf you control an Endor base, you may attack with a unit. It gets +2/+0 for this attack.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "DISASTER"
       ],
@@ -828,7 +828,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": null,
       "identity": "Run Amok",
@@ -839,8 +839,8 @@
       "rarity": "Common",
       "set": "HMW",
       "subtitle": "",
-      "text": "Create a Beast token.\nDeal 1 damage to a friendly ground unit and 1 damage to an enemy ground unit.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "DISASTER"
       ],
@@ -868,7 +868,7 @@
       "flags": {
         "no_price": false,
         "off_aspect": false,
-        "unresolved_text": false
+        "unresolved_text": true
       },
       "hp": 1,
       "identity": "Nimble Prowess",
@@ -879,8 +879,8 @@
       "rarity": "Common",
       "set": "SEC",
       "subtitle": "",
-      "text": "Attach to a friendly unit.\nWhen Played: You may exhaust a unit in attached unit's arena.",
-      "text_status": "present",
+      "text": null,
+      "text_status": "missing",
       "traits": [
         "INNATE"
       ],

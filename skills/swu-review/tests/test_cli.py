@@ -9,12 +9,14 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import SYNTHETIC_CARD_DB, SYNTHETIC_DECK  # noqa: E402
+
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPT = SKILL_DIR / "scripts" / "swu_analyze.py"
-FIXTURES_DIR = TESTS_DIR / "fixtures"
-CASE = FIXTURES_DIR / "poggle-blue-endor" / "deck.json"
-CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
+CASE = SYNTHETIC_DECK
+CARD_DB = SYNTHETIC_CARD_DB
 
 
 def run(*args):
@@ -67,9 +69,7 @@ class CliTest(unittest.TestCase):
     def test_illegal_deck_still_produces_json(self):
         with tempfile.TemporaryDirectory() as tmp:
             deck = json.loads(CASE.read_text(encoding="utf-8"))
-            deck["mainDeck"][0]["card"]["title"] = "Totally Fake Card"
-            deck["mainDeck"][0]["card"]["subtitle"] = ""
-            deck["mainDeck"][0]["card"]["cardNumber"] = 999
+            deck["deck"][0]["id"] = "HMW_999"
             path = Path(tmp) / "fake.json"
             path.write_text(json.dumps(deck), encoding="utf-8")
 

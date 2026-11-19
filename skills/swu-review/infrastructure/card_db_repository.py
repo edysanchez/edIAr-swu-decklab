@@ -10,31 +10,31 @@ A copy is a second source of truth that can drift. That is exactly how
 service — silently reported a penalty of 0 for every deck.
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
-from infrastructure.card_repository import CardRepository
+from infrastructure.card_repository import CardRepository, Identity
 
 
 class CardDBRepository(CardRepository):
     """Adapter for the normalised card database loaded from JSON."""
 
-    def __init__(self, card_db: Dict[Tuple[str, str], dict]):
+    def __init__(self, card_db: Dict[Identity, dict]):
         self._cards = card_db
 
-    def get_card(self, key: Tuple[str, str]) -> Optional[dict]:
+    def get_card(self, key: Identity) -> Optional[dict]:
         """Get a card by its ``(name, subtitle)`` identity key."""
         return self._cards.get(key)
 
-    def get_aspects(self, key: Tuple[str, str]) -> List[str]:
+    def get_aspects(self, key: Identity) -> List[str]:
         """Get the aspects for a card; an unknown card has no aspects."""
         card = self._cards.get(key) or {}
         return list(card.get("aspects") or [])
 
-    def has_aspect(self, key: Tuple[str, str], aspect: str) -> bool:
+    def has_aspect(self, key: Identity, aspect: str) -> bool:
         """Check if a card has a specific aspect."""
         return aspect in self.get_aspects(key)
 
-    def load_cards(self) -> Dict[Tuple[str, str], dict]:
+    def load_cards(self) -> Dict[Identity, dict]:
         """Return a shallow copy of the cards, as the protocol requires."""
         return dict(self._cards)
 
@@ -42,10 +42,10 @@ class CardDBRepository(CardRepository):
         """Get all cards as a list."""
         return list(self._cards.values())
 
-    def card_exists(self, key: Tuple[str, str]) -> bool:
+    def card_exists(self, key: Identity) -> bool:
         """Check if a card exists in the database."""
         return key in self._cards
 
-    def get_keys(self) -> List[Tuple[str, str]]:
+    def get_keys(self) -> List[Identity]:
         """Get all card identity keys."""
         return list(self._cards.keys())

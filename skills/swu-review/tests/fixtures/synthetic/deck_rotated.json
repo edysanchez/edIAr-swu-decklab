@@ -1,0 +1,81 @@
+{
+  "leader": {
+    "id": "HMW_900",
+    "count": 1
+  },
+  "base": {
+    "id": "HMW_899",
+    "count": 1
+  },
+  "deck": [
+    {
+      "id": "HMW_001",
+      "count": 3
+    },
+    {
+      "id": "HMW_002",
+      "count": 3
+    },
+    {
+      "id": "HMW_003",
+      "count": 3
+    },
+    {
+      "id": "HMW_004",
+      "count": 3
+    },
+    {
+      "id": "HMW_005",
+      "count": 3
+    },
+    {
+      "id": "HMW_006",
+      "count": 3
+    },
+    {
+      "id": "HMW_007",
+      "count": 3
+    },
+    {
+      "id": "HMW_008",
+      "count": 3
+    },
+    {
+      "id": "HMW_009",
+      "count": 3
+    },
+    {
+      "id": "HMW_010",
+      "count": 3
+    },
+    {
+      "id": "HMW_011",
+      "count": 3
+    },
+    {
+      "id": "HMW_012",
+      "count": 3
+    },
+    {
+      "id": "HMW_013",
+      "count": 3
+    },
+    {
+      "id": "HMW_014",
+      "count": 3
+    },
+    {
+      "id": "HMW_015",
+      "count": 3
+    },
+    {
+      "id": "SOR_001",
+      "count": 2
+    },
+    {
+      "id": "HMW_016",
+      "count": 3
+    }
+  ],
+  "sideboard": []
+}

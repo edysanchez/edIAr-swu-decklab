@@ -15,6 +15,9 @@ from decimal import Decimal
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import SYNTHETIC_CARD_DB, SYNTHETIC_DECK  # noqa: E402
+
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
@@ -24,8 +27,8 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 import cardmarket  # noqa: E402  (fails first: RED)
 
 FIXTURES_DIR = TESTS_DIR / "fixtures"
-CASE = FIXTURES_DIR / "poggle-blue-endor" / "deck.json"
-CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
+CASE = SYNTHETIC_DECK
+CARD_DB = SYNTHETIC_CARD_DB
 SCHEMA_PATH = SKILL_DIR / "analysis.schema.json"
 FIXED_TIME = "2026-11-03T00:00:00Z"
 
@@ -236,7 +239,10 @@ class AnalysisIntegrationTest(unittest.TestCase):
     def test_schema_accepts_price_eur(self):
         import json
 
-        import jsonschema
+        try:
+            import jsonschema
+        except ImportError:
+            self.skipTest("jsonschema not installed")
 
         with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
             schema = json.load(f)

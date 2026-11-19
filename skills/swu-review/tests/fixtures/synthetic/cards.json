@@ -1,0 +1,808 @@
+{
+  "Synthetic Base|Endor": {
+    "arenas": [],
+    "artist": null,
+    "aspects": [
+      "Vigilance"
+    ],
+    "cid": null,
+    "cost": null,
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "30",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Base",
+    "number": "899",
+    "power": null,
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "Endor",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Base",
+    "unique": false
+  },
+  "Synthetic Double Aspect": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression",
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "2",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "2",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Double Aspect",
+    "number": "19",
+    "power": "2",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Event": {
+    "arenas": [],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "2",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": null,
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Event",
+    "number": "17",
+    "power": null,
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Event",
+    "unique": false
+  },
+  "Synthetic Leader|Prime": {
+    "arenas": [],
+    "artist": null,
+    "aspects": [
+      "Aggression",
+      "Villainy"
+    ],
+    "cid": null,
+    "cost": null,
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "30",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Leader",
+    "number": "900",
+    "power": null,
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "Prime",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Leader",
+    "unique": false
+  },
+  "Synthetic Rotated Unit": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "2",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "2",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Rotated Unit",
+    "number": "1",
+    "power": "2",
+    "rarity": "Common",
+    "set": "SOR",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Twin|A": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "2",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "2",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Twin",
+    "number": "20",
+    "power": "2",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "A",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Twin|B": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "3",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "3",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Twin",
+    "number": "21",
+    "power": "3",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "B",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 01": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "2",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "2",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 01",
+    "number": "1",
+    "power": "2",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 02": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "3",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "3",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 02",
+    "number": "2",
+    "power": "3",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 03": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "4",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "4",
+    "keywords": [
+      "Sentinel"
+    ],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 03",
+    "number": "3",
+    "power": "4",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 04": {
+    "arenas": [
+      "Space"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "5",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "1",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 04",
+    "number": "4",
+    "power": "5",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 05": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "6",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "2",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 05",
+    "number": "5",
+    "power": "1",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 06": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "1",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "3",
+    "keywords": [
+      "Sentinel"
+    ],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 06",
+    "number": "6",
+    "power": "2",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 07": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "2",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "4",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 07",
+    "number": "7",
+    "power": "3",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 08": {
+    "arenas": [
+      "Space"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "3",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "1",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 08",
+    "number": "8",
+    "power": "4",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 09": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "4",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "2",
+    "keywords": [
+      "Sentinel"
+    ],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 09",
+    "number": "9",
+    "power": "5",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 10": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "5",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "3",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 10",
+    "number": "10",
+    "power": "1",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 11": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "6",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "4",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 11",
+    "number": "11",
+    "power": "2",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 12": {
+    "arenas": [
+      "Space"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "1",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "1",
+    "keywords": [
+      "Sentinel"
+    ],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 12",
+    "number": "12",
+    "power": "3",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 13": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "2",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "2",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 13",
+    "number": "13",
+    "power": "4",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 14": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "3",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "3",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 14",
+    "number": "14",
+    "power": "5",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 15": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "4",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "4",
+    "keywords": [
+      "Sentinel"
+    ],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 15",
+    "number": "15",
+    "power": "1",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Unit 16": {
+    "arenas": [
+      "Space"
+    ],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "5",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "1",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Unit 16",
+    "number": "16",
+    "power": "2",
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  },
+  "Synthetic Upgrade": {
+    "arenas": [],
+    "artist": null,
+    "aspects": [
+      "Aggression"
+    ],
+    "cid": null,
+    "cost": "1",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": null,
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Upgrade",
+    "number": "18",
+    "power": null,
+    "rarity": "Common",
+    "set": "HMW",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Upgrade",
+    "unique": false,
+    "upgradeHp": "1",
+    "upgradePower": "1"
+  },
+  "Synthetic Villain Unit": {
+    "arenas": [
+      "Ground"
+    ],
+    "artist": null,
+    "aspects": [
+      "Villainy"
+    ],
+    "cid": null,
+    "cost": "3",
+    "doubleSided": false,
+    "epicAction": null,
+    "foilPriceUsd": "2.00",
+    "frontArt": null,
+    "frontText": null,
+    "hp": "3",
+    "keywords": [],
+    "lowPriceUsd": "0.50",
+    "marketPriceUsd": "1.00",
+    "name": "Synthetic Villain Unit",
+    "number": "1",
+    "power": "3",
+    "rarity": "Common",
+    "set": "JTL",
+    "subtitle": "",
+    "tcgplayerId": null,
+    "traits": [
+      "TEST"
+    ],
+    "type": "Unit",
+    "unique": false
+  }
+}

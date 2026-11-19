@@ -15,19 +15,19 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
-SKILL_DIR = TESTS_DIR.parent
-REPO_ROOT = SKILL_DIR.parents[1]
-SCRIPTS_DIR = SKILL_DIR / "scripts"
+sys.path.insert(0, str(TESTS_DIR))
+from support import SYNTHETIC_CARD_DB, SYNTHETIC_DECK  # noqa: E402
 
+SKILL_DIR = TESTS_DIR.parent
+SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 import analysis  # noqa: E402
 import render_report  # noqa: E402  (fails first: RED)
 
-FIXTURES_DIR = TESTS_DIR / "fixtures"
-CASE = FIXTURES_DIR / "poggle-blue-endor" / "deck.json"
-CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
-FIXED_TIME = "2026-11-03T00:00:00Z"
+CASE = SYNTHETIC_DECK
+CARD_DB = SYNTHETIC_CARD_DB
+FIXED_TIME = "2026-01-01T00:00:00Z"
 
 SECTIONS = [
     "## Provenance",
@@ -59,7 +59,7 @@ class ReportTest(unittest.TestCase):
 
     def test_title_names_the_leader(self):
         self.assertIn("# SWU Review", self.report)
-        self.assertIn("Poggle the Lesser", self.report)
+        self.assertIn("Synthetic Leader", self.report)
 
     def test_provenance_is_reported_verbatim(self):
         self.assertIn(self.analysis["generated_at"], self.report)
@@ -92,14 +92,13 @@ class ReportTest(unittest.TestCase):
         report = render_report.render_report(mutated)
         self.assertIn("36.0", report)
 
-    def test_card_sheets_include_text_and_flags(self):
-        self.assertIn("Poggle the Lesser", self.report)
-        self.assertIn("Shield Generator Complex", self.report)
-        self.assertIn("Rancor Keeper", self.report)
+    def test_card_sheets_include_names_and_flags(self):
+        self.assertIn("Synthetic Leader", self.report)
+        self.assertIn("Synthetic Base", self.report)
+        self.assertIn("Synthetic Unit 01", self.report)
 
-        sheet = next(c for c in self.analysis["cards"] if c["identity"] == "Rancor Keeper")
-        if sheet["text"]:
-            self.assertIn(sheet["text"], self.report)
+        sheet = next(c for c in self.analysis["cards"] if c["identity"] == "Synthetic Unit 01")
+        self.assertIn("flags", sheet)
 
     def test_missing_text_is_explicit_and_never_invented(self):
         mutated = copy.deepcopy(self.analysis)
@@ -123,8 +122,8 @@ class ReportTest(unittest.TestCase):
 
     def test_card_sheets_nest_under_zone_headings(self):
         self.assertIn("### Leader", self.report)
-        self.assertIn("#### Poggle the Lesser", self.report)
-        self.assertIn("#### Rancor Keeper", self.report)
+        self.assertIn("#### Synthetic Leader", self.report)
+        self.assertIn("#### Synthetic Unit 01", self.report)
 
     def test_missing_numeric_stats_render_as_dash(self):
         mutated = copy.deepcopy(self.analysis)
@@ -142,9 +141,30 @@ class ReportTest(unittest.TestCase):
         self.assertIn("11.1", report)
 
     def test_finding_evidence_is_rendered(self):
-        self.assertIn("arena-imbalance", self.report)
-        self.assertIn("Starlit Purrgil", self.report)
-        self.assertIn("5.1", self.report)
+        mutated = copy.deepcopy(self.analysis)
+        mutated["findings"] = [{
+            "id": "arena-imbalance",
+            "severity": "warning",
+            "category": "composition",
+            "statement": "Synthetic finding.",
+            "evidence": {
+                "metric_path": "composition.arenas.space_pct",
+                "value": 2,
+                "denominator": 39,
+                "pct": 5.1,
+                "threshold": {"op": "<", "value": 15, "unit": "pct_of_unit_slots"},
+                "cards": [{"identity": "Synthetic Unit 01", "copies": 2}],
+            },
+            "source": {
+                "kind": "threshold",
+                "registry": "reference/findings.md#arena-imbalance",
+                "version": "1",
+            },
+        }]
+        report = render_report.render_report(mutated)
+        self.assertIn("arena-imbalance", report)
+        self.assertIn("Synthetic Unit 01", report)
+        self.assertIn("5.1", report)
 
     def test_limitations_section_lists_every_id(self):
         for limitation in self.analysis["limitations"]:

@@ -1,0 +1,9 @@
+{
+  "fetched_at": "2026-01-01T00:00:00",
+  "source": "synthetic-test-fixture",
+  "sets": [
+    "HMW",
+    "JTL"
+  ],
+  "total_unique_cards": 23
+}

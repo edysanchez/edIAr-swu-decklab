@@ -197,9 +197,9 @@ def _zone_counts(content, deck_format):
             card_entry = {"name": name, "subtitle": subtitle, "count": count}
             
             if current_section == 'leader':
-                leaders.append(card_entry)
-            elif current_section == 'base' and current_section != 'done':
-                bases.append(card_entry)
+                leaders.append(count)
+            elif current_section == 'base':
+                bases.append(count)
         
         return leaders, bases
     try:

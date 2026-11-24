@@ -18,6 +18,7 @@ import json
 import sys
 from pathlib import Path
 from collections import defaultdict
+from typing import Any, Dict, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -59,7 +60,18 @@ def load_deck(path, card_db=None):
     deck = validate_load_deck(path)
 
     # Build identity groups (name+subtitle)
-    groups = defaultdict(lambda: {"count": 0, "name": "", "subtitle": "", "cost": None, "type": None, "arena": None, "aspects": None, "code": ""})
+    groups: Dict[Tuple[str, str], Dict[str, Any]] = defaultdict(
+        lambda: {
+            "count": 0,
+            "name": "",
+            "subtitle": "",
+            "cost": None,
+            "type": None,
+            "arena": None,
+            "aspects": None,
+            "code": "",
+        }
+    )
 
     # Process main deck only (exclude leader/base)
     for card in deck.get('deck', []):
@@ -203,12 +215,12 @@ def main():
         print(f"Group: {label} ({len(sel)} cards)")
     print(f"{'copy':>4}  {'card':<44} {turn_hdr}")
     for c in out["cards"]:
-        probs = "  ".join(f"{v:5.1f}%" for v in c["p"])
-        print(f"{c['copies']:>4}  {c['name'][:44]:<44} {probs}")
+        prob_text = "  ".join(f"{v:5.1f}%" for v in c["p"])
+        print(f"{c['copies']:>4}  {c['name'][:44]:<44} {prob_text}")
     if args.group:
         gt = out["group_total"]
-        probs = "  ".join(f"{v:5.1f}%" for v in gt["p"])
-        print(f"{gt['copies']:>4}  {'= TOTAL ('+label+')':<44} {probs}")
+        prob_text = "  ".join(f"{v:5.1f}%" for v in gt["p"])
+        print(f"{gt['copies']:>4}  {'= TOTAL ('+label+')':<44} {prob_text}")
         print("      expected copies:       " + "  ".join(f"{v:5.2f} " for v in gt["expected_by_turn"]))
     return 0
 

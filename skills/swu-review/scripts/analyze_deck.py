@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 from collections import Counter
 from decimal import Decimal
+from typing import Dict, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -37,7 +38,7 @@ def analyze_deck(deck_path, verbose=True):
     leader_key = resolve_card(deck.get('leader'), card_db)
     base_key = resolve_card(deck.get('base'), card_db)
     
-    deck_cards = {}
+    deck_cards: Dict[Tuple[str, str], int] = {}
     for card in deck.get('deck', []):
         key = resolve_card(card, card_db)
         if key:
@@ -58,7 +59,7 @@ def analyze_deck(deck_path, verbose=True):
                 print(f"Base: {b['name']} - {b['subtitle']} ({b['set']})")
     
     # Curve
-    curve = Counter()
+    curve: Counter[int] = Counter()
     no_cost = 0
     total_cost = 0
     cost_count = 0
@@ -91,7 +92,7 @@ def analyze_deck(deck_path, verbose=True):
         print(f"  Mean cost: {mean_cost:.2f} (of {cost_count} cards with cost)")
     
     # Type split
-    type_counts = Counter()
+    type_counts: Counter[str] = Counter()
     for key, count in deck_cards.items():
         card = card_db.get(key)
         if card:

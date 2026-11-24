@@ -35,7 +35,7 @@ class CliTest(unittest.TestCase):
         self.assertEqual(result.stderr, "")
 
         data = json.loads(result.stdout)
-        self.assertEqual(data["schema_version"], "0.1.0")
+        self.assertEqual(data["schema_version"], "0.2.0")
         self.assertEqual(data["composition"]["n"], 50)
 
     def test_writes_json_and_report_files(self):

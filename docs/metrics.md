@@ -14,8 +14,8 @@ Legality is defined in [`rules.md`](rules.md) and is out of scope here.
 - A **slot** is one physical card: a 3-of occupies 3 slots.
 - **Card identity** is the printed name + subtitle, matching the legality
   definition. Two printings of the same card are the same identity.
-- Use **printed values**. Ignore in-game modifiers, aspect penalties and
-  abilities.
+- Use **printed values**. Cost and curve metrics ignore in-game modifiers,
+  aspect penalties and abilities. Aspect penalty is reported separately.
 - `N` is the number of cards in the main deck. It is at least 50 but not
   necessarily 50; every percentage must state the `N` it uses.
 - Percentages are reported to **one decimal place** and counts as integers.
@@ -36,7 +36,9 @@ new number, define it here first.
 | Arena split | unit slots | Deck composition |
 | Distinct cards | count | Deck composition |
 | Unique-icon slots | slots | Deck composition |
-| Aspect penalty: total and maximum | resources | Deck composition |
+| Aspect penalty: total, maximum, affected slots and per-slot burden | resources / slots / resources per slot | Deck composition |
+| Aspect penalty per card | copies, resources, icons | Deck composition |
+| Off-aspect flag | boolean per card | Deck composition |
 | Draw probability | % | Draw odds |
 | Expected copies | copies | Draw odds |
 | Staple density | % of slots | Meta metrics |
@@ -119,13 +121,29 @@ required = {Aggression: 2}
 missing  = 1  ->  penalty 2 per copy  ->  total_penalty 6, max_penalty 2
 ```
 
+`total_penalty` assumes **every copy is played at full cost**. It is a
+deckbuilding aggregate, not a per-game cost, and a 3-of contributes three times.
+
 Report:
 
 - `total_penalty`: the sum of `penalty(card) * copies`;
-- `max_penalty`: the penalty of the most expensive card;
-- `per_card`: every card with a non-zero penalty, with its missing icons.
+- `max_penalty`: the maximum `penalty(card)` across identities, without
+  multiplying by copies;
+- `affected_slots`: the number of main-deck slots whose card has a non-zero
+  penalty;
+- `total_per_slot`: `total_penalty / N`, rounded to two decimals;
+- `per_card`: every identity with a non-zero penalty, its copies, its penalty
+  and its missing icons;
+- `off_aspect` (per card sheet): true when the card has at least one unmatched
+  icon.
 
-This is a property of the deck, never a legality failure.
+This is a property of the deck, never a legality failure. It is reported under
+`legality.aspect_penalty` for schema compatibility; conceptually it belongs to
+deck composition.
+
+Official rule: Comprehensive Rules 2.D.6.b and 8.1.2; the SWU Competitive Hub
+states the same example (“a card with the same icon twice needs that icon twice
+on your leader and base”).
 
 ## Draw odds
 

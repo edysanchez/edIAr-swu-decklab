@@ -38,6 +38,8 @@ class AspectPenaltyServiceTest(unittest.TestCase):
         result = self.service.calculate_penalty(LEADER, BASE, {DOUBLE: 3})
         self.assertEqual(result["total"], 6)
         self.assertEqual(result["max"], 2)
+        self.assertEqual(result["affected_slots"], 3)
+        self.assertEqual(result["total_per_slot"], 2.0)
         self.assertEqual(result["per_card"][0]["identity"], "Synthetic Double Aspect")
         self.assertEqual(result["per_card"][0]["missing_aspects"], ["Aggression"])
 
@@ -47,12 +49,16 @@ class AspectPenaltyServiceTest(unittest.TestCase):
         )
         self.assertEqual(result["total"], 0)
         self.assertEqual(result["max"], 0)
+        self.assertEqual(result["affected_slots"], 0)
+        self.assertEqual(result["total_per_slot"], 0.0)
         self.assertEqual(result["per_card"], [])
 
     def test_double_icon_without_source(self):
         result = self.service.calculate_penalty(None, None, {DOUBLE: 3})
         self.assertEqual(result["total"], 12)
         self.assertEqual(result["max"], 4)
+        self.assertEqual(result["affected_slots"], 3)
+        self.assertEqual(result["total_per_slot"], 4.0)
         self.assertEqual(
             result["per_card"][0]["missing_aspects"],
             ["Aggression", "Aggression"],
@@ -62,6 +68,8 @@ class AspectPenaltyServiceTest(unittest.TestCase):
         result = self.service.calculate_penalty(LEADER, BASE, {SINGLE: 3})
         self.assertEqual(result["total"], 0)
         self.assertEqual(result["max"], 0)
+        self.assertEqual(result["affected_slots"], 0)
+        self.assertEqual(result["total_per_slot"], 0.0)
         self.assertEqual(result["per_card"], [])
 
 

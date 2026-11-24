@@ -73,8 +73,10 @@ class AspectPenaltyService:
             provided.update(self.card_repository.get_aspects(base_key))
 
         # Step 2: Calculate penalty for each main-deck card.
+        n = sum(main_counts.values())
         total = 0
         maximum = 0
+        affected_slots = 0
         per_card: List[dict] = []
 
         for key, copies in sorted(main_counts.items()):
@@ -90,6 +92,8 @@ class AspectPenaltyService:
             total += penalty * copies
             if penalty > maximum:
                 maximum = penalty
+            if penalty:
+                affected_slots += copies
 
             if penalty:
                 per_card.append({
@@ -102,5 +106,7 @@ class AspectPenaltyService:
         return {
             "total": total,
             "max": maximum,
+            "affected_slots": affected_slots,
+            "total_per_slot": round(total / n, 2) if n else 0.0,
             "per_card": per_card,
         }

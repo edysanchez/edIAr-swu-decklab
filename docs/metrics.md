@@ -96,17 +96,34 @@ Number of slots whose card has the unique icon. This is not the same as
 
 ### Aspect penalty
 
-For each card identity, compare its aspect icons with the aspects provided by
-the leader and base:
+Icons are matched with multiplicity: the leader's printed icons plus the base's
+icons form a multiset, and every icon on the card consumes one of its aspect.
 
 ```
-penalty(card) = 2 * (missing aspect icons)
+provided     = multiset(leader.aspects + base.aspects)
+required     = multiset(card.aspects)
+missing      = sum(max(0, required[a] - provided[a]) for a in required)
+penalty(card) = 2 * missing
+```
+
+The payload carries aspects as a list, and 55 identities in the current catalogue
+list the same aspect twice (`Relentless Firespray`: `["Aggression",
+"Aggression"]`), so the multiplicity is not hypothetical.
+
+Example: a leader providing Aggression and Villainy, a base providing Vigilance,
+and three copies of a unit with two Aggression icons:
+
+```
+provided = {Aggression: 1, Villainy: 1, Vigilance: 1}
+required = {Aggression: 2}
+missing  = 1  ->  penalty 2 per copy  ->  total_penalty 6, max_penalty 2
 ```
 
 Report:
 
 - `total_penalty`: the sum of `penalty(card) * copies`;
-- `max_penalty`: the penalty of the most expensive card.
+- `max_penalty`: the penalty of the most expensive card;
+- `per_card`: every card with a non-zero penalty, with its missing icons.
 
 This is a property of the deck, never a legality failure.
 

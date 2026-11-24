@@ -9,8 +9,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import swu_cards as sc
+from domain.services.aspect_penalty_service import AspectPenaltyService
+from infrastructure.card_db_repository import CardDBRepository
 
 PREMIER_SETS = {"JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"}
 SUSPENDED = set()  # None as of 2026-10-26
@@ -148,39 +151,12 @@ def calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db):
     """Calculate aspect penalty (not a legality check)."""
     if not leader_key or not base_key:
         return 0, 0
-    
-    leader = card_db.get(leader_key)
-    base = card_db.get(base_key)
-    
-    if not leader or not base:
+    if leader_key not in card_db or base_key not in card_db:
         return 0, 0
-    
-    provided_aspects = set()
-    for aspect in leader.get('aspects', []):
-        provided_aspects.add(aspect)
-    for aspect in base.get('aspects', []):
-        provided_aspects.add(aspect)
-    
-    total_penalty = 0
-    max_penalty = 0
-    
-    for card_key, count in deck_cards.items():
-        card = card_db.get(card_key)
-        if not card:
-            continue
-        
-        card_aspects = card.get('aspects', [])
-        missing = 0
-        for aspect in card_aspects:
-            if aspect not in provided_aspects:
-                missing += 1
-        
-        penalty = missing * 2
-        total_penalty += penalty * count
-        if penalty > max_penalty:
-            max_penalty = penalty
-    
-    return total_penalty, max_penalty
+
+    service = AspectPenaltyService(CardDBRepository(card_db))
+    result = service.calculate_penalty(leader_key, base_key, deck_cards)
+    return result["total"], result["max"]
 
 
 def validate_deck(deck_path, verbose=True):

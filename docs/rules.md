@@ -101,6 +101,17 @@ A deck may include cards whose aspects are not provided by its leader or base.
 When such a card is played, the player pays **2 additional resources for each
 missing aspect icon**.
 
+Aspects are counted as **icons, not as a set**. Each icon on the card must be
+matched by an icon from the leader or the base, so a card with two icons of the
+same aspect needs that aspect from two sources. Sources are the leader's printed
+aspect icons and the base's own.
+
+> **Example.** A leader with Aggression and Villainy plus a base with Vigilance
+> provides one Aggression. A unit with two Aggression icons is missing one icon
+> and costs **2** extra resources. With a leader that provides no Aggression at
+> all, the same unit is missing two icons and costs **4**. The same unit under a
+> leader with Aggression and a base with Aggression is missing nothing.
+
 A validator must never reject a deck for containing off-aspect cards. It should
 report the penalty as a property of the deck (for example, the total penalty if
 every card were played at full cost).

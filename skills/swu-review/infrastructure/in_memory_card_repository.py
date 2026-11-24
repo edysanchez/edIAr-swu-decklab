@@ -6,7 +6,7 @@ making tests faster and more reliable.
 
 from typing import Dict, List, Optional
 
-from infrastructure.card_repository import CardRepository, Identity
+from infrastructure.card_repository import CardData, CardRepository, Identity
 
 
 class InMemoryCardRepository(CardRepository):
@@ -16,42 +16,45 @@ class InMemoryCardRepository(CardRepository):
     Can be pre-populated with test data or started empty.
     """
 
-    def __init__(self, initial_cards: Optional[Dict[Identity, dict]] = None):
+    def __init__(self, initial_cards: Optional[Dict[Identity, CardData]] = None):
         """Initialize with optional pre-loaded cards.
 
         Args:
             initial_cards: Dictionary mapping ``(name, subtitle)`` identity keys
                            to card dicts.
         """
-        self._cards: Dict[Identity, dict] = initial_cards or {}
+        self._cards: Dict[Identity, CardData] = initial_cards or {}
         self._load_order: List[Identity] = []
 
-    def get_card(self, key: Identity) -> Optional[dict]:
+    def get_card(self, key: Identity) -> Optional[CardData]:
         """Get a card by its ``(name, subtitle)`` identity key."""
         return self._cards.get(key)
 
     def get_aspects(self, key: Identity) -> List[str]:
         """Get the aspects for a card."""
         card = self.get_card(key)
-        if card and "aspects" in card:
-            return card["aspects"]
-        return []
+        if not card:
+            return []
+        aspects = card.get("aspects")
+        if not isinstance(aspects, list):
+            return []
+        return [aspect for aspect in aspects if isinstance(aspect, str)]
 
     def has_aspect(self, key: Identity, aspect: str) -> bool:
         """Check if a card has a specific aspect."""
         return aspect in self.get_aspects(key)
 
-    def load_cards(self) -> Dict[Identity, dict]:
+    def load_cards(self) -> Dict[Identity, CardData]:
         """Load all cards as a dictionary."""
         return self._cards.copy()
 
-    def add_card(self, key: Identity, card: dict) -> None:
+    def add_card(self, key: Identity, card: CardData) -> None:
         """Add a card to the repository."""
         self._cards[key] = card
         if key not in self._load_order:
             self._load_order.append(key)
 
-    def get_all_cards(self) -> List[dict]:
+    def get_all_cards(self) -> List[CardData]:
         """Get all cards as a list."""
         return list(self._cards.values())
 

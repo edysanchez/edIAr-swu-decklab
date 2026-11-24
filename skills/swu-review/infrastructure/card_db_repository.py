@@ -12,16 +12,16 @@ service — silently reported a penalty of 0 for every deck.
 
 from typing import Dict, List, Optional
 
-from infrastructure.card_repository import CardRepository, Identity
+from infrastructure.card_repository import CardData, CardRepository, Identity
 
 
 class CardDBRepository(CardRepository):
     """Adapter for the normalised card database loaded from JSON."""
 
-    def __init__(self, card_db: Dict[Identity, dict]):
+    def __init__(self, card_db: Dict[Identity, CardData]):
         self._cards = card_db
 
-    def get_card(self, key: Identity) -> Optional[dict]:
+    def get_card(self, key: Identity) -> Optional[CardData]:
         """Get a card by its ``(name, subtitle)`` identity key."""
         return self._cards.get(key)
 
@@ -34,11 +34,11 @@ class CardDBRepository(CardRepository):
         """Check if a card has a specific aspect."""
         return aspect in self.get_aspects(key)
 
-    def load_cards(self) -> Dict[Identity, dict]:
+    def load_cards(self) -> Dict[Identity, CardData]:
         """Return a shallow copy of the cards, as the protocol requires."""
         return dict(self._cards)
 
-    def get_all_cards(self) -> List[dict]:
+    def get_all_cards(self) -> List[CardData]:
         """Get all cards as a list."""
         return list(self._cards.values())
 

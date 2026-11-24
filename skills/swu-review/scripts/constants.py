@@ -5,12 +5,14 @@ Single source for values that were previously duplicated across scripts.
 A follow-up refactor will make the existing scripts import from here too.
 """
 
+from typing import Tuple
+
 SCHEMA_VERSION = "0.2.0"
 TOOL_VERSION = "0.1.0-dev"
 RULES_VERSION = "2026-10-26"
 
 PREMIER_SETS = ("JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW")
-SUSPENDED: frozenset[str] = frozenset()
+SUSPENDED: frozenset[Tuple[str, str]] = frozenset()
 
 DRAW_HAND = 6
 DRAW_PER_REGROUP = 2

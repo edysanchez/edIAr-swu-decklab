@@ -13,7 +13,7 @@ Anything else raises :class:`UnresolvedCard`. The resolver never invents a card.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 class UnresolvedCard(Exception):
@@ -45,7 +45,7 @@ def normalize_number(value: Any) -> str:
     return text.upper()
 
 
-def parse_card_id(card_id: Any):
+def parse_card_id(card_id: Any) -> Optional[Tuple[str, str]]:
     """Parse ``SET_NUMBER`` into a normalised ``(set, number)`` pair."""
     if not isinstance(card_id, str) or "_" not in card_id:
         return None
@@ -113,7 +113,12 @@ class CardIndex:
 
         raise UnresolvedCard(ref, "no matching card in database")
 
-    def _check_name(self, ref: Dict[str, Any], key: Tuple[str, str], name):
+    def _check_name(
+        self,
+        ref: Dict[str, Any],
+        key: Tuple[str, str],
+        name: Optional[str],
+    ) -> None:
         """Reject a set/number that points to a different card than the title."""
         if name is not None and name != key[0]:
             raise UnresolvedCard(

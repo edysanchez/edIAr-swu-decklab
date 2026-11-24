@@ -21,14 +21,14 @@ from collections import Counter
 from datetime import datetime, timezone
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import constants as C
 import swu_cards as sc
-from card_resolver import CardIndex, UnresolvedCard
+from card_resolver import CardIndex, Resolved, UnresolvedCard
 from draw_odds import p_at_least_one
 from validate_deck import load_deck
 from domain.services.aspect_penalty_service import AspectPenaltyService
@@ -40,15 +40,15 @@ ZONE_ORDER = {"leader": 0, "base": 1, "main": 2}
 TYPE_ORDER = {"Unit": 0, "Event": 1, "Upgrade": 2}
 
 
-def _round1(value):
+def _round1(value: Any) -> float:
     return float(Decimal(str(value)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
 
 
-def _round2(value):
+def _round2(value: Any) -> float:
     return float(Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
-def _to_int(value):
+def _to_int(value: Any) -> Optional[int]:
     if value is None or value == "":
         return None
     try:
@@ -57,22 +57,22 @@ def _to_int(value):
         return None
 
 
-def _identity(key):
+def _identity(key: Tuple[str, str]) -> str:
     name, subtitle = key
     return f"{name}|{subtitle}" if subtitle else name
 
 
-def _display_name(card):
+def _display_name(card: Dict[str, Any]) -> str:
     name = card.get("name", "")
     subtitle = card.get("subtitle", "") or ""
     return f"{name} - {subtitle}" if subtitle else name
 
 
-def _code(card):
+def _code(card: Dict[str, Any]) -> str:
     return f"{card.get('set', '')}{card.get('number', '')}"
 
 
-def _detect_format(content):
+def _detect_format(content: str) -> str:
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
@@ -87,7 +87,10 @@ def _detect_format(content):
     return "json"
 
 
-def _db_meta(card_db_path, card_db):
+def _db_meta(
+    card_db_path: Path,
+    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+) -> Dict[str, Any]:
     meta_path = card_db_path.parent / "meta.json"
     if meta_path.exists():
         with open(meta_path, "r", encoding="utf-8") as f:
@@ -115,7 +118,12 @@ def _db_meta(card_db_path, card_db):
     }
 
 
-def _resolve_ref(index, ref, zone, unresolved):
+def _resolve_ref(
+    index: CardIndex,
+    ref: Any,
+    zone: str,
+    unresolved: List[Dict[str, Any]],
+) -> Optional[Resolved]:
     try:
         return index.resolve(ref)
     except UnresolvedCard as exc:
@@ -124,7 +132,7 @@ def _resolve_ref(index, ref, zone, unresolved):
         return None
 
 
-def _entry_count(entry):
+def _entry_count(entry: Any) -> int:
     if not isinstance(entry, dict):
         return 1
     try:
@@ -133,7 +141,10 @@ def _entry_count(entry):
         return 1
 
 
-def _zone_counts(content, deck_format):
+def _zone_counts(
+    content: str,
+    deck_format: str,
+) -> Optional[Tuple[List[int], List[int]]]:
     """Count leader/base entries from the raw input.
 
     ``validate_deck.load_deck`` keeps only the last leader/base entry and loses
@@ -143,10 +154,10 @@ def _zone_counts(content, deck_format):
     """
     if deck_format == "text":
         # Parse text format to extract leaders and bases
-        leaders = []
-        bases = []
+        leaders: List[int] = []
+        bases: List[int] = []
         lines = content.strip().split('\n')
-        current_section = None
+        current_section: Optional[str] = None
         
         for line in lines:
             line = line.strip()
@@ -227,7 +238,10 @@ def _zone_counts(content, deck_format):
     return None
 
 
-def _card_ref(resolved, count=1):
+def _card_ref(
+    resolved: Optional[Resolved],
+    count: int = 1,
+) -> Optional[Dict[str, Any]]:
     if resolved is None:
         return None
     key, card = resolved.key, resolved.card
@@ -243,7 +257,11 @@ def _card_ref(resolved, count=1):
     }
 
 
-def _deck_entry(key, card, copies):
+def _deck_entry(
+    key: Tuple[str, str],
+    card: Dict[str, Any],
+    copies: int,
+) -> Dict[str, Any]:
     return {
         "identity": _identity(key),
         "name": key[0],
@@ -252,7 +270,13 @@ def _deck_entry(key, card, copies):
     }
 
 
-def _sheet(key, card, zone, copies, provided_aspects):
+def _sheet(
+    key: Tuple[str, str],
+    card: Dict[str, Any],
+    zone: str,
+    copies: int,
+    provided_aspects: "Counter[str]",
+) -> Dict[str, Any]:
     text = card.get("frontText")
     text = None if text is None else str(text)
 
@@ -262,7 +286,7 @@ def _sheet(key, card, zone, copies, provided_aspects):
     keywords = list(card.get("keywords") or [])
     required_aspects = Counter(aspects)
 
-    tags = []
+    tags: List[str] = []
     tags.append(f"type:{card.get('type', 'Unknown')}")
     tags.extend(f"arena:{a}" for a in arenas)
     tags.extend(f"aspect:{a}" for a in aspects)
@@ -314,7 +338,11 @@ def _sheet(key, card, zone, copies, provided_aspects):
     }
 
 
-def _zone_check(zone, resolved, counts):
+def _zone_check(
+    zone: str,
+    resolved: Optional[Resolved],
+    counts: Optional[List[int]],
+) -> Tuple[bool, str]:
     """Return (ok, detail) for "exactly one leader/base, count 1"."""
     if counts is None:
         if resolved is None:
@@ -332,12 +360,20 @@ def _zone_check(zone, resolved, counts):
     return True, f"Exactly one {zone}"
 
 
-def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts):
+def _legality(
+    leader: Optional[Resolved],
+    base: Optional[Resolved],
+    main_counts: "Counter[Tuple[str, str]]",
+    side_counts: "Counter[Tuple[str, str]]",
+    unresolved: List[Dict[str, Any]],
+    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    zone_counts: Optional[Tuple[List[int], List[int]]],
+) -> Dict[str, Any]:
     errors: List[str] = []
     warnings: List[str] = []
     checks: List[Dict[str, Any]] = []
 
-    def check(check_id, ok, detail):
+    def check(check_id: str, ok: bool, detail: str) -> None:
         checks.append({"id": check_id, "ok": ok, "detail": detail})
         if not ok:
             errors.append(detail)
@@ -431,8 +467,11 @@ def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_
 
 
 def _aspect_penalty(
-    leader, base, main_counts: dict, card_repository: CardRepository
-) -> dict:
+    leader: Optional[Resolved],
+    base: Optional[Resolved],
+    main_counts: "Counter[Tuple[str, str]]",
+    card_repository: CardRepository,
+) -> Dict[str, Any]:
     """Calculate aspect penalty using the domain service.
 
     Args:
@@ -459,7 +498,12 @@ def _aspect_penalty(
     )
 
 
-def _composition(main_counts, card_db, data_as_of, cm_index=None):
+def _composition(
+    main_counts: "Counter[Tuple[str, str]]",
+    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    data_as_of: str,
+    cm_index: Optional[Any] = None,
+) -> Dict[str, Any]:
     n = sum(main_counts.values())
     curve: Counter[int] = Counter()
     no_cost = 0
@@ -561,7 +605,12 @@ def _composition(main_counts, card_db, data_as_of, cm_index=None):
     return composition
 
 
-def _findings(composition, main_counts, card_db, unresolved):
+def _findings(
+    composition: Dict[str, Any],
+    main_counts: "Counter[Tuple[str, str]]",
+    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    unresolved: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     findings: List[Dict[str, Any]] = []
     if unresolved or composition["n"] == 0:
         return findings
@@ -630,9 +679,14 @@ def _findings(composition, main_counts, card_db, unresolved):
     return sorted(findings, key=lambda f: f["id"])
 
 
-def _limitations(db, composition, unresolved, findings):
+def _limitations(
+    db: Dict[str, Any],
+    composition: Dict[str, Any],
+    unresolved: List[Dict[str, Any]],
+    findings: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     price = composition["price"]
-    items = [
+    items: List[Dict[str, Any]] = [
         {
             "id": "data-snapshot",
             "category": "data",
@@ -771,7 +825,7 @@ def _limitations(db, composition, unresolved, findings):
     return items
 
 
-def _out_of_scope():
+def _out_of_scope() -> List[Dict[str, str]]:
     return [
         {"id": "meta", "statement": "Meta share, staple density and archetype data."},
         {"id": "matchups", "statement": "Matchup win rates and sideboard plans."},
@@ -783,12 +837,17 @@ def _out_of_scope():
     ]
 
 
-def _draw_odds(main_counts, card_db, n, max_round):
+def _draw_odds(
+    main_counts: "Counter[Tuple[str, str]]",
+    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    n: int,
+    max_round: int,
+) -> Dict[str, Any]:
     rounds = list(range(0, max_round + 1))
-    per_card = []
+    per_card: List[Dict[str, Any]] = []
     for key, copies in sorted(main_counts.items()):
-        probabilities = []
-        expected = []
+        probabilities: List[float] = []
+        expected: List[float] = []
         for round_number in rounds:
             drawn = C.DRAW_HAND + round_number * C.DRAW_PER_REGROUP
             probabilities.append(_round1(p_at_least_one(n, copies, drawn) * 100))
@@ -821,7 +880,13 @@ def _draw_odds(main_counts, card_db, n, max_round):
     }
 
 
-def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=None, cm_index=None):
+def build_analysis(
+    deck_path: str | Path,
+    card_db_path: Optional[str | Path] = None,
+    generated_at: Optional[str] = None,
+    max_round: Optional[int] = None,
+    cm_index: Optional[Any] = None,
+) -> Dict[str, Any]:
     """Build the full analysis dict for a deck file.
 
     ``cm_index`` is an optional :class:`cardmarket.CardmarketIndex`. When given,
@@ -841,7 +906,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     index = CardIndex(card_db)
 
     deck = load_deck(deck_path)
-    unresolved: List[UnresolvedCard] = []
+    unresolved: List[Dict[str, Any]] = []
 
     leader = _resolve_ref(index, deck.get("leader"), "leader", unresolved)
     base = _resolve_ref(index, deck.get("base"), "base", unresolved)
@@ -877,7 +942,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     if base:
         provided_aspects.update(base.card.get("aspects") or [])
 
-    cards = []
+    cards: List[Dict[str, Any]] = []
     if leader:
         cards.append(_sheet(
             leader.key, leader.card, "leader",

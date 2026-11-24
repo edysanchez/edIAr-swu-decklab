@@ -18,7 +18,7 @@ import json
 import sys
 from pathlib import Path
 from collections import defaultdict
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -30,7 +30,7 @@ OPEN_HAND = 6
 DRAW_PER_REGROUP = 2
 
 
-def p_at_least_one(N, K, n):
+def p_at_least_one(N: int, K: int, n: int) -> float:
     """P(>=1 success) drawing n from N with K successes, hypergeometric."""
     if n <= 0 or K <= 0:
         return 0.0
@@ -41,13 +41,16 @@ def p_at_least_one(N, K, n):
     return max(0.0, 1.0 - p0)
 
 
-def p_with_mulligan(N, K, n_hand=OPEN_HAND):
+def p_with_mulligan(N: int, K: int, n_hand: int = OPEN_HAND) -> float:
     """P(>=1) in opening hand with one full redraw of 6."""
     p = p_at_least_one(N, K, n_hand)
     return 1 - (1 - p) ** 2
 
 
-def load_deck(path, card_db=None):
+def load_deck(
+    path: str | Path,
+    card_db: Optional[Dict[Tuple[str, str], Dict[str, Any]]] = None,
+) -> List[Dict[str, Any]]:
     """Load deck and return list of dicts with count/name/cost/type/arena/aspects/code.
     Uses shared parsing from validate_deck; groups by name+subtitle identity.
     """
@@ -123,11 +126,11 @@ def load_deck(path, card_db=None):
     return rows
 
 
-def pct(x):
+def pct(x: float) -> float:
     return round(x * 100, 1)
 
 
-def main():
+def main() -> int:
     ap = argparse.ArgumentParser(description="Draw odds for SWU Premier (hypergeometric)")
     ap.add_argument("deck", help="Deck JSON file")
     ap.add_argument("--copies", type=int, help="Only calculate for cards with this many copies (use with --group)")
@@ -177,7 +180,7 @@ def main():
         "cards": []
     }
 
-    def prob(K, t):
+    def prob(K: int, t: int) -> float:
         # Draw 2 cards per regroup phase
         n = args.hand + (t * DRAW_PER_REGROUP)
         if args.mulligan and t == 0:

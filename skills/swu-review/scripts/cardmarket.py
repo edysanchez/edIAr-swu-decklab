@@ -33,7 +33,7 @@ import re
 import unicodedata
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import constants as C
 import swu_cards as sc
@@ -45,7 +45,7 @@ SET_EXPANSIONS = {
 }
 
 
-def normalize(text):
+def normalize(text: Any) -> str:
     """Fold a card name to a comparison key.
 
     Accents are stripped, the text is lower-cased and everything that is not a
@@ -57,7 +57,7 @@ def normalize(text):
     return " ".join(re.sub(r"[^a-z0-9]+", " ", folded).split())
 
 
-def _positive(value):
+def _positive(value: Any) -> Optional[float]:
     """Return ``value`` as a positive float, or ``None`` when it is not a price."""
     if value is None:
         return None
@@ -68,7 +68,7 @@ def _positive(value):
     return number if number > 0 else None
 
 
-def _snapshot_date(prices):
+def _snapshot_date(prices: Any) -> str:
     """Extract the ``YYYY-MM-DD`` date from a price guide ``createdAt`` field."""
     raw = str((prices or {}).get("createdAt") or "")
     match = re.match(r"^(\d{4}-\d{2}-\d{2})", raw)
@@ -78,14 +78,19 @@ def _snapshot_date(prices):
 class CardmarketIndex:
     """In-memory index from SWU card identity to a Cardmarket quote."""
 
-    def __init__(self, catalog, prices, set_expansions=None):
+    def __init__(
+        self,
+        catalog: Any,
+        prices: Any,
+        set_expansions: Optional[Dict[str, Any]] = None,
+    ) -> None:
         self.set_expansions = {
             set_code: tuple(exps)
             for set_code, exps in (set_expansions or SET_EXPANSIONS).items()
         }
         self.snapshot = _snapshot_date(prices)
 
-        self._prices = {
+        self._prices: Dict[Any, Dict[str, Any]] = {
             row.get("idProduct"): row
             for row in (prices or {}).get("priceGuides") or []
             if row.get("idProduct") is not None
@@ -113,7 +118,13 @@ class CardmarketIndex:
                     prefix = normalize(name.split("//", 1)[0])
                     self._by_base_prefix.setdefault((set_code, prefix), set()).add(metacard)
 
-    def quote(self, set_code, name, subtitle="", card_type=""):
+    def quote(
+        self,
+        set_code: str,
+        name: str,
+        subtitle: str = "",
+        card_type: str = "",
+    ) -> Optional[Dict[str, Any]]:
         """Return the cheapest non-foil quote for a card identity.
 
         The result is ``{"trend", "low", "id_product"}`` or ``None`` when the
@@ -131,7 +142,7 @@ class CardmarketIndex:
         if not metacards:
             return None
 
-        best = None
+        best: Optional[Tuple[float, Optional[float], Any]] = None
         for metacard in metacards:
             for product_id in self._products.get((set_code, metacard), []):
                 row = self._prices.get(product_id) or {}
@@ -145,7 +156,11 @@ class CardmarketIndex:
             return None
         return {"trend": best[0], "low": best[1], "id_product": best[2]}
 
-    def price_deck(self, main_counts, card_db):
+    def price_deck(
+        self,
+        main_counts: Dict[Tuple[str, str], int],
+        card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    ) -> Dict[str, Any]:
         """Price a main deck keyed by ``(name, subtitle)``.
 
         ``card_db`` maps the same keys to cards carrying ``set`` and ``type``.
@@ -180,12 +195,12 @@ class CardmarketIndex:
         }
 
 
-def default_cache_dir():
+def default_cache_dir() -> Path:
     """Default cache location: ``data/cm/``."""
     return sc.get_data_dir() / C.CARDMARKET_CACHE_DIR
 
 
-def load_index(cache_dir=None):
+def load_index(cache_dir: Optional[str | Path] = None) -> Optional[CardmarketIndex]:
     """Load a :class:`CardmarketIndex` from the local cache.
 
     Returns ``None`` when either bulk file is missing, so callers can run

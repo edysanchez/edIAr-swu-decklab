@@ -310,7 +310,7 @@ def validate_deck(
     return len(errors) == 0, errors, warnings
 
 
-def main():
+def main() -> None:
     import argparse
     parser = argparse.ArgumentParser(description='Validate SWU Premier deck legality')
     parser.add_argument('deck', help='Path to deck file (SWUDB JSON or text)')

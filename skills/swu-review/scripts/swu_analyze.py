@@ -18,6 +18,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -28,7 +29,7 @@ import cardmarket  # noqa: E402
 STDOUT = "-"
 
 
-def _parser():
+def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Analyse the card and deck-composition part of a SWU Premier deck.",
     )
@@ -79,7 +80,7 @@ def _parser():
     return parser
 
 
-def _write_json(data, target):
+def _write_json(data: Dict[str, Any], target: str) -> None:
     text = json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
     if target == STDOUT:
         sys.stdout.write(text)
@@ -87,7 +88,7 @@ def _write_json(data, target):
         Path(target).write_text(text, encoding="utf-8")
 
 
-def _write_report(data, target):
+def _write_report(data: Dict[str, Any], target: str) -> None:
     text = render_report(data)
     if target == STDOUT:
         sys.stdout.write(text)
@@ -95,7 +96,7 @@ def _write_report(data, target):
         Path(target).write_text(text, encoding="utf-8")
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
 

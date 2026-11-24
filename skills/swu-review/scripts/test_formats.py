@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Create test cases
-def test_id_format():
+def test_id_format() -> bool:
     """Test ID-based export format"""
     deck = {
         "metadata": {},
@@ -37,7 +37,7 @@ def test_id_format():
     print('PASS: ID format accepted by all scripts')
     return True
 
-def test_case_format():
+def test_case_format() -> bool:
     """Test case format with mainDeck"""
     deck = {
         "mainDeck": [
@@ -64,7 +64,7 @@ def test_case_format():
     print('PASS: Case format parsed')
     return True
 
-def test_flat_list():
+def test_flat_list() -> bool:
     """Test flat list format"""
     deck = [
         {"count": 3, "title": "Rancor Keeper"},
@@ -83,7 +83,7 @@ def test_flat_list():
     print('PASS: Flat list accepted')
     return True
 
-def test_reprint_grouping():
+def test_reprint_grouping() -> None:
     """Test that reprints are grouped by name+subtitle"""
     # Same card from different sets should be grouped
     _deck = {

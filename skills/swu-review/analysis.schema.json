@@ -134,10 +134,12 @@
     "aspect_penalty": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["total", "max", "per_card"],
+      "required": ["total", "max", "affected_slots", "total_per_slot", "per_card"],
       "properties": {
         "total": { "type": "integer", "minimum": 0 },
         "max": { "type": "integer", "minimum": 0 },
+        "affected_slots": { "type": "integer", "minimum": 0 },
+        "total_per_slot": { "type": "number", "minimum": 0 },
         "per_card": {
           "type": "array",
           "items": {

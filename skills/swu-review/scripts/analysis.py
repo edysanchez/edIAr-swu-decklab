@@ -277,6 +277,7 @@ def _sheet(key, card, zone, copies, provided_aspects):
     aspects = list(card.get("aspects") or [])
     traits = list(card.get("traits") or [])
     keywords = list(card.get("keywords") or [])
+    required_aspects = Counter(aspects)
 
     tags = []
     tags.append(f"type:{card.get('type', 'Unknown')}")
@@ -320,7 +321,10 @@ def _sheet(key, card, zone, copies, provided_aspects):
         "epic_action": card.get("epicAction"),
         "double_sided": bool(card.get("doubleSided")),
         "flags": {
-            "off_aspect": any(a not in provided_aspects for a in aspects),
+            "off_aspect": any(
+                required_aspects[a] > provided_aspects[a]
+                for a in required_aspects
+            ),
             "no_price": not has_price,
             "unresolved_text": text is None,
         },
@@ -885,7 +889,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     findings = _findings(composition, main_counts, card_db, unresolved)
     limitations = _limitations(db, composition, unresolved, findings)
 
-    provided_aspects = set()
+    provided_aspects = Counter()
     if leader:
         provided_aspects.update(leader.card.get("aspects") or [])
     if base:

@@ -150,14 +150,26 @@ def _legality(analysis):
         lines.append("")
 
     penalty = legality.get("aspect_penalty") or {}
+    per_card = penalty.get("per_card") or []
+    n = (analysis.get("composition") or {}).get("n") or 0
+    total = penalty.get("total", 0)
+    affected = penalty.get("affected_slots")
+    if affected is None:
+        affected = sum(item.get("copies", 0) for item in per_card)
+    total_per_slot = penalty.get("total_per_slot")
+    if total_per_slot is None:
+        total_per_slot = round(total / n, 2) if n else 0.0
+    affected_pct = (affected / n * 100) if n else 0.0
+
     lines.append("### Aspect penalty")
     lines.append("")
     lines.append(
-        f"Total penalty: **{penalty.get('total', 0)}**; "
-        f"maximum on a single card: **{penalty.get('max', 0)}**."
+        f"Total if every copy is played at full cost: **{total}**; "
+        f"worst single card: **{penalty.get('max', 0)}**; "
+        f"affected slots: **{affected}** of {n} ({affected_pct:.1f}%); "
+        f"per-slot burden: **{total_per_slot:.2f}**."
     )
     lines.append("")
-    per_card = penalty.get("per_card") or []
     if per_card:
         lines.append(_table(
             ["Card", "Copies", "Penalty", "Missing aspects"],

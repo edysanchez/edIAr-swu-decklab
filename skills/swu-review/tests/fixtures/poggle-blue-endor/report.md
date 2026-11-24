@@ -13,7 +13,7 @@
 | Generated at | 2026-11-03T09:36:34Z |
 | Tool version | 0.1.0-dev |
 | Rules version | 2026-10-26 |
-| Schema version | 0.1.0 |
+| Schema version | 0.2.0 |
 | Input path | cases/poggle-blue-endor/deck.json |
 | Input SHA-256 | 9cb743aa588f6d42655d8755cc50334f168cd76994cb2da275ca8edeeb1afb8a |
 | Input format | case |
@@ -46,7 +46,7 @@
 
 ### Aspect penalty
 
-Total penalty: **0**; maximum on a single card: **0**.
+Total if every copy is played at full cost: **0**; worst single card: **0**; affected slots: **0** of 50 (0.0%); per-slot burden: **0.00**.
 
 ## Composition snapshot
 

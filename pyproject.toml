@@ -33,6 +33,7 @@ extend-exclude = ["data", ".local", "reports"]
 select = ["E4", "E7", "E9", "F"]
 
 [tool.mypy]
+strict = true
 python_version = "3.12"
 mypy_path = ["skills/swu-review", "skills/swu-review/scripts"]
 files = [

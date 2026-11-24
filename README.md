@@ -38,7 +38,7 @@ Install the dev tools and run the checks:
 python3 -m pip install ".[dev]"
 python3 -m unittest discover -s skills/swu-review/tests
 python3 -m ruff check .
-python3 -m mypy --strict
+python3 -m mypy
 python3 -m mypy skills/swu-review/scripts
 python3 -m coverage run -m unittest discover -s skills/swu-review/tests
 python3 -m coverage report -m

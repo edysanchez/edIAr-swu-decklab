@@ -24,7 +24,7 @@ For strategic deck reviews, always read `skills/swu-review/SKILL.md` first. It c
 - Install dev tools: `python3 -m pip install ".[dev]"`
 - Run test suite: `python3 -m unittest discover -s skills/swu-review/tests`
 - Run lint: `python3 -m ruff check .`
-- Run type checks: `python3 -m mypy --strict` and `python3 -m mypy skills/swu-review/scripts`
+- Run type checks: `python3 -m mypy` and `python3 -m mypy skills/swu-review/scripts`
 - Run coverage: `python3 -m coverage run -m unittest discover -s skills/swu-review/tests && python3 -m coverage report -m`
 - CI: `.github/workflows/` runs the tests, lint, types, docs links and an optional live-data job. See `docs/ci.md`.
 

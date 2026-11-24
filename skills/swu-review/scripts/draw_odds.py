@@ -18,16 +18,39 @@ import json
 import sys
 from pathlib import Path
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, TypedDict
 
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import swu_cards as sc
+from infrastructure.card_repository import CardData
 from validate_deck import load_deck as validate_load_deck, resolve_card
 
 DECK_SIZE = 50
 OPEN_HAND = 6
 DRAW_PER_REGROUP = 2
+
+
+class CardGroup(TypedDict, total=False):
+    count: int
+    name: str
+    subtitle: str
+    cost: Optional[int]
+    type: Optional[str]
+    arena: Optional[str]
+    aspects: Optional[str]
+    code: str
+
+
+class CardRow(TypedDict):
+    count: int
+    name: str
+    code: str
+    cost: Optional[int]
+    type: str
+    arena: Optional[str]
+    aspects: Optional[str]
 
 
 def p_at_least_one(N: int, K: int, n: int) -> float:
@@ -49,8 +72,8 @@ def p_with_mulligan(N: int, K: int, n_hand: int = OPEN_HAND) -> float:
 
 def load_deck(
     path: str | Path,
-    card_db: Optional[Dict[Tuple[str, str], Dict[str, Any]]] = None,
-) -> List[Dict[str, Any]]:
+    card_db: Optional[Dict[Tuple[str, str], CardData]] = None,
+) -> List[CardRow]:
     """Load deck and return list of dicts with count/name/cost/type/arena/aspects/code.
     Uses shared parsing from validate_deck; groups by name+subtitle identity.
     """
@@ -63,7 +86,7 @@ def load_deck(
     deck = validate_load_deck(path)
 
     # Build identity groups (name+subtitle)
-    groups: Dict[Tuple[str, str], Dict[str, Any]] = defaultdict(
+    groups: Dict[Tuple[str, str], CardGroup] = defaultdict(
         lambda: {
             "count": 0,
             "name": "",
@@ -112,7 +135,7 @@ def load_deck(
             if c.get('set') and c.get('number'):
                 groups[key]["code"] = f"{c['set']}{c['number'].zfill(3) if c['number'].isdigit() else c['number']}"
 
-    rows = []
+    rows: List[CardRow] = []
     for key, g in groups.items():
         rows.append({
             "count": int(g["count"]),
@@ -155,7 +178,11 @@ def main() -> int:
         g = args.group
         if g.startswith("cost:"):
             cv = int(g.split(":", 1)[1])
-            sel = [r for r in rows if r.get("cost") is not None and int(float(r["cost"])) == cv]
+            sel = [
+                r
+                for r in rows
+                if (cost := r.get("cost")) is not None and cost == cv
+            ]
             label = f"cost {cv}"
         elif g.startswith("arena:"):
             av = g.split(":", 1)[1].lower()

@@ -39,10 +39,10 @@ def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
     base_key = resolve_card(deck.get('base'), card_db)
     
     deck_cards: Dict[Tuple[str, str], int] = {}
-    for card in deck.get('deck', []):
-        key = resolve_card(card, card_db)
+    for entry in deck.get('deck', []):
+        key = resolve_card(entry, card_db)
         if key:
-            count = card.get('count', 1) if isinstance(card, dict) else 1
+            count = entry.get('count', 1) if isinstance(entry, dict) else 1
             deck_cards[key] = deck_cards.get(key, 0) + count
     
     N = sum(deck_cards.values())
@@ -64,11 +64,11 @@ def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
     total_cost = 0
     cost_count = 0
     for key, count in deck_cards.items():
-        card = card_db.get(key)
-        if not card:
+        card_data = card_db.get(key)
+        if not card_data:
             continue
-        cost = card.get('cost')
-        if cost is None or cost == '':
+        cost = card_data.get('cost')
+        if cost is None:
             no_cost += count
         else:
             try:
@@ -94,9 +94,9 @@ def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
     # Type split
     type_counts: Counter[str] = Counter()
     for key, count in deck_cards.items():
-        card = card_db.get(key)
-        if card:
-            t = card.get('type', 'Unknown')
+        card_data = card_db.get(key)
+        if card_data:
+            t = card_data.get('type') or 'Unknown'
             type_counts[t] += count
     
     if verbose:
@@ -111,12 +111,12 @@ def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
     space = 0
     unit_slots = 0
     for key, count in deck_cards.items():
-        card = card_db.get(key)
-        if not card:
+        card_data = card_db.get(key)
+        if not card_data:
             continue
-        if card.get('type') == 'Unit':
+        if card_data.get('type') == 'Unit':
             unit_slots += count
-            arenas = card.get('arenas', [])
+            arenas = card_data.get('arenas') or []
             if 'Ground' in arenas:
                 ground += count
             if 'Space' in arenas:
@@ -138,8 +138,8 @@ def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
     # Unique-icon slots
     unique_slots = 0
     for key, count in deck_cards.items():
-        card = card_db.get(key)
-        if card and card.get('unique'):
+        card_data = card_db.get(key)
+        if card_data and card_data.get('unique'):
             unique_slots += count
     
     if verbose:
@@ -157,10 +157,10 @@ def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
     total_usd = Decimal('0')
     priced = 0
     for key, count in deck_cards.items():
-        card = card_db.get(key)
-        if card and card.get('marketPriceUsd'):
+        card_data = card_db.get(key)
+        if card_data and card_data.get('marketPriceUsd'):
             try:
-                price = Decimal(str(card['marketPriceUsd']))
+                price = Decimal(str(card_data['marketPriceUsd']))
                 if price > 0:
                     total_usd += price * count
                     priced += count

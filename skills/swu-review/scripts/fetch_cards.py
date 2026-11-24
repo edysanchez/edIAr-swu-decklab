@@ -17,6 +17,11 @@ from urllib.error import URLError, HTTPError
 
 from constants import CARD_DB_PATH
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from infrastructure.card_normalizer import normalize_card_data  # noqa: E402
+from infrastructure.card_repository import CardData  # noqa: E402
+
 PREMIER_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
 API_BASE = "https://api.swu-db.com"
 
@@ -42,12 +47,12 @@ def fetch_set(set_code: str) -> Optional[Dict[str, Any]]:
         return None
 
 
-def normalize_cards(all_cards_data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+def normalize_cards(all_cards_data: Dict[str, Any]) -> Dict[str, CardData]:
     """
     Normalize cards: only VariantType == 'Normal', exclude tokens.
     Deduplicate by name + subtitle.
     """
-    cards = {}
+    cards: Dict[str, CardData] = {}
     
     for set_code, data in all_cards_data.items():
         if not data or 'data' not in data:
@@ -67,7 +72,7 @@ def normalize_cards(all_cards_data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]
             subtitle = row.get('Subtitle', '') or ''
             key = f"{name}|{subtitle}" if subtitle else name
             
-            cards[key] = {
+            cards[key] = normalize_card_data({
                 "name": name,
                 "subtitle": subtitle,
                 "set": row.get('Set', set_code),
@@ -92,7 +97,7 @@ def normalize_cards(all_cards_data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]
                 "cid": row.get('cid'),
                 "frontArt": row.get('FrontArt'),
                 "artist": row.get('Artist')
-            }
+            })
     
     return cards
 

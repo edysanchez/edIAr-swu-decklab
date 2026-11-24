@@ -37,6 +37,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import constants as C
 import swu_cards as sc
+from infrastructure.card_repository import CardData
 
 GAME_ID = C.CARDMARKET_GAME_ID
 SET_EXPANSIONS = {
@@ -159,7 +160,7 @@ class CardmarketIndex:
     def price_deck(
         self,
         main_counts: Dict[Tuple[str, str], int],
-        card_db: Dict[Tuple[str, str], Dict[str, Any]],
+        card_db: Dict[Tuple[str, str], CardData],
     ) -> Dict[str, Any]:
         """Price a main deck keyed by ``(name, subtitle)``.
 

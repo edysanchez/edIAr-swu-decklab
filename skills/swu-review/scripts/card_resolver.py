@@ -15,6 +15,8 @@ Anything else raises :class:`UnresolvedCard`. The resolver never invents a card.
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
+from infrastructure.card_repository import CardData
+
 
 class UnresolvedCard(Exception):
     """A deck reference that cannot be matched to the local card database."""
@@ -28,7 +30,7 @@ class UnresolvedCard(Exception):
 @dataclass(frozen=True)
 class Resolved:
     key: Tuple[str, str]
-    card: Dict[str, Any]
+    card: CardData
     resolved_by: str
 
 
@@ -56,7 +58,7 @@ def parse_card_id(card_id: Any) -> Optional[Tuple[str, str]]:
 class CardIndex:
     """Lookup index over the normalised card database."""
 
-    def __init__(self, card_db: Dict[Tuple[str, str], Dict[str, Any]]):
+    def __init__(self, card_db: Dict[Tuple[str, str], CardData]):
         self.by_identity = dict(card_db)
         self.by_set_number: Dict[Tuple[str, str], Tuple[str, str]] = {}
         self.by_name: Dict[str, List[Tuple[str, str]]] = {}

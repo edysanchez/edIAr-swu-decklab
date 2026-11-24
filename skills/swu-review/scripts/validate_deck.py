@@ -7,7 +7,7 @@ Implements docs/rules.md
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -15,13 +15,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import swu_cards as sc
 from domain.services.aspect_penalty_service import AspectPenaltyService
 from infrastructure.card_db_repository import CardDBRepository
-from infrastructure.card_repository import Identity
+from infrastructure.card_repository import CardData, Identity
 
 PREMIER_SETS = {"JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"}
 SUSPENDED: frozenset[Identity] = frozenset()  # None as of 2026-10-26
 
 
-def load_deck(deck_path: str | Path) -> Dict[str, Any]:
+def load_deck(deck_path: str | Path) -> "sc.ParsedDeck":
     path = Path(deck_path)
     with open(path, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -40,7 +40,7 @@ def load_deck(deck_path: str | Path) -> Dict[str, Any]:
                     if 'id' in data['deck'][0]:
                         return sc.parse_deck_swu_json(data)
                     elif 'key' in data['deck'][0]:
-                        return data
+                        return cast(sc.ParsedDeck, data)
                 # could be list of dicts without id
                 return sc.parse_deck_swu_json(data)
             # maybe top-level leader/base/deck as dicts
@@ -54,9 +54,9 @@ def load_deck(deck_path: str | Path) -> Dict[str, Any]:
     return sc.parse_deck_swu_text(content)
 
 
-def parse_flat_list(data: List[Any]) -> Dict[str, Any]:
+def parse_flat_list(data: List[Any]) -> "sc.ParsedDeck":
     """Parse flat list format."""
-    result: Dict[str, Any] = {"leader": None, "base": None, "deck": [], "sideboard": []}
+    result: sc.ParsedDeck = {"leader": None, "base": None, "deck": [], "sideboard": []}
     for e in data:
         if not isinstance(e, dict):
             continue
@@ -66,9 +66,13 @@ def parse_flat_list(data: List[Any]) -> Dict[str, Any]:
         count = int(e.get("count", 1))
         title = e.get("title") or e.get("name") or e.get("cardName") or ""
         subtitle = e.get("subtitle") or ""
-        entry = {"name": title, "subtitle": subtitle, "count": count}
-        if e.get("code"):
-            entry["code"] = e.get("code")
+        entry = cast(
+            sc.DeckEntry,
+            {"name": title, "subtitle": subtitle, "count": count},
+        )
+        code = e.get("code")
+        if code:
+            entry["code"] = str(code)
         if t in ("Leader", "leaders"):
             if result["leader"] is None:
                 result["leader"] = entry
@@ -84,9 +88,9 @@ def parse_flat_list(data: List[Any]) -> Dict[str, Any]:
     return result
 
 
-def parse_case_format(data: Dict[str, Any]) -> Dict[str, Any]:
+def parse_case_format(data: Dict[str, Any]) -> "sc.ParsedDeck":
     """Parse the case study format (mainDeck/sideboard with nested card objects)."""
-    result: Dict[str, Any] = {"leader": None, "base": None, "deck": [], "sideboard": []}
+    result: sc.ParsedDeck = {"leader": None, "base": None, "deck": [], "sideboard": []}
     
     for card_entry in data.get('mainDeck', []):
         card = card_entry.get('card', {})
@@ -97,13 +101,16 @@ def parse_case_format(data: Dict[str, Any]) -> Dict[str, Any]:
         title = card.get('title', '')
         subtitle = card.get('subtitle', '') or ''
         
-        entry = {
-            'name': title,
-            'subtitle': subtitle,
-            'count': count,
-            'set': code,
-            'number': number
-        }
+        entry = cast(
+            sc.DeckEntry,
+            {
+                'name': title,
+                'subtitle': subtitle,
+                'count': count,
+                'set': code,
+                'number': number
+            },
+        )
         
         if card_type == 'Leader':
             result['leader'] = entry
@@ -120,13 +127,16 @@ def parse_case_format(data: Dict[str, Any]) -> Dict[str, Any]:
         title = card.get('title', '')
         subtitle = card.get('subtitle', '') or ''
         
-        entry = {
-            'name': title,
-            'subtitle': subtitle,
-            'count': count,
-            'set': code,
-            'number': number
-        }
+        entry = cast(
+            sc.DeckEntry,
+            {
+                'name': title,
+                'subtitle': subtitle,
+                'count': count,
+                'set': code,
+                'number': number
+            },
+        )
         result['sideboard'].append(entry)
     
     return result
@@ -134,7 +144,7 @@ def parse_case_format(data: Dict[str, Any]) -> Dict[str, Any]:
 
 def resolve_card(
     card_ref: Any,
-    card_db: Dict[Identity, Dict[str, Any]],
+    card_db: Dict[Identity, CardData],
 ) -> Optional[Identity]:
     """Resolve a card reference to its identity."""
     if isinstance(card_ref, dict):
@@ -163,7 +173,7 @@ def calculate_aspect_penalty(
     leader_key: Optional[Identity],
     base_key: Optional[Identity],
     deck_cards: Dict[Identity, int],
-    card_db: Dict[Identity, Dict[str, Any]],
+    card_db: Dict[Identity, CardData],
 ) -> Tuple[int, int]:
     """Calculate aspect penalty (not a legality check)."""
     if not leader_key or not base_key:
@@ -255,27 +265,35 @@ def validate_deck(
         if key == leader_key or key == base_key:
             continue
         if count > 3:
-            card = card_db.get(key)
-            if card:
-                name = f"{card['name']} - {card['subtitle']}" if card.get('subtitle') else card['name']
+            card_data = card_db.get(key)
+            if card_data:
+                name = (
+                    f"{card_data['name']} - {card_data['subtitle']}"
+                    if card_data.get('subtitle')
+                    else card_data['name']
+                )
             else:
                 name = str(key)
             errors.append(f"Too many copies of {name}: {count} (max 3)")
     
     for key in deck_cards:
-        card = card_db.get(key)
-        if card and card['set'] not in PREMIER_SETS:
-            errors.append(f"Card {card['name']} is from non-Premier set {card['set']}")
+        card_data = card_db.get(key)
+        if card_data and card_data['set'] not in PREMIER_SETS:
+            errors.append(
+                f"Card {card_data['name']} is from non-Premier set {card_data['set']}"
+            )
     
     for key in sideboard_cards:
-        card = card_db.get(key)
-        if card and card['set'] not in PREMIER_SETS:
-            errors.append(f"Sideboard card {card['name']} is from non-Premier set {card['set']}")
+        card_data = card_db.get(key)
+        if card_data and card_data['set'] not in PREMIER_SETS:
+            errors.append(
+                f"Sideboard card {card_data['name']} is from non-Premier set {card_data['set']}"
+            )
     
     for key in all_identities:
         if key in SUSPENDED:
-            card = card_db.get(key)
-            name = card['name'] if card else str(key)
+            card_data = card_db.get(key)
+            name = card_data['name'] if card_data else str(key)
             errors.append(f"Card {name} is suspended")
     
     total_penalty, max_penalty = calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db)

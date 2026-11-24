@@ -11,7 +11,7 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, Optional, cast
+from typing import Any, Dict, Optional
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
@@ -19,6 +19,7 @@ from constants import CARD_DB_PATH
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from infrastructure.card_normalizer import normalize_card_data  # noqa: E402
 from infrastructure.card_repository import CardData  # noqa: E402
 
 PREMIER_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
@@ -71,7 +72,7 @@ def normalize_cards(all_cards_data: Dict[str, Any]) -> Dict[str, CardData]:
             subtitle = row.get('Subtitle', '') or ''
             key = f"{name}|{subtitle}" if subtitle else name
             
-            cards[key] = cast(CardData, {
+            cards[key] = normalize_card_data({
                 "name": name,
                 "subtitle": subtitle,
                 "set": row.get('Set', set_code),

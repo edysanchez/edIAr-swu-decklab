@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple, TypedDict, cast
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from infrastructure.card_normalizer import normalize_card_data  # noqa: E402
 from infrastructure.card_repository import CardData, Identity  # noqa: E402
 
 
@@ -77,15 +78,15 @@ def load_swu_cards(card_db_path: Optional[Path] = None) -> Dict[Identity, CardDa
     with open(card_db_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     
-    # Convert string keys back to tuples
-    cards = {}
+    # Convert string keys back to tuples and canonicalise the row values.
+    cards: Dict[Identity, CardData] = {}
     for k, v in data.items():
         # Key is stored as "Name|Subtitle" or just "Name"
         if '|' in k:
             name, subtitle = k.split('|', 1)
         else:
             name, subtitle = k, ""
-        cards[(name, subtitle)] = v
+        cards[(name, subtitle)] = normalize_card_data(v)
     
     return cards
 

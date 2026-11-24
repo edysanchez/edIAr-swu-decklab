@@ -5,7 +5,7 @@ This enables dependency injection and loose coupling between domain logic
 and data access implementation.
 """
 
-from typing import Dict, List, Optional, Protocol, Tuple, TypedDict, Union
+from typing import Dict, List, Optional, Protocol, Tuple, TypedDict
 
 # Card identity is the same (name, subtitle) tuple used by the catalogue.
 Identity = Tuple[str, str]
@@ -15,8 +15,8 @@ class CardData(TypedDict, total=False):
     """Normalised card record from the local catalogue.
 
     ``total=False`` because the source JSON does not guarantee every field on
-    every printing. Values that are numeric in the API may arrive as strings;
-    the analysis layer normalises them with ``_to_int``/``Decimal``.
+    every printing. The infrastructure boundary normalises API values to these
+    canonical types before the domain sees them.
     """
 
     name: str
@@ -27,24 +27,24 @@ class CardData(TypedDict, total=False):
     aspects: List[str]
     traits: List[str]
     arenas: List[str]
-    cost: Optional[Union[str, int]]
-    power: Optional[Union[str, int]]
-    hp: Optional[Union[str, int]]
+    cost: Optional[int]
+    power: Optional[int]
+    hp: Optional[int]
     keywords: List[str]
     unique: bool
     rarity: str
     frontText: Optional[str]
     epicAction: Optional[str]
     doubleSided: bool
-    marketPriceUsd: Optional[Union[str, float, int]]
-    lowPriceUsd: Optional[Union[str, float, int]]
-    foilPriceUsd: Optional[Union[str, float, int]]
-    tcgplayerId: Optional[Union[str, int]]
-    cid: Optional[Union[str, int]]
+    marketPriceUsd: Optional[str]
+    lowPriceUsd: Optional[str]
+    foilPriceUsd: Optional[str]
+    tcgplayerId: Optional[str]
+    cid: Optional[str]
     frontArt: Optional[str]
     artist: Optional[str]
-    upgradePower: Optional[Union[str, int]]
-    upgradeHp: Optional[Union[str, int]]
+    upgradePower: Optional[int]
+    upgradeHp: Optional[int]
 
 
 class CardRepository(Protocol):

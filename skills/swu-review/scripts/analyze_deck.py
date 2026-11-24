@@ -68,7 +68,7 @@ def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
         if not card_data:
             continue
         cost = card_data.get('cost')
-        if cost is None or cost == '':
+        if cost is None:
             no_cost += count
         else:
             try:

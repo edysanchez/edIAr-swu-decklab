@@ -18,7 +18,7 @@ import json
 import sys
 from pathlib import Path
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple, TypedDict, Union
+from typing import Dict, List, Optional, Tuple, TypedDict
 
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -36,7 +36,7 @@ class CardGroup(TypedDict, total=False):
     count: int
     name: str
     subtitle: str
-    cost: Optional[Union[str, int]]
+    cost: Optional[int]
     type: Optional[str]
     arena: Optional[str]
     aspects: Optional[str]
@@ -47,7 +47,7 @@ class CardRow(TypedDict):
     count: int
     name: str
     code: str
-    cost: Optional[Union[str, int]]
+    cost: Optional[int]
     type: str
     arena: Optional[str]
     aspects: Optional[str]
@@ -181,7 +181,7 @@ def main() -> int:
             sel = [
                 r
                 for r in rows
-                if (cost := r.get("cost")) is not None and int(float(cost)) == cv
+                if (cost := r.get("cost")) is not None and cost == cv
             ]
             label = f"cost {cv}"
         elif g.startswith("arena:"):

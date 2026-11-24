@@ -53,6 +53,9 @@ CATALOG = {
         # Same name, different set: must not match LOF.
         {"idProduct": 6, "name": "Yoda, My Ally is the Force",
          "idCategory": 1644, "idExpansion": 9999, "idMetacard": 300},
+        # A synthetic HMW card, used by the positive EUR coverage test.
+        {"idProduct": 7, "name": "Synthetic Unit 01",
+         "idCategory": 1644, "idExpansion": 7000, "idMetacard": 400},
     ],
 }
 
@@ -67,10 +70,11 @@ PRICES = {
         {"idProduct": 4, "avg": 0.14, "low": 0.05, "trend": 0.12},
         {"idProduct": 5, "avg": 0.11, "low": 0.04, "trend": 0.09},
         {"idProduct": 6, "avg": 80.0, "low": 70.0, "trend": 99.0},
+        {"idProduct": 7, "avg": 2.75, "low": 2.0, "trend": 2.50},
     ],
 }
 
-SET_EXPANSIONS = {"LOF": [6105, 6188], "JTL": [5995]}
+SET_EXPANSIONS = {"LOF": [6105, 6188], "JTL": [5995], "HMW": [7000]}
 
 CARD_DB_MIN = {
     ("Yoda", "My Ally is the Force"): {"set": "LOF", "type": "Unit"},
@@ -230,7 +234,19 @@ class AnalysisIntegrationTest(unittest.TestCase):
         self.assertEqual(block["currency"], "EUR")
         self.assertEqual(block["source"], "Cardmarket price guide")
         self.assertEqual(block["snapshot"], "2026-11-05")
+        self.assertEqual(block["priced_slots"], 3)
+        self.assertEqual(block["total"], 7.5)
+        self.assertEqual(block["coverage_pct"], 6.0)
+
+    def test_price_eur_is_zero_when_no_product_matches(self):
+        no_hmw = cardmarket.CardmarketIndex(
+            CATALOG, PRICES, {"LOF": [6105, 6188], "JTL": [5995]}
+        )
+        out = self.build(no_hmw)
+        block = out["composition"]["price_eur"]
         self.assertEqual(block["priced_slots"], 0)
+        self.assertEqual(block["total"], 0.0)
+        self.assertEqual(block["coverage_pct"], 0.0)
 
     def test_no_price_eur_block_without_index(self):
         out = self.build(None)

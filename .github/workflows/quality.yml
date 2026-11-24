@@ -44,8 +44,7 @@ jobs:
         run: python -m pip install ".[dev]"
 
       - name: Type check domain and infrastructure
-        run: python -m mypy
+        run: python -m mypy --strict
 
-      - name: Type check scripts (advisory)
-        continue-on-error: true
+      - name: Type check scripts
         run: python -m mypy skills/swu-review/scripts

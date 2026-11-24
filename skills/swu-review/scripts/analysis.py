@@ -21,6 +21,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
+from typing import Any, Dict, List, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -332,9 +333,9 @@ def _zone_check(zone, resolved, counts):
 
 
 def _legality(leader, base, main_counts, side_counts, unresolved, card_db, zone_counts):
-    errors = []
-    warnings = []
-    checks = []
+    errors: List[str] = []
+    warnings: List[str] = []
+    checks: List[Dict[str, Any]] = []
 
     def check(check_id, ok, detail):
         checks.append({"id": check_id, "ok": ok, "detail": detail})
@@ -460,7 +461,7 @@ def _aspect_penalty(
 
 def _composition(main_counts, card_db, data_as_of, cm_index=None):
     n = sum(main_counts.values())
-    curve = Counter()
+    curve: Counter[int] = Counter()
     no_cost = 0
     total_cost = 0
     cost_count = 0
@@ -474,7 +475,7 @@ def _composition(main_counts, card_db, data_as_of, cm_index=None):
             total_cost += cost * copies
             cost_count += copies
 
-    type_counts = Counter()
+    type_counts: Counter[str] = Counter()
     for key, copies in main_counts.items():
         type_counts[card_db[key].get("type", "Unknown")] += copies
 
@@ -561,7 +562,7 @@ def _composition(main_counts, card_db, data_as_of, cm_index=None):
 
 
 def _findings(composition, main_counts, card_db, unresolved):
-    findings = []
+    findings: List[Dict[str, Any]] = []
     if unresolved or composition["n"] == 0:
         return findings
 
@@ -840,19 +841,19 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     index = CardIndex(card_db)
 
     deck = load_deck(deck_path)
-    unresolved = []
+    unresolved: List[UnresolvedCard] = []
 
     leader = _resolve_ref(index, deck.get("leader"), "leader", unresolved)
     base = _resolve_ref(index, deck.get("base"), "base", unresolved)
 
-    main_counts = Counter()
+    main_counts: Counter[Tuple[str, str]] = Counter()
     for entry in deck.get("deck", []):
         count = max(1, _entry_count(entry))
         resolved = _resolve_ref(index, entry, "main", unresolved)
         if resolved:
             main_counts[resolved.key] += count
 
-    side_counts = Counter()
+    side_counts: Counter[Tuple[str, str]] = Counter()
     for entry in deck.get("sideboard", []):
         count = max(1, _entry_count(entry))
         resolved = _resolve_ref(index, entry, "sideboard", unresolved)
@@ -870,7 +871,7 @@ def build_analysis(deck_path, card_db_path=None, generated_at=None, max_round=No
     findings = _findings(composition, main_counts, card_db, unresolved)
     limitations = _limitations(db, composition, unresolved, findings)
 
-    provided_aspects = Counter()
+    provided_aspects: Counter[str] = Counter()
     if leader:
         provided_aspects.update(leader.card.get("aspects") or [])
     if base:

@@ -13,7 +13,7 @@ Anything else raises :class:`UnresolvedCard`. The resolver never invents a card.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 
 class UnresolvedCard(Exception):
@@ -59,7 +59,7 @@ class CardIndex:
     def __init__(self, card_db: Dict[Tuple[str, str], Dict[str, Any]]):
         self.by_identity = dict(card_db)
         self.by_set_number: Dict[Tuple[str, str], Tuple[str, str]] = {}
-        self.by_name: Dict[str, list] = {}
+        self.by_name: Dict[str, List[Tuple[str, str]]] = {}
 
         for key, card in self.by_identity.items():
             name, _subtitle = key
@@ -87,17 +87,17 @@ class CardIndex:
         set_code = normalize_set(ref.get("set"))
         number = normalize_number(ref.get("number"))
         if set_code and number:
-            key = self.by_set_number.get((set_code, number))
-            if key:
-                self._check_name(ref, key, name)
-                return Resolved(key, self.by_identity[key], "set_number")
+            set_number_key = self.by_set_number.get((set_code, number))
+            if set_number_key:
+                self._check_name(ref, set_number_key, name)
+                return Resolved(set_number_key, self.by_identity[set_number_key], "set_number")
 
         parsed = parse_card_id(ref.get("id"))
         if parsed:
-            key = self.by_set_number.get(parsed)
-            if key:
-                self._check_name(ref, key, name)
-                return Resolved(key, self.by_identity[key], "id")
+            id_key = self.by_set_number.get(parsed)
+            if id_key:
+                self._check_name(ref, id_key, name)
+                return Resolved(id_key, self.by_identity[id_key], "id")
 
         if name is not None:
             key = (name, str(ref.get("subtitle") or "").strip())

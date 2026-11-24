@@ -33,6 +33,7 @@ import re
 import unicodedata
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
+from typing import Any, Dict, List, Set, Tuple
 
 import constants as C
 import swu_cards as sc
@@ -92,9 +93,9 @@ class CardmarketIndex:
 
         # (set, idMetacard) -> [idProduct], (set, name) -> {idMetacard},
         # (set, base name) -> {idMetacard}.
-        self._products = {}
-        self._by_name = {}
-        self._by_base_prefix = {}
+        self._products: Dict[Tuple[str, Any], List[Any]] = {}
+        self._by_name: Dict[Tuple[str, str], Set[Any]] = {}
+        self._by_base_prefix: Dict[Tuple[str, str], Set[Any]] = {}
 
         for product in (catalog or {}).get("products") or []:
             expansion = product.get("idExpansion")

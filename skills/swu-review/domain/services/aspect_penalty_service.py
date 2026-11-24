@@ -6,7 +6,7 @@ and easy substitution of the data source in production.
 """
 
 from collections import Counter
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from infrastructure.card_repository import CardRepository, Identity
 
@@ -50,7 +50,7 @@ class AspectPenaltyService:
         leader_key: Optional[Identity],
         base_key: Optional[Identity],
         main_counts: Dict[Identity, int],
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """Calculate the aspect penalty for all main-deck cards.
 
         Args:
@@ -66,7 +66,7 @@ class AspectPenaltyService:
             - per_card: List of dicts with per-card penalty details
         """
         # Step 1: Collect provided aspects from leader and base as a multiset.
-        provided: Counter = Counter()
+        provided: Counter[str] = Counter()
         if leader_key:
             provided.update(self.card_repository.get_aspects(leader_key))
         if base_key:
@@ -77,14 +77,14 @@ class AspectPenaltyService:
         total = 0
         maximum = 0
         affected_slots = 0
-        per_card: List[dict] = []
+        per_card: List[Dict[str, Any]] = []
 
         for key, copies in sorted(main_counts.items()):
             card_aspects = self.card_repository.get_aspects(key)
-            required = Counter(card_aspects)
+            required: Counter[str] = Counter(card_aspects)
 
             # One entry per icon that has no matching icon from leader/base.
-            missing = []
+            missing: List[str] = []
             for aspect, count in required.items():
                 missing.extend([aspect] * max(0, count - provided[aspect]))
 

@@ -10,7 +10,7 @@ TOOL_VERSION = "0.1.0-dev"
 RULES_VERSION = "2026-10-26"
 
 PREMIER_SETS = ("JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW")
-SUSPENDED = frozenset()
+SUSPENDED: frozenset[str] = frozenset()
 
 DRAW_HAND = 6
 DRAW_PER_REGROUP = 2

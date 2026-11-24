@@ -7,6 +7,7 @@ Implements docs/rules.md
 import json
 import sys
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -14,12 +15,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import swu_cards as sc
 from domain.services.aspect_penalty_service import AspectPenaltyService
 from infrastructure.card_db_repository import CardDBRepository
+from infrastructure.card_repository import Identity
 
 PREMIER_SETS = {"JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"}
-SUSPENDED = set()  # None as of 2026-10-26
+SUSPENDED: frozenset[Identity] = frozenset()  # None as of 2026-10-26
 
 
-def load_deck(deck_path):
+def load_deck(deck_path: str | Path) -> Dict[str, Any]:
     path = Path(deck_path)
     with open(path, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -52,9 +54,9 @@ def load_deck(deck_path):
     return sc.parse_deck_swu_text(content)
 
 
-def parse_flat_list(data):
+def parse_flat_list(data: List[Any]) -> Dict[str, Any]:
     """Parse flat list format."""
-    result = {"leader": None, "base": None, "deck": [], "sideboard": []}
+    result: Dict[str, Any] = {"leader": None, "base": None, "deck": [], "sideboard": []}
     for e in data:
         if not isinstance(e, dict):
             continue
@@ -82,9 +84,9 @@ def parse_flat_list(data):
     return result
 
 
-def parse_case_format(data):
+def parse_case_format(data: Dict[str, Any]) -> Dict[str, Any]:
     """Parse the case study format (mainDeck/sideboard with nested card objects)."""
-    result = {"leader": None, "base": None, "deck": [], "sideboard": []}
+    result: Dict[str, Any] = {"leader": None, "base": None, "deck": [], "sideboard": []}
     
     for card_entry in data.get('mainDeck', []):
         card = card_entry.get('card', {})
@@ -130,11 +132,21 @@ def parse_case_format(data):
     return result
 
 
-def resolve_card(card_ref, card_db):
+def resolve_card(
+    card_ref: Any,
+    card_db: Dict[Identity, Dict[str, Any]],
+) -> Optional[Identity]:
     """Resolve a card reference to its identity."""
     if isinstance(card_ref, dict):
         if 'key' in card_ref:
-            return card_ref['key']
+            key = card_ref['key']
+            if (
+                isinstance(key, (list, tuple))
+                and len(key) == 2
+                and all(isinstance(part, str) for part in key)
+            ):
+                return (key[0], key[1])
+            return None
         if 'name' in card_ref:
             key = sc.card_identity_key(card_ref['name'], card_ref.get('subtitle', ''))
             return key
@@ -147,7 +159,12 @@ def resolve_card(card_ref, card_db):
     return None
 
 
-def calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db):
+def calculate_aspect_penalty(
+    leader_key: Optional[Identity],
+    base_key: Optional[Identity],
+    deck_cards: Dict[Identity, int],
+    card_db: Dict[Identity, Dict[str, Any]],
+) -> Tuple[int, int]:
     """Calculate aspect penalty (not a legality check)."""
     if not leader_key or not base_key:
         return 0, 0
@@ -159,9 +176,12 @@ def calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db):
     return result["total"], result["max"]
 
 
-def validate_deck(deck_path, verbose=True):
-    errors = []
-    warnings = []
+def validate_deck(
+    deck_path: str | Path,
+    verbose: bool = True,
+) -> Tuple[bool, List[str], List[str]]:
+    errors: List[str] = []
+    warnings: List[str] = []
     
     try:
         card_db = sc.load_swu_cards()
@@ -179,7 +199,7 @@ def validate_deck(deck_path, verbose=True):
         print(f"Validating: {deck_path}")
         print("=" * 60)
     
-    all_identities = {}
+    all_identities: Dict[Identity, int] = {}
     
     leader_key = resolve_card(deck.get('leader'), card_db)
     if leader_key:
@@ -193,7 +213,7 @@ def validate_deck(deck_path, verbose=True):
     else:
         errors.append("No base found or base could not be resolved")
     
-    deck_cards = {}
+    deck_cards: Dict[Identity, int] = {}
     for card in deck.get('deck', []):
         key = resolve_card(card, card_db)
         if key:
@@ -203,7 +223,7 @@ def validate_deck(deck_path, verbose=True):
         else:
             errors.append(f"Could not resolve card in deck: {card}")
     
-    sideboard_cards = {}
+    sideboard_cards: Dict[Identity, int] = {}
     for card in deck.get('sideboard', []):
         key = resolve_card(card, card_db)
         if key:

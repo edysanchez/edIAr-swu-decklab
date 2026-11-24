@@ -5,16 +5,17 @@ This enables dependency injection and loose coupling between domain logic
 and data access implementation.
 """
 
-from typing import Dict, List, Optional, Protocol, Tuple
+from typing import Any, Dict, List, Optional, Protocol, Tuple
 
 # Card identity is the same (name, subtitle) tuple used by the catalogue.
 Identity = Tuple[str, str]
+CardData = Dict[str, Any]
 
 
 class CardRepository(Protocol):
     """Protocol defining the card database interface."""
 
-    def get_card(self, key: Identity) -> Optional[dict]:
+    def get_card(self, key: Identity) -> Optional[CardData]:
         """Get a card by its ``(name, subtitle)`` identity key."""
         ...
 
@@ -26,11 +27,11 @@ class CardRepository(Protocol):
         """Check if a card has a specific aspect."""
         ...
 
-    def load_cards(self) -> Dict[Identity, dict]:
+    def load_cards(self) -> Dict[Identity, CardData]:
         """Load all cards from the data source."""
         ...
 
-    def get_all_cards(self) -> List[dict]:
+    def get_all_cards(self) -> List[CardData]:
         """Get all cards as a list."""
         ...
 

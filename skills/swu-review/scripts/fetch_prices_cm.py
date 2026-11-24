@@ -20,6 +20,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -31,15 +32,18 @@ import swu_cards as sc
 USER_AGENT = "edIAr-swu-decklab/0.1"
 
 
-def fetch_json(url):
+def fetch_json(url: str) -> Dict[str, Any]:
     """Download and decode one JSON document."""
     print(f"Fetching {url}...", file=sys.stderr)
     request = Request(url, headers={"User-Agent": USER_AGENT})
     with urlopen(request, timeout=120) as response:
-        return json.loads(response.read().decode("utf-8"))
+        data = json.loads(response.read().decode("utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"unexpected JSON payload from {url}")
+    return data
 
 
-def fetch_prices(cache_dir=None):
+def fetch_prices(cache_dir: Optional[str | Path] = None) -> Dict[str, Any]:
     """Download both Cardmarket files and return a summary dict."""
     cache_dir = (
         Path(cache_dir)
@@ -80,7 +84,7 @@ def fetch_prices(cache_dir=None):
     return summary
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description="Fetch Cardmarket bulk catalog and price guide for SWU.",
     )

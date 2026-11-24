@@ -11,6 +11,7 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from typing import Any, Dict, Optional
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
@@ -20,7 +21,7 @@ PREMIER_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
 API_BASE = "https://api.swu-db.com"
 
 
-def fetch_set(set_code):
+def fetch_set(set_code: str) -> Optional[Dict[str, Any]]:
     """Fetch a set from swu-db API."""
     url = f"{API_BASE}/cards/{set_code}"
     print(f"Fetching {url}...", file=sys.stderr)
@@ -29,6 +30,9 @@ def fetch_set(set_code):
     try:
         with urlopen(req, timeout=60) as response:
             data = json.loads(response.read().decode('utf-8'))
+        if not isinstance(data, dict):
+            print(f"Error fetching {set_code}: unexpected JSON payload", file=sys.stderr)
+            return None
         return data
     except HTTPError as e:
         print(f"Error fetching {set_code}: {e}", file=sys.stderr)
@@ -38,7 +42,7 @@ def fetch_set(set_code):
         return None
 
 
-def normalize_cards(all_cards_data):
+def normalize_cards(all_cards_data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     """
     Normalize cards: only VariantType == 'Normal', exclude tokens.
     Deduplicate by name + subtitle.
@@ -93,7 +97,7 @@ def normalize_cards(all_cards_data):
     return cards
 
 
-def main():
+def main() -> None:
     # CARD_DB_PATH = "data/swudb/cards_normalized.json" (from constants.py)
     # Ensure the parent directory exists
     swu_db_dir = Path(CARD_DB_PATH).parent

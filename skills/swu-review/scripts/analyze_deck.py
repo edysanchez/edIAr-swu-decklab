@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from collections import Counter
 from decimal import Decimal
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -18,7 +18,7 @@ import swu_cards as sc
 from validate_deck import load_deck, resolve_card, calculate_aspect_penalty
 
 
-def analyze_deck(deck_path, verbose=True):
+def analyze_deck(deck_path: str | Path, verbose: bool = True) -> Dict[str, Any]:
     try:
         card_db = sc.load_swu_cards()
     except FileNotFoundError as e:
@@ -193,7 +193,7 @@ def analyze_deck(deck_path, verbose=True):
     }
 
 
-def main():
+def main() -> None:
     import argparse
     parser = argparse.ArgumentParser(description='Analyze SWU Premier deck')
     parser.add_argument('deck', help='Path to deck file')

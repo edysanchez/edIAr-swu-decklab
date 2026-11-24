@@ -12,9 +12,10 @@ Usage (library)::
 """
 
 from collections import Counter
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 
-def _fmt(value, places=None):
+def _fmt(value: Any, places: Optional[int] = None) -> str:
     if value is None:
         return "—"
     if places is not None:
@@ -22,15 +23,15 @@ def _fmt(value, places=None):
     return str(value)
 
 
-def _pct(value):
+def _pct(value: Any) -> str:
     return "—" if value is None else f"{value:.1f}%"
 
 
-def _escape(text):
+def _escape(text: Any) -> str:
     return str(text).replace("|", "\\|").replace("\n", " ")
 
 
-def _table(headers, rows):
+def _table(headers: List[str], rows: Iterable[Sequence[Any]]) -> str:
     lines = [
         "| " + " | ".join(headers) + " |",
         "|" + "|".join("---" for _ in headers) + "|",
@@ -40,7 +41,7 @@ def _table(headers, rows):
     return "\n".join(lines)
 
 
-def _data_health(analysis):
+def _data_health(analysis: Dict[str, Any]) -> str:
     limitations = analysis.get("limitations") or []
     counts = Counter(item.get("impact", "info") for item in limitations)
     blocking = [item for item in limitations if item.get("impact") == "blocking"]
@@ -65,7 +66,7 @@ def _data_health(analysis):
     )
 
 
-def _title(analysis):
+def _title(analysis: Dict[str, Any]) -> str:
     deck = analysis.get("deck") or {}
     leader = deck.get("leader")
     leader_name = leader["name"] if leader else "unknown leader"
@@ -84,7 +85,7 @@ def _title(analysis):
     return "\n".join(lines)
 
 
-def _provenance(analysis):
+def _provenance(analysis: Dict[str, Any]) -> str:
     db = analysis.get("db") or {}
     source = analysis.get("input") or {}
     lines = ["## Provenance", ""]
@@ -107,7 +108,7 @@ def _provenance(analysis):
     return "\n".join(lines)
 
 
-def _legality(analysis):
+def _legality(analysis: Dict[str, Any]) -> str:
     legality = analysis.get("legality") or {}
     lines = ["## Legality", ""]
     if legality.get("ok"):
@@ -187,7 +188,7 @@ def _legality(analysis):
     return "\n".join(lines)
 
 
-def _composition(analysis):
+def _composition(analysis: Dict[str, Any]) -> str:
     comp = analysis.get("composition") or {}
     arenas = comp.get("arenas") or {}
     price = comp.get("price") or {}
@@ -271,7 +272,7 @@ def _composition(analysis):
     return "\n".join(lines)
 
 
-def _card_sheet(card):
+def _card_sheet(card: Dict[str, Any]) -> str:
     name = card.get("name", "Unknown")
     subtitle = card.get("subtitle") or ""
     heading = f"#### {name}" + (f" — {subtitle}" if subtitle else "")
@@ -322,7 +323,7 @@ def _card_sheet(card):
     return "\n".join(lines)
 
 
-def _cards(analysis):
+def _cards(analysis: Dict[str, Any]) -> str:
     cards = analysis.get("cards") or []
     lines = ["## Card sheets", ""]
     if not cards:
@@ -342,7 +343,7 @@ def _cards(analysis):
     return "\n".join(lines)
 
 
-def _draw_odds(analysis):
+def _draw_odds(analysis: Dict[str, Any]) -> str:
     odds = analysis.get("draw_odds") or {}
     rounds = odds.get("rounds") or []
     per_card = odds.get("per_card") or []
@@ -392,7 +393,7 @@ def _draw_odds(analysis):
     return "\n".join(lines)
 
 
-def _findings(analysis):
+def _findings(analysis: Dict[str, Any]) -> str:
     findings = analysis.get("findings") or []
     lines = ["## Findings", ""]
     if not findings:
@@ -439,7 +440,7 @@ def _findings(analysis):
     return "\n".join(lines)
 
 
-def _limitations(analysis):
+def _limitations(analysis: Dict[str, Any]) -> str:
     limitations = analysis.get("limitations") or []
     lines = ["## Limitations", ""]
     if not limitations:
@@ -478,7 +479,7 @@ def _limitations(analysis):
     return "\n".join(lines)
 
 
-def _out_of_scope(analysis):
+def _out_of_scope(analysis: Dict[str, Any]) -> str:
     items = analysis.get("out_of_scope") or []
     lines = ["## Out of scope", ""]
     if not items:
@@ -496,7 +497,7 @@ def _out_of_scope(analysis):
     return "\n".join(lines)
 
 
-def render_report(analysis):
+def render_report(analysis: Dict[str, Any]) -> str:
     """Render an analysis dict as Markdown. Does not mutate the input."""
     blocks = [
         _title(analysis),

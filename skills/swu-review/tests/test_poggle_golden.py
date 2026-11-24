@@ -15,6 +15,9 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(TESTS_DIR))
+from support import requires_catalogue  # noqa: E402
+
 SKILL_DIR = TESTS_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[1]
 SCRIPTS_DIR = SKILL_DIR / "scripts"
@@ -67,6 +70,7 @@ def build_with_fake_card():
         )
 
 
+@requires_catalogue
 class PoggleGoldenTest(unittest.TestCase):
     def test_composition_matches_case_readme(self):
         out = build()

@@ -13,18 +13,22 @@ import unittest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
-SKILL_DIR = TESTS_DIR.parent
-REPO_ROOT = SKILL_DIR.parents[1]
-SCRIPTS_DIR = SKILL_DIR / "scripts"
+sys.path.insert(0, str(TESTS_DIR))
+from support import (  # noqa: E402
+    SYNTHETIC_CARD_DB,
+    SYNTHETIC_CASE_DECK,
+    SYNTHETIC_TEXT_DECK,
+)
 
+SKILL_DIR = TESTS_DIR.parent
+SCRIPTS_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 import analysis  # noqa: E402
 
-FIXTURES_DIR = TESTS_DIR / "fixtures"
-CASE = FIXTURES_DIR / "poggle-blue-endor" / "deck.json"
-CARD_DB = REPO_ROOT / "data" / "swudb" / "cards_normalized.json"
-FIXED_TIME = "2026-11-03T00:00:00Z"
+CASE = SYNTHETIC_CASE_DECK
+CARD_DB = SYNTHETIC_CARD_DB
+FIXED_TIME = "2026-01-01T00:00:00Z"
 
 
 def build_from(deck):
@@ -85,29 +89,22 @@ class LegalityTest(unittest.TestCase):
 
     def test_swudb_json_duplicate_leader_is_illegal(self):
         deck = {
-            "leader": {"id": "HMW_012", "count": 2},
-            "base": {"id": "HMW_022", "count": 1},
-            "deck": [{"id": "ASH_032", "count": 3}],
+            "leader": {"id": "HMW_900", "count": 2},
+            "base": {"id": "HMW_899", "count": 1},
+            "deck": [{"id": "HMW_001", "count": 3}],
             "sideboard": [],
         }
         self.assert_illegal(build_from(deck), "leader")
 
     def test_text_format_still_loads(self):
-        deck = (
-            "Leader\n1 | Poggle the Lesser | Let the Executions Begin\n\n"
-            "Base\n1 | Shield Generator Complex | Endor\n\n"
-            "MainDeck\n3 | Rancor Keeper\n"
+        out = analysis.build_analysis(
+            SYNTHETIC_TEXT_DECK,
+            card_db_path=CARD_DB,
+            generated_at=FIXED_TIME,
         )
-        with tempfile.TemporaryDirectory() as tmp:
-            path = Path(tmp) / "deck.txt"
-            path.write_text(deck, encoding="utf-8")
-            out = analysis.build_analysis(
-                path,
-                card_db_path=CARD_DB,
-                generated_at=FIXED_TIME,
-            )
         self.assertIn("legality", out)
         self.assertEqual(out["input"]["format"], "text")
+        self.assertTrue(out["legality"]["ok"], out["legality"]["errors"])
 
 
 if __name__ == "__main__":

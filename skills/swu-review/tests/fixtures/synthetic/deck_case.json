@@ -1,0 +1,271 @@
+{
+  "mainDeck": [
+    {
+      "count": 1,
+      "card": {
+        "title": "Synthetic Leader",
+        "subtitle": "Prime",
+        "type": {
+          "name": "Leader"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 900
+      }
+    },
+    {
+      "count": 1,
+      "card": {
+        "title": "Synthetic Base",
+        "subtitle": "Endor",
+        "type": {
+          "name": "Base"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 899
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 01",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 1
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 02",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 2
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 03",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 3
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 04",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 4
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 05",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 5
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 06",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 6
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 07",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 7
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 08",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 8
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 09",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 9
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 10",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 10
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 11",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 11
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 12",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 12
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 13",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 13
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 14",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 14
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 15",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 15
+      }
+    },
+    {
+      "count": 3,
+      "card": {
+        "title": "Synthetic Unit 16",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "HMW"
+        },
+        "cardNumber": 16
+      }
+    },
+    {
+      "count": 2,
+      "card": {
+        "title": "Synthetic Villain Unit",
+        "subtitle": "",
+        "type": {
+          "name": "Unit"
+        },
+        "expansion": {
+          "code": "JTL"
+        },
+        "cardNumber": 1
+      }
+    }
+  ],
+  "sideboard": []
+}

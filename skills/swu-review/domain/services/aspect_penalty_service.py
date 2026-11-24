@@ -6,9 +6,24 @@ and easy substitution of the data source in production.
 """
 
 from collections import Counter
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional, TypedDict
 
 from infrastructure.card_repository import CardRepository, Identity
+
+
+class PerCardPenalty(TypedDict):
+    identity: str
+    copies: int
+    penalty: int
+    missing_aspects: List[str]
+
+
+class AspectPenaltyResult(TypedDict):
+    total: int
+    max: int
+    affected_slots: int
+    total_per_slot: float
+    per_card: List[PerCardPenalty]
 
 
 def _identity_label(key: Identity) -> str:
@@ -50,7 +65,7 @@ class AspectPenaltyService:
         leader_key: Optional[Identity],
         base_key: Optional[Identity],
         main_counts: Dict[Identity, int],
-    ) -> Dict[str, Any]:
+    ) -> AspectPenaltyResult:
         """Calculate the aspect penalty for all main-deck cards.
 
         Args:
@@ -77,7 +92,7 @@ class AspectPenaltyService:
         total = 0
         maximum = 0
         affected_slots = 0
-        per_card: List[Dict[str, Any]] = []
+        per_card: List[PerCardPenalty] = []
 
         for key, copies in sorted(main_counts.items()):
             card_aspects = self.card_repository.get_aspects(key)

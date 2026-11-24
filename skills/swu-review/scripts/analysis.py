@@ -31,9 +31,9 @@ import swu_cards as sc
 from card_resolver import CardIndex, Resolved, UnresolvedCard
 from draw_odds import p_at_least_one
 from validate_deck import load_deck
-from domain.services.aspect_penalty_service import AspectPenaltyService
+from domain.services.aspect_penalty_service import AspectPenaltyResult, AspectPenaltyService
 from infrastructure.card_db_repository import CardDBRepository
-from infrastructure.card_repository import CardRepository
+from infrastructure.card_repository import CardData, CardRepository
 
 
 ZONE_ORDER = {"leader": 0, "base": 1, "main": 2}
@@ -62,13 +62,13 @@ def _identity(key: Tuple[str, str]) -> str:
     return f"{name}|{subtitle}" if subtitle else name
 
 
-def _display_name(card: Dict[str, Any]) -> str:
+def _display_name(card: CardData) -> str:
     name = card.get("name", "")
     subtitle = card.get("subtitle", "") or ""
     return f"{name} - {subtitle}" if subtitle else name
 
 
-def _code(card: Dict[str, Any]) -> str:
+def _code(card: CardData) -> str:
     return f"{card.get('set', '')}{card.get('number', '')}"
 
 
@@ -89,7 +89,7 @@ def _detect_format(content: str) -> str:
 
 def _db_meta(
     card_db_path: Path,
-    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    card_db: Dict[Tuple[str, str], CardData],
 ) -> Dict[str, Any]:
     meta_path = card_db_path.parent / "meta.json"
     if meta_path.exists():
@@ -259,7 +259,7 @@ def _card_ref(
 
 def _deck_entry(
     key: Tuple[str, str],
-    card: Dict[str, Any],
+    card: CardData,
     copies: int,
 ) -> Dict[str, Any]:
     return {
@@ -272,7 +272,7 @@ def _deck_entry(
 
 def _sheet(
     key: Tuple[str, str],
-    card: Dict[str, Any],
+    card: CardData,
     zone: str,
     copies: int,
     provided_aspects: "Counter[str]",
@@ -366,7 +366,7 @@ def _legality(
     main_counts: "Counter[Tuple[str, str]]",
     side_counts: "Counter[Tuple[str, str]]",
     unresolved: List[Dict[str, Any]],
-    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    card_db: Dict[Tuple[str, str], CardData],
     zone_counts: Optional[Tuple[List[int], List[int]]],
 ) -> Dict[str, Any]:
     errors: List[str] = []
@@ -471,7 +471,7 @@ def _aspect_penalty(
     base: Optional[Resolved],
     main_counts: "Counter[Tuple[str, str]]",
     card_repository: CardRepository,
-) -> Dict[str, Any]:
+) -> AspectPenaltyResult:
     """Calculate aspect penalty using the domain service.
 
     Args:
@@ -500,7 +500,7 @@ def _aspect_penalty(
 
 def _composition(
     main_counts: "Counter[Tuple[str, str]]",
-    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    card_db: Dict[Tuple[str, str], CardData],
     data_as_of: str,
     cm_index: Optional[Any] = None,
 ) -> Dict[str, Any]:
@@ -608,7 +608,7 @@ def _composition(
 def _findings(
     composition: Dict[str, Any],
     main_counts: "Counter[Tuple[str, str]]",
-    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    card_db: Dict[Tuple[str, str], CardData],
     unresolved: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
     findings: List[Dict[str, Any]] = []
@@ -839,7 +839,7 @@ def _out_of_scope() -> List[Dict[str, str]]:
 
 def _draw_odds(
     main_counts: "Counter[Tuple[str, str]]",
-    card_db: Dict[Tuple[str, str], Dict[str, Any]],
+    card_db: Dict[Tuple[str, str], CardData],
     n: int,
     max_round: int,
 ) -> Dict[str, Any]:

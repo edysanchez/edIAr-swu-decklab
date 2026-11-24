@@ -7,8 +7,44 @@ provides name+subtitle identity lookups.
 """
 
 import json
+import sys
 from pathlib import Path
-from typing import Dict, Tuple, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple, TypedDict, cast
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from infrastructure.card_repository import CardData, Identity  # noqa: E402
+
+
+class DeckEntry(TypedDict, total=False):
+    name: str
+    subtitle: str
+    count: int
+    set: str
+    number: str
+    id: str
+    code: str
+    key: Identity
+
+
+class ParsedDeck(TypedDict, total=False):
+    leader: Optional[DeckEntry]
+    base: Optional[DeckEntry]
+    deck: List[DeckEntry]
+    sideboard: List[DeckEntry]
+
+
+class ResolvedEntry(TypedDict):
+    key: Identity
+    count: int
+
+
+class ResolvedDeck(TypedDict):
+    leader: Optional[Identity]
+    base: Optional[Identity]
+    deck: List[ResolvedEntry]
+    sideboard: List[ResolvedEntry]
+    unresolved: List[Tuple[str, Identity]]
 
 
 def get_data_dir() -> Path:
@@ -25,7 +61,7 @@ def get_data_dir() -> Path:
     return cwd / "data"
 
 
-def load_swu_cards(card_db_path: Optional[Path] = None) -> Dict[Tuple[str, str], Dict[str, Any]]:
+def load_swu_cards(card_db_path: Optional[Path] = None) -> Dict[Identity, CardData]:
     """
     Load and normalize card database.
     Returns dict keyed by (name, subtitle) with card data.
@@ -59,12 +95,12 @@ def card_identity_key(name: str, subtitle: str = "") -> Tuple[str, str]:
     return (name.strip(), (subtitle or "").strip())
 
 
-def parse_deck_swu_json(deck_data: Dict[str, Any]) -> Dict[str, Any]:
+def parse_deck_swu_json(deck_data: Dict[str, Any]) -> ParsedDeck:
     """
     Parse SWUDB JSON format.
     Returns dict with leader, base, deck, sideboard (all as identity keys).
     """
-    result: Dict[str, Any] = {
+    result: ParsedDeck = {
         "leader": None,
         "base": None,
         "deck": [],
@@ -122,13 +158,13 @@ def parse_deck_swu_json(deck_data: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
-def parse_deck_swu_text(text: str) -> Dict[str, Any]:
+def parse_deck_swu_text(text: str) -> ParsedDeck:
     """
     Parse SWUDB text format (Melee/Picklist style).
     Sections: Leader, Base, MainDeck, Sideboard
     Lines like: "3 | Card Name | Subtitle" or "1 | Card Name"
     """
-    result: Dict[str, Any] = {
+    result: ParsedDeck = {
         "leader": None,
         "base": None,
         "deck": [],
@@ -189,7 +225,10 @@ def parse_deck_swu_text(text: str) -> Dict[str, Any]:
             else:
                 continue
         
-        card_entry = {"name": name, "subtitle": subtitle, "count": count}
+        card_entry = cast(
+            DeckEntry,
+            {"name": name, "subtitle": subtitle, "count": count},
+        )
         
         if current_section == 'leader':
             result["leader"] = card_entry
@@ -204,14 +243,14 @@ def parse_deck_swu_text(text: str) -> Dict[str, Any]:
 
 
 def resolve_deck_to_identities(
-    deck_parsed: Dict[str, Any],
-    card_db: Dict[Tuple[str, str], Dict[str, Any]],
-) -> Dict[str, Any]:
+    deck_parsed: ParsedDeck,
+    card_db: Dict[Identity, CardData],
+) -> ResolvedDeck:
     """
     Resolve parsed deck to card identities using the card database.
     Returns deck with resolved card identities.
     """
-    result: Dict[str, Any] = {
+    result: ResolvedDeck = {
         "leader": None,
         "base": None,
         "deck": [],

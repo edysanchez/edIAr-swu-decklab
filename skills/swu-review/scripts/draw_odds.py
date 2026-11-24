@@ -197,7 +197,7 @@ def main():
         print(json.dumps(out, ensure_ascii=False, indent=2))
         return 0
 
-    turn_hdr = "  ".join((f"hand" if t == 0 else f"+{t}R").rjust(6) for t in turns)
+    turn_hdr = "  ".join(("hand" if t == 0 else f"+{t}R").rjust(6) for t in turns)
     print(f"Draw odds - {args.deck} (N={N}, hand={args.hand}, +{DRAW_PER_REGROUP}/regroup{', with mulligan' if args.mulligan else ''})")
     if args.group:
         print(f"Group: {label} ({len(sel)} cards)")

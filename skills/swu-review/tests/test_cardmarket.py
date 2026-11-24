@@ -11,7 +11,6 @@ The fixtures are synthetic: no network access and no dependency on the local
 
 import sys
 import unittest
-from decimal import Decimal
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent

@@ -167,34 +167,16 @@ def _zone_counts(content, deck_format):
             # Parse card line
             if '|' in line:
                 parts = [p.strip() for p in line.split('|')]
-                if len(parts) >= 2:
-                    try:
-                        count = int(parts[0])
-                        name = parts[1]
-                        subtitle = parts[2] if len(parts) > 2 else ""
-                    except ValueError:
-                        continue
-                else:
+                if len(parts) < 2:
                     continue
             else:
                 parts = line.split(None, 1)
-                if len(parts) == 2:
-                    try:
-                        count = int(parts[0])
-                        rest = parts[1]
-                        if '|' in rest:
-                            name_parts = [p.strip() for p in rest.split('|')]
-                            name = name_parts[0]
-                            subtitle = name_parts[1] if len(name_parts) > 1 else ""
-                        else:
-                            name = rest
-                            subtitle = ""
-                    except ValueError:
-                        continue
-                else:
+                if len(parts) != 2:
                     continue
-            
-            card_entry = {"name": name, "subtitle": subtitle, "count": count}
+            try:
+                count = int(parts[0])
+            except ValueError:
+                continue
             
             if current_section == 'leader':
                 leaders.append(count)
@@ -648,7 +630,6 @@ def _findings(composition, main_counts, card_db, unresolved):
 
 
 def _limitations(db, composition, unresolved, findings):
-    n = composition["n"]
     price = composition["price"]
     items = [
         {

@@ -7,10 +7,8 @@ provides name+subtitle identity lookups.
 """
 
 import json
-import os
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
-from decimal import Decimal
+from typing import Dict, Tuple, Optional, Any
 
 
 def get_data_dir() -> Path:

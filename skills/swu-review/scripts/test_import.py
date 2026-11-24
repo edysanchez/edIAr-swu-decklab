@@ -3,7 +3,7 @@ sys.path.insert(0, '.')
 print("sys.path:", sys.path[:3])
 print("Looking for domain.services...")
 try:
-    from domain.services.aspect_penalty_service import AspectPenaltyService
+    from domain.services.aspect_penalty_service import AspectPenaltyService  # noqa: F401
     print("Import successful!")
 except ImportError as e:
     print(f"Import error: {e}")

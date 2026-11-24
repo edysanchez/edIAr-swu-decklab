@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ediar-swu-decklab"
+version = "0.1.0.dev0"
+description = "Star Wars: Unlimited Premier deck review tools"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Edgar Sanchez" }]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "coverage==7.17.5",
+  "jsonschema==4.26.0",
+  "mypy==2.4.1",
+  "ruff==0.17.6",
+]
+
+[tool.setuptools]
+packages = []
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = ["data", ".local", "reports"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "skills/swu-review"
+files = [
+  "skills/swu-review/domain",
+  "skills/swu-review/infrastructure",
+]
+explicit_package_bases = true
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[tool.coverage.run]
+branch = true
+source = ["skills/swu-review"]
+omit = ["skills/swu-review/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false

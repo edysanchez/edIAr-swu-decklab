@@ -261,11 +261,11 @@ def validate_deck(deck_path, verbose=True):
     total_penalty, max_penalty = calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db)
     
     if verbose:
-        print(f"\nDeck structure:")
+        print("\nDeck structure:")
         if leader_key:
-            l = card_db.get(leader_key)
-            if l:
-                print(f"  Leader: {l['name']} - {l['subtitle']} ({l['set']} {l['number']})")
+            leader = card_db.get(leader_key)
+            if leader:
+                print(f"  Leader: {leader['name']} - {leader['subtitle']} ({leader['set']} {leader['number']})")
         if base_key:
             b = card_db.get(base_key)
             if b:
@@ -274,17 +274,17 @@ def validate_deck(deck_path, verbose=True):
         print(f"  Sideboard: {sideboard_size} cards")
         print(f"  Distinct cards (main deck): {len(deck_cards)}")
         
-        print(f"\nAspect penalty (not a legality issue):")
+        print("\nAspect penalty (not a legality issue):")
         print(f"  Total penalty: {total_penalty}")
         print(f"  Max penalty: {max_penalty}")
         
-        print(f"\nValidation:")
+        print("\nValidation:")
         if errors:
             print(f"  ❌ ILLEGAL ({len(errors)} error(s))")
             for err in errors:
                 print(f"     - {err}")
         else:
-            print(f"  ✅ LEGAL")
+            print("  ✅ LEGAL")
         print("=" * 60)
     
     return len(errors) == 0, errors, warnings

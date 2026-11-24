@@ -8,14 +8,13 @@ Deduplicates by name + subtitle identity.
 """
 
 import json
-import os
 import sys
 from pathlib import Path
 from datetime import datetime
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
-from .constants import CARD_DB_PATH
+from constants import CARD_DB_PATH
 
 PREMIER_SETS = ["JTL", "LOF", "IBH", "SEC", "LAW", "ASH", "HMW"]
 API_BASE = "https://api.swu-db.com"

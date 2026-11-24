@@ -8,7 +8,7 @@ Card database only, no meta.
 import json
 import sys
 from pathlib import Path
-from collections import Counter, defaultdict
+from collections import Counter
 from decimal import Decimal
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -49,9 +49,9 @@ def analyze_deck(deck_path, verbose=True):
     if verbose:
         print(f"\nDeck: {N} cards")
         if leader_key:
-            l = card_db.get(leader_key)
-            if l:
-                print(f"Leader: {l['name']} - {l['subtitle']} ({l['set']})")
+            leader = card_db.get(leader_key)
+            if leader:
+                print(f"Leader: {leader['name']} - {leader['subtitle']} ({leader['set']})")
         if base_key:
             b = card_db.get(base_key)
             if b:
@@ -75,13 +75,13 @@ def analyze_deck(deck_path, verbose=True):
                 curve[c] += count
                 total_cost += c * count
                 cost_count += count
-            except:
+            except (ValueError, TypeError):
                 no_cost += count
     
     mean_cost = total_cost / cost_count if cost_count > 0 else 0
     
     if verbose:
-        print(f"\nCurve:")
+        print("\nCurve:")
         for cost in sorted(curve.keys()):
             pct = (curve[cost] / N * 100) if N > 0 else 0
             print(f"  {cost}: {curve[cost]} ({pct:.1f}%)")
@@ -99,7 +99,7 @@ def analyze_deck(deck_path, verbose=True):
             type_counts[t] += count
     
     if verbose:
-        print(f"\nType split:")
+        print("\nType split:")
         for t in ['Unit', 'Event', 'Upgrade']:
             if type_counts[t] > 0:
                 pct = (type_counts[t] / N * 100) if N > 0 else 0
@@ -148,7 +148,7 @@ def analyze_deck(deck_path, verbose=True):
     total_penalty, max_penalty = calculate_aspect_penalty(leader_key, base_key, deck_cards, card_db)
     
     if verbose:
-        print(f"\nAspect penalty:")
+        print("\nAspect penalty:")
         print(f"  Total: {total_penalty}")
         print(f"  Max: {max_penalty}")
     
@@ -163,13 +163,13 @@ def analyze_deck(deck_path, verbose=True):
                 if price > 0:
                     total_usd += price * count
                     priced += count
-            except:
+            except (ArithmeticError, ValueError, TypeError):
                 pass
     
     coverage = (priced / N * 100) if N > 0 else 0
     
     if verbose:
-        print(f"\nPrice (USD, swu-db):")
+        print("\nPrice (USD, swu-db):")
         print(f"  Total: ${total_usd:.2f}")
         print(f"  Coverage: {priced}/{N} ({coverage:.1f}%)")
         print("=" * 60)

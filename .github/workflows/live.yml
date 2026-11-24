@@ -1,0 +1,42 @@
+name: live-data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  poggle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dev dependencies
+        run: python -m pip install ".[dev]"
+
+      - name: Fetch the card catalogue
+        run: python skills/swu-review/scripts/fetch_cards.py
+
+      - name: Verify the catalogue is not empty
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("data/swudb/cards_normalized.json")
+          cards = json.loads(path.read_text(encoding="utf-8"))
+          if len(cards) < 1000:
+              raise SystemExit(f"only {len(cards)} cards fetched")
+          print(f"{len(cards)} cards fetched")
+          PY
+
+      - name: Run the real-catalogue contract test
+        run: python -m unittest discover -s skills/swu-review/tests -p 'test_poggle_golden.py' -v

@@ -30,6 +30,22 @@ docs/                # rules, metrics, data sources, roadmap
 
 Card data is cached locally in `data/` and is not published.
 
+## Development
+
+Install the dev tools and run the checks:
+
+```bash
+python3 -m pip install ".[dev]"
+python3 -m unittest discover -s skills/swu-review/tests
+python3 -m ruff check .
+python3 -m mypy
+python3 -m coverage run -m unittest discover -s skills/swu-review/tests
+python3 -m coverage report -m
+```
+
+See [`docs/ci.md`](docs/ci.md) for the workflows, required checks and the
+optional live-data job.
+
 ## Principles
 
 1. **No invented cards.** Every card, cost and ability comes from the card

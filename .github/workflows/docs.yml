@@ -1,0 +1,45 @@
+name: docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  local-links:
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check local documentation links
+        uses: lycheeverse/lychee-action@v2.9.0
+        with:
+          args: --offline --no-progress './**/*.md'
+          fail: true
+
+  external-links:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check external documentation links
+        uses: lycheeverse/lychee-action@v2.9.0
+        with:
+          args: --no-progress --max-retries 2 './**/*.md'
+          fail: true
+          token: ${{ secrets.GITHUB_TOKEN }}

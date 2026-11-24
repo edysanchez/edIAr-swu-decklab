@@ -21,7 +21,12 @@ For strategic deck reviews, always read `skills/swu-review/SKILL.md` first. It c
 - Draw odds (standalone): `python3 skills/swu-review/scripts/draw_odds.py <deck.json|deck.txt>`
 
 ### Tests
+- Install dev tools: `python3 -m pip install ".[dev]"`
 - Run test suite: `python3 -m unittest discover -s skills/swu-review/tests`
+- Run lint: `python3 -m ruff check .`
+- Run type checks: `python3 -m mypy`
+- Run coverage: `python3 -m coverage run -m unittest discover -s skills/swu-review/tests && python3 -m coverage report -m`
+- CI: `.github/workflows/` runs the tests, lint, types, docs links and an optional live-data job. See `docs/ci.md`.
 
 ### Notes
 - Card DB is cached in `data/swudb/` (gitignored). If missing, run `fetch_cards.py` first.

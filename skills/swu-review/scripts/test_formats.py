@@ -59,7 +59,7 @@ def test_case_format():
                           cwd='/home/edy/repos/edIAr-swu-decklab',
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if result.returncode not in [0, 1]:  # 0 is valid, 1 is invalid but parsed
-        print(f'FAIL: Case format parsing failed')
+        print('FAIL: Case format parsing failed')
         return False
     print('PASS: Case format parsed')
     return True
@@ -78,7 +78,7 @@ def test_flat_list():
                           cwd='/home/edy/repos/edIAr-swu-decklab',
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if b'Unrecognized' in result.stdout + result.stderr:
-        print(f'FAIL: Flat list rejected')
+        print('FAIL: Flat list rejected')
         return False
     print('PASS: Flat list accepted')
     return True
@@ -86,7 +86,7 @@ def test_flat_list():
 def test_reprint_grouping():
     """Test that reprints are grouped by name+subtitle"""
     # Same card from different sets should be grouped
-    deck = {
+    _deck = {
         "leader": {"id": "HMW_012", "count": 1},
         "base": {"id": "HMW_022", "count": 1},
         "deck": [

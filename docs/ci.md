@@ -58,7 +58,7 @@ At the time this pipeline was added:
 - **Ruff:** clean with `E4`, `E7`, `E9` and `F`.
 - **Ruff advisory:** 11 import-sorting findings and 26 complexity findings
   (`C90`, `PLR0911`, `PLR0912`, `PLR0913`, `PLR0915`). The full list is
-  published in the workflow step summary.
+  published in the workflow step summary and in a sticky PR comment.
 - **mypy:** clean and strict on `domain/`, `infrastructure/` and `scripts/`.
 - **Links:** all tracked Markdown local links resolve.
 

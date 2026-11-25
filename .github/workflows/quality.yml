@@ -38,7 +38,7 @@ jobs:
         run: |
           python -m ruff check . \
             --select I,C90,PLR0911,PLR0912,PLR0913,PLR0915 \
-            --output-format=concise > ruff-advisory.txt || true
+            --output-format=concise --quiet > ruff-advisory.txt || true
           {
             echo "### Ruff advisory findings"
             echo ""

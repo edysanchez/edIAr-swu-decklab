@@ -8,7 +8,7 @@ that only deterministic, offline checks can become required.
 | Workflow | Trigger | Gate | What it does |
 |---|---|---|---|
 | `tests` | push to `main`, PR to `main` | Required | Data-free `unittest` suite, coverage report, no tracked card data |
-| `quality` | push to `main`, PR to `main` | Ruff required; mypy strict required for `domain/` + `infrastructure/` and `scripts/` | Lint and type checks |
+| `quality` | push to `main`, PR to `main` | Ruff minimal required; import sorting and complexity advisory; mypy strict required for `domain/` + `infrastructure/` and `scripts/` | Lint and type checks |
 | `docs` | PR to `main`; weekly schedule; manual | Local links on PR; external links on schedule | Markdown link check |
 | `live-data` | Weekly schedule; manual | Never a PR gate | Fetch the real catalogue and run the Poggle contract test |
 
@@ -56,6 +56,9 @@ At the time this pipeline was added:
 - **Tests:** 84 tests, 13 Poggle skips without `data/`.
 - **Coverage:** about 53% with the synthetic suite; no threshold is enforced.
 - **Ruff:** clean with `E4`, `E7`, `E9` and `F`.
+- **Ruff advisory:** 11 import-sorting findings and 26 complexity findings
+  (`C90`, `PLR0911`, `PLR0912`, `PLR0913`, `PLR0915`). The full list is
+  published in the workflow step summary and in a sticky PR comment.
 - **mypy:** clean and strict on `domain/`, `infrastructure/` and `scripts/`.
 - **Links:** all tracked Markdown local links resolve.
 
@@ -83,6 +86,9 @@ action majors (`actions/checkout@v7`, `actions/setup-python@v7`).
 
 ## Not in the pipeline yet
 
+- `I` (import sorting) and complexity are advisory. The next ruff phase fixes
+  the import order in one commit and makes `I` blocking; after that, add `B`,
+  `UP`, `SIM`, `C4`, `RUF`, then make complexity blocking.
 - `ruff format --check` — needs a dedicated formatting commit first.
 - Removing `Any` from the JSON/card boundaries — the next typing ratchet.
 - A coverage threshold — the suite still skips the real-data contract.

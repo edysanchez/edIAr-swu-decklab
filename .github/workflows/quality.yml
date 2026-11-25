@@ -17,6 +17,9 @@ jobs:
   ruff:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v7
 
@@ -29,6 +32,71 @@ jobs:
 
       - name: Lint
         run: python -m ruff check .
+
+      - name: Extended Ruff checks (advisory)
+        continue-on-error: true
+        run: |
+          python -m ruff check . \
+            --select I,C90,PLR0911,PLR0912,PLR0913,PLR0915 \
+            --output-format=concise --quiet > ruff-advisory.txt || true
+          {
+            echo "### Ruff advisory findings"
+            echo ""
+            echo '```text'
+            cat ruff-advisory.txt
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish advisory findings to the PR
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- ruff-advisory -->';
+            const findings = fs.readFileSync('ruff-advisory.txt', 'utf8').trim();
+            const lines = findings.split('\n').filter(Boolean);
+            const imports = lines.filter((line) => line.includes(' I001 ')).length;
+            const complexity = lines.length - imports;
+            const detail = findings
+              ? `<details><summary>Show ${lines.length} findings</summary>\n\n\`\`\`text\n${findings}\n\`\`\`\n\n</details>`
+              : 'No findings.';
+            const body = [
+              marker,
+              '### Ruff advisory findings',
+              '',
+              `**${imports}** import-sorting · **${complexity}** complexity`,
+              '',
+              detail,
+              '',
+              '<sub>Updated by CI.</sub>',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const existing = comments.find((comment) => comment.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
 
   mypy:
     runs-on: ubuntu-latest

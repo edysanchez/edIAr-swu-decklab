@@ -33,9 +33,15 @@ jobs:
       - name: Extended Ruff checks (advisory)
         continue-on-error: true
         run: |
-          python -m ruff check . \
-            --select I,C90,PLR0911,PLR0912,PLR0913,PLR0915 \
-            --output-format=github
+          {
+            echo "### Ruff advisory findings"
+            echo ""
+            echo '```text'
+            python -m ruff check . \
+              --select I,C90,PLR0911,PLR0912,PLR0913,PLR0915 \
+              --output-format=concise || true
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
   mypy:
     runs-on: ubuntu-latest

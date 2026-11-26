@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -11,10 +12,20 @@ sys.path.insert(0, str(FACTORY_DIR))
 
 import factory  # noqa: E402
 
+EXAMPLE_BACKLOG = FACTORY_DIR / "backlog.example.json"
+
 
 class BacklogTests(unittest.TestCase):
     def setUp(self) -> None:
+        self._old_backlog = os.environ.get("FACTORY_BACKLOG")
+        os.environ["FACTORY_BACKLOG"] = str(EXAMPLE_BACKLOG)
         self.data = factory.load_backlog()
+
+    def tearDown(self) -> None:
+        if self._old_backlog is None:
+            os.environ.pop("FACTORY_BACKLOG", None)
+        else:
+            os.environ["FACTORY_BACKLOG"] = self._old_backlog
 
     def test_ids_are_unique(self) -> None:
         ids = [item["id"] for item in self.data["items"]]

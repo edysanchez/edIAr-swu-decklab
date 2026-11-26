@@ -1,0 +1,22 @@
+{
+  "wip_limit": 1,
+  "items": [
+    {
+      "id": "EXAMPLE-1",
+      "title": "Replace one hardcoded path with a configuration value",
+      "status": "ready",
+      "risk": "T1",
+      "priority": "P1",
+      "f1": false,
+      "scope": "Example item. Replace one hardcoded path with a value read from configuration. No behaviour change.",
+      "acceptance": [
+        "The path is configurable",
+        "The existing test suite passes",
+        "No new warnings"
+      ],
+      "oracle": [],
+      "source": "factory example",
+      "notes": "Template item. Replace it with the project's own queue."
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "wip_limit": 1,
+  "items": [
+    {
+      "id": "CLEAN-B2",
+      "title": "Remove explicit Any from the resolver and Cardmarket boundary",
+      "status": "ready",
+      "risk": "T1",
+      "priority": "P1",
+      "f1": false,
+      "scope": "Type card_resolver.py (7 Any) and cardmarket.py (16 Any). Type-only change: no behaviour change. Do not refactor unrelated logic.",
+      "acceptance": [
+        "Zero explicit Any in card_resolver.py and cardmarket.py",
+        "Strict mypy passes on the core and scripts",
+        "84 tests OK; no new P0/P1",
+        "No behaviour change"
+      ],
+      "oracle": [],
+      "source": "council 2026-11-25 cleanup-first (local working note)",
+      "notes": "First item of the bounded cleanup gate. No domain oracle: the guard is strict mypy plus the existing suite."
+    },
+    {
+      "id": "CLEAN-B3A",
+      "title": "Remove explicit Any from analysis.py",
+      "status": "ready",
+      "risk": "T1",
+      "priority": "P1",
+      "f1": false,
+      "scope": "Type analysis.py (33 Any) in place with JsonValue/JsonDict and stable TypedDicts. Do not split the module in this item.",
+      "acceptance": [
+        "Zero explicit Any in analysis.py",
+        "Strict mypy passes on the core and scripts",
+        "84 tests OK; no new P0/P1",
+        "No behaviour change"
+      ],
+      "oracle": [],
+      "source": "council 2026-11-25 cleanup-first (local working note)",
+      "notes": "analysis.py is 1003 lines. Type first; the responsibility split is a later item."
+    },
+    {
+      "id": "CLEAN-B3B",
+      "title": "Remove explicit Any from render_report.py",
+      "status": "ready",
+      "risk": "T1",
+      "priority": "P1",
+      "f1": false,
+      "scope": "Type render_report.py (17 Any) against the same JsonValue/JsonDict model as analysis.py.",
+      "acceptance": [
+        "Zero explicit Any in render_report.py",
+        "Strict mypy passes on the core and scripts",
+        "84 tests OK; no new P0/P1",
+        "No behaviour change"
+      ],
+      "oracle": [],
+      "source": "council 2026-11-25 cleanup-first (local working note)",
+      "notes": "Keep the report output byte-identical for the fixtures."
+    },
+    {
+      "id": "CLEAN-B3C",
+      "title": "Remove explicit Any from the remaining CLIs and fetchers",
+      "status": "ready",
+      "risk": "T1",
+      "priority": "P1",
+      "f1": false,
+      "scope": "Type analyze_deck.py, fetch_cards.py, fetch_prices_cm.py, swu_analyze.py, swu_cards.py and validate_deck.py (17 Any total).",
+      "acceptance": [
+        "Zero explicit Any in those six files",
+        "Strict mypy passes on the core and scripts",
+        "84 tests OK; no new P0/P1",
+        "No behaviour change"
+      ],
+      "oracle": [],
+      "source": "council 2026-11-25 cleanup-first (local working note)",
+      "notes": "This is likely two small PRs: fetchers, then CLIs."
+    },
+    {
+      "id": "CLEAN-ANY",
+      "title": "Enable disallow_any_explicit",
+      "status": "ready",
+      "risk": "T1",
+      "priority": "P1",
+      "f1": false,
+      "scope": "Set disallow_any_explicit = true in pyproject.toml and remove any remaining explicit Any in skills/swu-review.",
+      "acceptance": [
+        "disallow_any_explicit = true",
+        "Zero explicit Any in skills/swu-review",
+        "Strict mypy passes on the core and scripts",
+        "84 tests OK; 13 Poggle tests OK with data"
+      ],
+      "oracle": [],
+      "source": "council 2026-11-25 cleanup-first (local working note)",
+      "notes": "This closes the typing half of the cleanup gate. The small ruff pass is a separate decision."
+    },
+    {
+      "id": "P0-2",
+      "title": "validate_deck and swu_analyze disagree on leader/base structure",
+      "status": "ready",
+      "risk": "T3",
+      "priority": "P0",
+      "f1": true,
+      "scope": "One Deck/CardIndex model shared by both CLIs. Enforce exactly one leader and one base, the correct slot type, no leader/base in the sideboard, and reject secondleader in Premier.",
+      "acceptance": [
+        "4/4 differential cases agree between validate_deck and swu_analyze",
+        "A regression test fails before the fix and passes after it",
+        "No new P0/P1 and no regression in the Poggle case"
+      ],
+      "oracle": [
+        "leader-count-2",
+        "unit-in-leader-slot",
+        "leader-in-sideboard",
+        "secondleader"
+      ],
+      "source": "docs/code-health.md P0-2 (local working note)",
+      "notes": "Pilot for the factory loop. Freeze expected values before implementation; the agent may implement and run the oracle, but must not author the expected verdicts."
+    },
+    {
+      "id": "P0-3",
+      "title": "Legality must fail closed when suspension data is missing or empty",
+      "status": "ready",
+      "risk": "T3",
+      "priority": "P0",
+      "f1": true,
+      "scope": "Missing, empty or truncated suspension data must block legality or union the built-in registry. It must never silently pass every card.",
+      "acceptance": [
+        "An empty Premier suspension snapshot is a blocking limitation",
+        "A regression test covers the empty and truncated cases",
+        "No new P0/P1"
+      ],
+      "oracle": [],
+      "source": "docs/code-health.md P0-3 (local working note)",
+      "notes": "On main, suspension is not implemented; this may be a port from dynamic-legal-set-check rather than a small patch."
+    },
+    {
+      "id": "DOC-FACTORY",
+      "title": "Publish the factory contract and the tracked backlog",
+      "status": "review",
+      "risk": "T0",
+      "priority": "P1",
+      "f1": false,
+      "scope": "One page with the loop, WIP=1, risk tiers, definitions of ready/done, gates, metrics and kill criteria.",
+      "acceptance": [
+        "A new contributor can run one item end to end from the README",
+        "The backlog is the only queue"
+      ],
+      "oracle": [],
+      "source": "Council 2026-11-26",
+      "notes": "README and the 101 guide are written; waiting for PR #10 review."
+    }
+  ]
+}

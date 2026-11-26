@@ -1,0 +1,56 @@
+{
+  "fixture": "skills/swu-review/tests/fixtures/poggle-blue-endor/deck.json",
+  "frozen_by": "proposed-by-agent-for-human-review",
+  "cases": [
+    {
+      "id": "leader-count-2",
+      "description": "A leader entry with count 2 is illegal in Premier.",
+      "mutation": {
+        "type": "set_leader_count",
+        "value": 2
+      },
+      "expected": {
+        "validate.valid": false,
+        "analyze.legality.ok": false
+      },
+      "source": "docs/rules.md: exactly one leader"
+    },
+    {
+      "id": "unit-in-leader-slot",
+      "description": "The leader slot must contain a Leader card.",
+      "mutation": {
+        "type": "unit_in_leader_slot"
+      },
+      "expected": {
+        "validate.valid": false,
+        "analyze.legality.ok": false
+      },
+      "source": "docs/rules.md: the leader slot contains the leader"
+    },
+    {
+      "id": "leader-in-sideboard",
+      "description": "A leader in the sideboard is not a legal Premier deck.",
+      "mutation": {
+        "type": "leader_in_sideboard"
+      },
+      "expected": {
+        "validate.valid": false,
+        "analyze.legality.ok": false
+      },
+      "source": "docs/rules.md: one leader in the leader zone"
+    },
+    {
+      "id": "secondleader",
+      "description": "A secondleader field is a Twin Suns export and is illegal in Premier.",
+      "mutation": {
+        "type": "add_secondleader",
+        "value": "ASH_011"
+      },
+      "expected": {
+        "validate.valid": false,
+        "analyze.legality.ok": false
+      },
+      "source": "docs/rules.md and docs/data-sources.md: secondleader is not Premier"
+    }
+  ]
+}

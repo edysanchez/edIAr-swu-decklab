@@ -1,9 +1,10 @@
 # <ID> — <title>
 
 - **Status:** ready
-- **Risk:** T0 | T1 | T2 | T3 | T4
-- **Priority:** P0 | P1 | P2
-- **F1:** yes | no
+- **Priority:** now | next | later
+- **Process:** quick review | council + differential tests | domain sign-off | human-led design
+- **Milestone:** functional-core | shareable | distributable | optional-extensions | none
+- **Data touch:** yes | no
 
 ## Problem
 
@@ -27,6 +28,8 @@ This item answers exactly one question. State it here.
 - [ ] Both CLIs agree on every differential case.
 
 ## Oracle / expected values
+
+Only for domain sign-off items.
 
 | Case | Expected | Source | Frozen by |
 |---|---|---|---|

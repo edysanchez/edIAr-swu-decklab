@@ -4,9 +4,11 @@ This guide explains what a **software factory** is, why it exists, how this
 repo's factory works, and how the skill is developed with it. No prior knowledge
 of factories, orchestrators, or agents is required.
 
-> This guide covers the core factory. Examples use the SWU integration (P0-2)
-> to make the flow concrete; the core ships `backlog.example.json` and an
-> optional oracle hook instead of the SWU queue and cases.
+> This guide covers the core factory. Examples use the SWU integration
+> (`legality-parity`, legacy `P0-2`) to make the flow concrete; the core ships
+> `backlog.example.json` and an optional oracle hook instead of the SWU queue
+> and cases. The permanent old-to-new mapping is in
+> [`legacy-map.md`](legacy-map.md).
 
 ## 1. What is a software factory?
 
@@ -102,53 +104,53 @@ An item enters the backlog only when it is **ready**:
 - one question;
 - reproduction or evidence;
 - acceptance test;
-- oracle row if it is T3;
-- risk T0–T4 and priority P0–P2;
-- link to F1/P0;
+- an oracle row if the process label is domain sign-off (T3);
+- a risk tier and a priority (`now`, `next`, `later`);
+- a milestone and the current blocker, if any;
 - not blocked.
 
 ```bash
 python3 factory/factory.py list
-python3 factory/factory.py show P0-2
+python3 factory/factory.py show legality-parity
 ```
 
 ### 4.2 Start
 
 ```bash
-python3 factory/factory.py new P0-2 --base origin/main
+python3 factory/factory.py new legality-parity --base origin/main
 ```
 
 This creates:
 
-- branch `factory/p0-2`;
-- worktree `/tmp/opencode/factory-worktrees/p0-2`;
+- branch `factory/legality-parity`;
+- worktree `/tmp/opencode/factory-worktrees/legality-parity`;
 - a `data/` link for the real-data tests;
 - the item marked as `doing`.
 
 ### 4.3 Design and oracle
 
-- **T0/T1:** the acceptance test is enough.
-- **T2:** a short design and a test plan.
-- **T3:** a human freezes the expected values in
+- **quick review (T0/T1):** the acceptance test is enough.
+- **council + differential tests (T2):** a short design and a test plan.
+- **domain sign-off (T3):** a human freezes the expected values in
   `factory/oracle_cases/legality.json` (change `frozen_by` and add the exact
   source to `source`). The agent must not change the expected value to make the
   test pass.
-- **T4:** human-led design; the factory only records the decision.
+- **human-led design (T4):** the factory only records the decision.
 
 ### 4.4 Red test
 
 Before implementing, write the failing test:
 
 ```bash
-cd /tmp/opencode/factory-worktrees/p0-2
+cd /tmp/opencode/factory-worktrees/legality-parity
 # edit skills/swu-review/tests/...
 ```
 
 And confirm it is red:
 
 ```bash
-python3 <control>/factory/factory.py check --worktree /tmp/opencode/factory-worktrees/p0-2
-python3 <control>/factory/factory.py oracle --worktree /tmp/opencode/factory-worktrees/p0-2
+python3 <control>/factory/factory.py check --worktree /tmp/opencode/factory-worktrees/legality-parity
+python3 <control>/factory/factory.py oracle --worktree /tmp/opencode/factory-worktrees/legality-parity
 ```
 
 If everything is already green, you have not written the right test.
@@ -170,8 +172,8 @@ separate item.
 ### 4.6 Verification
 
 ```bash
-python3 <control>/factory/factory.py check --worktree /tmp/opencode/factory-worktrees/p0-2
-python3 <control>/factory/factory.py oracle --worktree /tmp/opencode/factory-worktrees/p0-2
+python3 <control>/factory/factory.py check --worktree /tmp/opencode/factory-worktrees/legality-parity
+python3 <control>/factory/factory.py oracle --worktree /tmp/opencode/factory-worktrees/legality-parity
 ```
 
 - `check` = mechanical gates: tests, data-guard, ruff, mypy, links.
@@ -183,9 +185,9 @@ python3 <control>/factory/factory.py oracle --worktree /tmp/opencode/factory-wor
 ### 4.7 Packet
 
 ```bash
-python3 <control>/factory/factory.py packet P0-2 \
-  --worktree /tmp/opencode/factory-worktrees/p0-2 \
-  --out /tmp/opencode/p0-2-packet.md
+python3 <control>/factory/factory.py packet legality-parity \
+  --worktree /tmp/opencode/factory-worktrees/legality-parity \
+  --out /tmp/opencode/legality-parity-packet.md
 ```
 
 The packet contains:
@@ -203,7 +205,7 @@ It is the PR body or the evidence for the reviewer.
 
 Only when triggered:
 
-- T2/T3/T4;
+- council + differential tests, domain sign-off, or human-led design;
 - legality, rules, schema, cross-cutting, or scope;
 - red oracle.
 
@@ -214,26 +216,26 @@ council is advisory.
 ### 4.9 PR, CI, and merge
 
 ```bash
-cd /tmp/opencode/factory-worktrees/p0-2
+cd /tmp/opencode/factory-worktrees/legality-parity
 git add skills/swu-review
 git commit -m "fix(legality): share one Deck model across both CLIs"
-git push -u origin factory/p0-2
-gh pr create --base main --head factory/p0-2 \
+git push -u origin factory/legality-parity
+gh pr create --base main --head factory/legality-parity \
   --title "fix(legality): unify validate_deck and swu_analyze" \
   --body-file /tmp/opencode/p0-2-packet.md
 ```
 
 - Required CI: `test`, `ruff`, `mypy`, `local-links`.
 - Human review.
-- Human merge; **no auto-merge** for T2–T4.
+- Human merge; **no auto-merge** for council, domain-sign-off or human-led work.
 
 ### 4.10 Close and learn
 
 After the merge:
 
 ```bash
-git worktree remove /tmp/opencode/factory-worktrees/p0-2
-git branch -d factory/p0-2
+git worktree remove /tmp/opencode/factory-worktrees/legality-parity
+git branch -d factory/legality-parity
 ```
 
 - Mark the item `done` in the backlog (manual today; the next increment would be
@@ -241,7 +243,7 @@ git branch -d factory/p0-2
 - Add one metrics line:
 
 ```text
-2026-11-26 | P0-2 | T3 | 2d | 25min | yes | 1 | 0 | ...
+2026-11-26 | legality-parity | domain sign-off | 2d | 25min | yes | 1 | 0 | ...
 ```
 
 - If a defect escaped, create a new item and add the missing case to the
@@ -259,30 +261,25 @@ git branch -d factory/p0-2
 
 ### Why green CI is not enough
 
-`main` has 84 green tests and P0-2 is still open: `validate_deck` and
-`swu_analyze` return different answers. No isolated unit test sees that
-divergence unless you wrote the case. The oracle sees it because it runs both
-full paths and compares them with the domain expectation.
+`main` has 84 green tests and `legality-parity` (legacy P0-2) is still open:
+`validate_deck` and `swu_analyze` return different answers. No isolated unit
+test sees that divergence unless you wrote the case. The oracle sees it because
+it runs both full paths and compares them with the domain expectation.
 
-## 6. Risk and autonomy
+## 6. Risk and human gates
 
-| Tier | Examples | Process | Autonomy |
-|---|---|---|---|
-| **T0** | docs, typos | CI + quick review | Agent PR; human merge |
-| **T1** | tests, tooling | CI + human review | Agent PR; human merge |
-| **T2** | engine behaviour | TDD + differential tests + council | Agent PR; human merge |
-| **T3** | rules, legality, data | human oracle + domain review | Agent implements; human signs |
-| **T4** | scope, architecture | human-led design | Agent drafts only |
-
-| Level | Agent may | Human must |
+| Process label | Tier (internal) | Examples |
 |---|---|---|
-| **L0** | nothing | do the work |
-| **L1** | draft design/tests | approve and implement |
-| **L2** | implement + verify + open PR | approve design and merge |
-| **L3** | merge T0/T1 after CI + review | audit and set policy |
-| **L4** | set scope and merge | — (not recommended) |
+| quick review | T0 / T1 | docs, typos, tests, tooling |
+| council + differential tests | T2 | engine behaviour |
+| domain sign-off | T3 | rules, legality, data |
+| human-led design | T4 | scope, architecture |
 
-Start at **L2**. L3 only for T0/T1, and only after a clean track record.
+`data_touch: true` adds the data guard and the live case to any tier.
+
+Humans approve the design and the merge. Agents implement, run checks and
+assemble evidence. **Agents never merge.** There is no separate autonomy scale
+in this spike.
 
 ## 7. The domain oracle
 
@@ -334,8 +331,8 @@ oracle is a snapshot of current behaviour, bugs included.
 - **PR gate:** synthetic catalogue and deck, offline, deterministic.
 - **Live job:** real catalogue, weekly/manual, advisory; catches drift.
 
-The P0-2 cases are structural (leader count, slot type, sideboard,
-`secondleader`), so they do not need real cards. A synthetic catalogue can
+The `legality-parity` (legacy P0-2) cases are structural (leader count, slot
+type, sideboard, `secondleader`), so they do not need real cards. A synthetic catalogue can
 exercise the same rules.
 
 ### Data licensing
@@ -376,7 +373,7 @@ Without metrics, the factory is an act of faith.
 | Building a platform before a product | It becomes the next meta-project | One small loop, one pilot |
 | 100% coverage/MSI as the goal | It rewards trivial tests and exclusions | Diff coverage + ratchet + MSI on critical modules |
 | The agent writes the expected values | It turns the bug into the spec | Human-frozen oracle |
-| Auto-merge | Domain truth is not deterministic | Human merge for T2–T4 |
+| Auto-merge | Domain truth is not deterministic | Human merge for council, domain and human-led work |
 | Council on every change | Review fatigue | Council by trigger |
 | Mixing factory and product in one PR | No one knows what changed behaviour | One PR, one question |
 | Real card data in fixtures | Legal risk | Synthetic in PR; live in the job |
@@ -422,9 +419,9 @@ From the control worktree:
 
 ```bash
 python3 factory/factory.py list
-python3 factory/factory.py show EXAMPLE-1
+python3 factory/factory.py show example-path-config
 python3 factory/factory.py check
-python3 factory/factory.py packet EXAMPLE-1 --no-check
+python3 factory/factory.py packet example-path-config --no-check
 # The oracle requires the project integration:
 # python3 factory/factory.py oracle
 ```
@@ -441,12 +438,17 @@ The SWU integration adds `factory/backlog.json`, `factory/oracle.py` and
 
 ## 12. Spike status
 
-- The core is on `spike/factory-core`; the SWU integration is on
+- The core is PR #10 (draft) on `spike/factory-core`; the SWU integration is on
   `spike/swu-integration`.
 - `main` is protected, but the oracle is not a required check.
 - The core ships an example backlog; the SWU integration ships the real queue.
-- The SWU integration oracle is red for P0-2; that is the expected result.
+- The core has 22 tooling tests and an 8-check verification bundle.
+- The SWU integration oracle is red for `legality-parity` (legacy P0-2); that
+  is the expected result.
 - The expected values are **proposals** (`frozen_by` awaiting human review).
+- The vocabulary is plain: `priority` is `now`/`next`/`later`, `risk` is an
+  internal tier with a process label, and `milestone` uses product names. The
+  old values are in [`legacy-map.md`](legacy-map.md).
 - The CLI is about 500 lines; the council recommended about 100 LOC for the
   production version.
 - The next step is not a workflow: it is a **synthetic fixture** to make the

@@ -2,12 +2,14 @@
   "wip_limit": 1,
   "items": [
     {
-      "id": "EXAMPLE-1",
+      "id": "example-path-config",
+      "legacy_id": "EXAMPLE-1",
       "title": "Replace one hardcoded path with a configuration value",
       "status": "ready",
+      "priority": "next",
       "risk": "T1",
-      "priority": "P1",
-      "f1": false,
+      "data_touch": false,
+      "milestone": null,
       "scope": "Example item. Replace one hardcoded path with a value read from configuration. No behaviour change.",
       "acceptance": [
         "The path is configurable",

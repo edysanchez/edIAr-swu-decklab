@@ -45,9 +45,9 @@ From the control worktree (the one containing `factory/`):
 
 ```bash
 python3 factory/factory.py list
-python3 factory/factory.py show EXAMPLE-1
+python3 factory/factory.py show example-path-config
 python3 factory/factory.py check
-python3 factory/factory.py packet EXAMPLE-1
+python3 factory/factory.py packet example-path-config
 # The oracle requires the project integration:
 # python3 factory/factory.py oracle
 ```
@@ -55,14 +55,14 @@ python3 factory/factory.py packet EXAMPLE-1
 Create an item worktree:
 
 ```bash
-python3 factory/factory.py new EXAMPLE-1 --base origin/main
+python3 factory/factory.py new example-path-config --base origin/main
 ```
 
 That command:
 
 - refuses to start unless the item is `ready` and WIP is 0;
-- creates branch `factory/example-1` from `origin/main`;
-- creates a worktree under `/tmp/opencode/factory-worktrees/example-1`
+- creates branch `factory/example-path-config` from `origin/main`;
+- creates a worktree under `/tmp/opencode/factory-worktrees/example-path-config`
   (override with `FACTORY_WORKTREES` or `--worktree-dir`);
 - symlinks `data/` from the control worktree so the real-data tests can run
   (`--no-data-link` to skip);
@@ -74,11 +74,11 @@ The item worktree is a clean checkout; the factory control plane stays in the
 control worktree. Run checks against it with `--worktree`:
 
 ```bash
-python3 factory/factory.py check --worktree /tmp/opencode/factory-worktrees/example-1
-python3 factory/factory.py packet EXAMPLE-1 --worktree /tmp/opencode/factory-worktrees/example-1
-python3 factory/factory.py status --worktree /tmp/opencode/factory-worktrees/example-1
+python3 factory/factory.py check --worktree /tmp/opencode/factory-worktrees/example-path-config
+python3 factory/factory.py packet example-path-config --worktree /tmp/opencode/factory-worktrees/example-path-config
+python3 factory/factory.py status --worktree /tmp/opencode/factory-worktrees/example-path-config
 # The oracle requires the project integration:
-# python3 factory/factory.py oracle --worktree /tmp/opencode/factory-worktrees/example-1
+# python3 factory/factory.py oracle --worktree /tmp/opencode/factory-worktrees/example-path-config
 ```
 
 ## Backlog
@@ -88,13 +88,17 @@ The resolved backlog is the only queue. The core ships
 `factory/backlog.json`; `FACTORY_BACKLOG` can point to a private file. Each item
 has:
 
-- `id`, `title`, `status` (`ready`, `doing`, `review`, `done`);
-- `risk` (`T0`–`T4`) and `priority` (`P0`–`P2`);
-- `f1` (whether it belongs to the F1 exit checklist);
+- `id` (a lowercase slug), optional `legacy_id`, `title`, `status`
+  (`ready`, `doing`, `review`, `done`);
+- `priority`: `now`, `next`, `later`;
+- `risk`: `T0`–`T4` (internal process tier; the CLI shows a process label);
+- `data_touch`: `true` when the change touches card or snapshot data;
+- `milestone`: `functional-core`, `shareable`, `distributable`,
+  `optional-extensions`, or `null`;
 - `scope`, `acceptance`, `oracle`, `source`, `notes`.
 
 The field set is intentionally small. If an item needs a second question, split
-it.
+it. The permanent legacy mapping is in [`docs/legacy-map.md`](docs/legacy-map.md).
 
 ## Verification bundle
 
@@ -149,16 +153,18 @@ expected values from the implementation; that would turn the bug into the spec.
 
 ## Risk tiers and human gates
 
-| Tier | Examples | Process |
+| Process label | Tier (internal) | Examples |
 |---|---|---|
-| T0 | docs, typos | CI + quick review |
-| T1 | tests, tooling | CI + human review |
-| T2 | engine behaviour | TDD + differential tests + council |
-| T3 | rules, legality, data | human-frozen oracle + domain review + human sign-off |
-| T4 | scope, architecture | human-led design |
+| quick review | T0 / T1 | docs, typos, tests, tooling |
+| council + differential tests | T2 | engine behaviour |
+| domain sign-off | T3 | rules, legality, data |
+| human-led design | T4 | scope, architecture |
+
+`data_touch: true` adds the data guard and the live case to any tier.
 
 Humans approve the design and the merge. Agents implement, run checks and
-assemble evidence. There is no auto-merge for T2–T4.
+assemble evidence. **Agents never merge.** There is no separate autonomy scale
+in this spike.
 
 ## Metrics
 

@@ -11,7 +11,8 @@ Link the backlog item and the problem it solves.
 ## Verification
 
 - [ ] `python3 factory/factory.py check --worktree <path>`
-- [ ] `python3 factory/factory.py oracle --worktree <path>`
+- [ ] `python3 factory/factory.py oracle --worktree <path>` (domain sign-off
+      items; otherwise record "not installed" or "not run")
 - [ ] Poggle or the relevant live-data case, if the change touches data.
 - [ ] No new skips, no tracked card data.
 

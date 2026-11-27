@@ -116,3 +116,6 @@ jobs:
 
       - name: Type check scripts
         run: python -m mypy skills/swu-review/scripts
+
+      - name: Type check the factory
+        run: python -m mypy factory/factory.py

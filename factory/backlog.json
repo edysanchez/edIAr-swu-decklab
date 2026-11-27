@@ -3,7 +3,6 @@
   "items": [
     {
       "id": "typing-resolver-cardmarket",
-      "legacy_id": "CLEAN-B2",
       "title": "Remove explicit Any from the resolver and Cardmarket boundary",
       "status": "ready",
       "priority": "next",
@@ -23,7 +22,6 @@
     },
     {
       "id": "typing-analysis",
-      "legacy_id": "CLEAN-B3A",
       "title": "Remove explicit Any from analysis.py",
       "status": "ready",
       "priority": "next",
@@ -43,7 +41,6 @@
     },
     {
       "id": "typing-render-report",
-      "legacy_id": "CLEAN-B3B",
       "title": "Remove explicit Any from render_report.py",
       "status": "ready",
       "priority": "next",
@@ -63,7 +60,6 @@
     },
     {
       "id": "typing-clis-fetchers",
-      "legacy_id": "CLEAN-B3C",
       "title": "Remove explicit Any from the remaining CLIs and fetchers",
       "status": "ready",
       "priority": "next",
@@ -83,7 +79,6 @@
     },
     {
       "id": "enable-disallow-any-explicit",
-      "legacy_id": "CLEAN-ANY",
       "title": "Enable disallow_any_explicit",
       "status": "ready",
       "priority": "next",
@@ -103,7 +98,6 @@
     },
     {
       "id": "legality-parity",
-      "legacy_id": "P0-2",
       "title": "validate_deck and swu_analyze disagree on leader/base structure",
       "status": "ready",
       "priority": "now",
@@ -127,7 +121,6 @@
     },
     {
       "id": "suspension-fail-closed",
-      "legacy_id": "P0-3",
       "title": "Legality must fail closed when suspension data is missing or empty",
       "status": "ready",
       "priority": "now",
@@ -146,7 +139,6 @@
     },
     {
       "id": "factory-docs",
-      "legacy_id": "DOC-FACTORY",
       "title": "Publish the factory contract and the tracked backlog",
       "status": "review",
       "priority": "later",
@@ -160,7 +152,7 @@
       ],
       "oracle": [],
       "source": "Council 2026-11-26",
-      "notes": "README, the 101 guide and the legacy map are written; waiting for PR #10 review."
+      "notes": "README, the 101 guide and the vocabulary table are written; waiting for PR #10 review."
     }
   ]
 }

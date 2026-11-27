@@ -20,8 +20,8 @@ python3 factory/factory.py packet legality-parity --no-check
 ```
 
 The current oracle is expected to be **red** on `leader-count-2` and
-`secondleader`. That is the product gap `legality-parity` (legacy P0-2)
-exposes, not a factory failure.
+`secondleader`. That is the product gap `legality-parity` exposes (defect P0-2
+in `code-health.md`), not a factory failure.
 
 The expected values are proposals (`frozen_by:
 proposed-by-agent-for-human-review`). A human must freeze them before the

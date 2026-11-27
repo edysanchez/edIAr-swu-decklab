@@ -5,10 +5,11 @@ repo's factory works, and how the skill is developed with it. No prior knowledge
 of factories, orchestrators, or agents is required.
 
 > This guide covers the core factory. Examples use the SWU integration
-> (`legality-parity`, legacy `P0-2`) to make the flow concrete; the core ships
+> (`legality-parity`) to make the flow concrete; the core ships
 > `backlog.example.json` and an optional oracle hook instead of the SWU queue
-> and cases. The permanent old-to-new mapping is in
-> [`legacy-map.md`](legacy-map.md).
+> and cases. The old-to-new vocabulary table is in
+> [`vocabulary.md`](vocabulary.md); it is reference only, not an alias
+> mechanism.
 
 ## 1. What is a software factory?
 
@@ -261,8 +262,8 @@ git branch -d factory/legality-parity
 
 ### Why green CI is not enough
 
-`main` has 84 green tests and `legality-parity` (legacy P0-2) is still open:
-`validate_deck` and `swu_analyze` return different answers. No isolated unit
+`main` has 84 green tests and `legality-parity` is still open (defect P0-2 in
+`code-health.md`): `validate_deck` and `swu_analyze` return different answers. No isolated unit
 test sees that divergence unless you wrote the case. The oracle sees it because
 it runs both full paths and compares them with the domain expectation.
 
@@ -331,8 +332,8 @@ oracle is a snapshot of current behaviour, bugs included.
 - **PR gate:** synthetic catalogue and deck, offline, deterministic.
 - **Live job:** real catalogue, weekly/manual, advisory; catches drift.
 
-The `legality-parity` (legacy P0-2) cases are structural (leader count, slot
-type, sideboard, `secondleader`), so they do not need real cards. A synthetic catalogue can
+The `legality-parity` cases are structural (leader count, slot type, sideboard,
+`secondleader`), so they do not need real cards. A synthetic catalogue can
 exercise the same rules.
 
 ### Data licensing
@@ -443,12 +444,12 @@ The SWU integration adds `factory/backlog.json`, `factory/oracle.py` and
 - `main` is protected, but the oracle is not a required check.
 - The core ships an example backlog; the SWU integration ships the real queue.
 - The core has 22 tooling tests and an 8-check verification bundle.
-- The SWU integration oracle is red for `legality-parity` (legacy P0-2); that
-  is the expected result.
+- The SWU integration oracle is red for `legality-parity`; that is the expected
+  result.
 - The expected values are **proposals** (`frozen_by` awaiting human review).
 - The vocabulary is plain: `priority` is `now`/`next`/`later`, `risk` is an
   internal tier with a process label, and `milestone` uses product names. The
-  old values are in [`legacy-map.md`](legacy-map.md).
+  old values are in [`vocabulary.md`](vocabulary.md).
 - The CLI is about 500 lines; the council recommended about 100 LOC for the
   production version.
 - The next step is not a workflow: it is a **synthetic fixture** to make the

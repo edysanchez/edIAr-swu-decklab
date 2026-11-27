@@ -88,7 +88,7 @@ The resolved backlog is the only queue. The core ships
 `factory/backlog.json`; `FACTORY_BACKLOG` can point to a private file. Each item
 has:
 
-- `id` (a lowercase slug), optional `legacy_id`, `title`, `status`
+- `id` (a lowercase noun slug), `title`, `status`
   (`ready`, `doing`, `review`, `done`);
 - `priority`: `now`, `next`, `later`;
 - `risk`: `T0`–`T4` (internal process tier; the CLI shows a process label);
@@ -98,7 +98,9 @@ has:
 - `scope`, `acceptance`, `oracle`, `source`, `notes`.
 
 The field set is intentionally small. If an item needs a second question, split
-it. The permanent legacy mapping is in [`docs/legacy-map.md`](docs/legacy-map.md).
+it. The old-to-new vocabulary table is in
+[`docs/vocabulary.md`](docs/vocabulary.md); it is reference only, not an alias
+mechanism.
 
 ## Verification bundle
 

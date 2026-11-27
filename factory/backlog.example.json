@@ -3,7 +3,6 @@
   "items": [
     {
       "id": "example-path-config",
-      "legacy_id": "EXAMPLE-1",
       "title": "Replace one hardcoded path with a configuration value",
       "status": "ready",
       "priority": "next",

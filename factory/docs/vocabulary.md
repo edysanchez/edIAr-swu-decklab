@@ -1,10 +1,8 @@
-# Legacy map
+# Vocabulary
 
-The factory now uses plain-language values in the backlog and the CLI. This
-page is the permanent mapping for old IDs, historical metrics and notes that
-still use the old vocabulary.
-
-It is a reference, not a second vocabulary: new items use the plain values only.
+The backlog and the CLI use plain-language values. The old codes are **not
+aliases**: they were removed from the backlog. This page is only for translating
+old notes, historical metrics and documents that still use the old vocabulary.
 
 ## Priority
 
@@ -42,17 +40,8 @@ priorities. They remain historical headings.
 
 ## Item IDs
 
-| Old | New |
-|---|---|
-| `P0-2` | `legality-parity` |
-| `P0-3` | `suspension-fail-closed` |
-| `CLEAN-B2` | `typing-resolver-cardmarket` |
-| `CLEAN-B3A` | `typing-analysis` |
-| `CLEAN-B3B` | `typing-render-report` |
-| `CLEAN-B3C` | `typing-clis-fetchers` |
-| `CLEAN-ANY` | `enable-disallow-any-explicit` |
-| `DOC-FACTORY` | `factory-docs` |
-| `EXAMPLE-1` | `example-path-config` |
+Item IDs are lowercase noun slugs: `legality-parity`,
+`suspension-fail-closed`, `typing-analysis`, `example-path-config`.
 
-Old IDs resolve through `legacy_id`. Historical metrics lines keep the old ID;
-new lines use the new ID.
+There are no legacy ID aliases. Old IDs remain only in git history, old metrics
+lines and historical documents; `factory.py` does not resolve them.

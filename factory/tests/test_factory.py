@@ -60,10 +60,6 @@ class BacklogTests(unittest.TestCase):
         self.assertIn("example-path-config", text)
         self.assertIn("WIP:", text)
 
-    def test_find_item_resolves_legacy_id(self) -> None:
-        item = factory.find_item(self.data, "EXAMPLE-1")
-        self.assertEqual(item["id"], "example-path-config")
-
     def test_item_has_acceptance(self) -> None:
         item = factory.find_item(self.data, "example-path-config")
         text = factory.render_item(item)
@@ -132,10 +128,10 @@ class BacklogValidationTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             factory.validate_backlog(make_backlog(make_item("Bad ID")))
 
-    def test_validate_rejects_duplicate_alias_case_insensitive(self) -> None:
+    def test_validate_rejects_duplicate_id(self) -> None:
         data = make_backlog(
-            make_item("legality-parity", legacy_id="P0-2"),
-            make_item("other-item", legacy_id="p0-2"),
+            make_item("legality-parity"),
+            make_item("legality-parity"),
         )
         with self.assertRaises(SystemExit):
             factory.validate_backlog(data)

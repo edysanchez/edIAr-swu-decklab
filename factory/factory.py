@@ -50,7 +50,6 @@ GATES: dict[str, dict[str, object]] = {
     "T4": {"label": "human-led design", "council": True, "signoff": True},
 }
 ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-LEGACY_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]*$")
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 
 
@@ -94,21 +93,10 @@ def validate_backlog(data: object, name: str = "backlog") -> dict[str, Any]:
         item_id = item.get("id")
         if not isinstance(item_id, str) or not ID_RE.fullmatch(item_id):
             raise SystemExit(f"{name}: invalid id at item {index}: {item_id!r}")
-        legacy_id = item.get("legacy_id")
-        if legacy_id is not None:
-            if not isinstance(legacy_id, str) or not LEGACY_ID_RE.fullmatch(legacy_id):
-                raise SystemExit(
-                    f"{name}: invalid legacy_id for {item_id}: {legacy_id!r}"
-                )
-        for alias in (item_id, legacy_id):
-            if not alias:
-                continue
-            key = alias.lower()
-            if key in seen:
-                raise SystemExit(
-                    f"{name}: duplicate id/alias {alias!r} (also {seen[key]})"
-                )
-            seen[key] = item_id
+        key = item_id.lower()
+        if key in seen:
+            raise SystemExit(f"{name}: duplicate id {item_id!r} (also {seen[key]})")
+        seen[key] = item_id
         if not isinstance(item.get("title"), str) or not item["title"].strip():
             raise SystemExit(f"{name}: {item_id} needs a non-empty title")
         if item.get("status") not in STATUSES:
@@ -193,14 +181,11 @@ def save_backlog(data: dict[str, Any]) -> None:
 def find_item(data: dict[str, Any], item_id: str) -> dict[str, Any]:
     items = data["items"]
     for item in items:
-        if item["id"] == item_id or item.get("legacy_id") == item_id:
+        if item["id"] == item_id:
             return cast(dict[str, Any], item)
     lowered = item_id.lower()
     for item in items:
         if item["id"].lower() == lowered:
-            return cast(dict[str, Any], item)
-        legacy = item.get("legacy_id")
-        if isinstance(legacy, str) and legacy.lower() == lowered:
             return cast(dict[str, Any], item)
     raise SystemExit(f"unknown item: {item_id}")
 
@@ -274,8 +259,6 @@ def render_item(item: dict[str, Any]) -> str:
     ]
     if item.get("data_touch"):
         lines.append("- Data: yes")
-    if item.get("legacy_id"):
-        lines.append(f"- Legacy ID: {item['legacy_id']}")
     lines += [
         f"- Source: {item.get('source', '—')}",
         "",

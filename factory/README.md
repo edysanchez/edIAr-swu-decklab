@@ -109,9 +109,11 @@ allows:
 |---|---|
 | `tests` | `python3 -m unittest discover -s skills/swu-review/tests` |
 | `data-guard` | `git ls-files data` must be empty |
+| `tooling-tests` | `python3 -m unittest discover -s factory/tests` when present |
 | `ruff` | `python3 -m ruff check .` if available |
 | `mypy-core` | `python3 -m mypy` if available |
 | `mypy-scripts` | `python3 -m mypy skills/swu-review/scripts` if available |
+| `mypy-factory` | `python3 -m mypy factory/factory.py` if available |
 | `links` | local Markdown links resolve (offline approximation of lychee) |
 
 If `ruff` or `mypy` is missing, the check is `SKIP`, not `PASS`. Use

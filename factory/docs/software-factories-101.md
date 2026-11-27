@@ -253,7 +253,7 @@ git branch -d factory/legality-parity
 
 ```text
 1. Unit tests       -> the code does what it says, branch by branch
-2. Local check      -> tests + lint + types + links + data-guard
+2. Local check      -> product and tooling tests + lint + types + links + data-guard
 3. Oracle           -> domain truth + parity between CLIs
 4. CI               -> all of the above on a clean clone
 5. Human            -> design, domain, merge
